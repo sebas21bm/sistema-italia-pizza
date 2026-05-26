@@ -36,7 +36,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.4</version>
                 <configuration>
-                    <mainClass>mx.uv.sistemapizzeria.App</mainClass>
+                    <mainClass>mx.uv.sistemapizzeria.SistemaPizzeria</mainClass>
                 </configuration>
                 <executions>
                     <execution>
