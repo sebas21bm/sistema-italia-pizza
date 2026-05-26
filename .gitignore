@@ -1,0 +1,9 @@
+/target/
+
+/.idea/
+jshell.history
+*.class
+*.iml
+nbactions.xml
+/out/
+/src/main/resources/config/*.properties

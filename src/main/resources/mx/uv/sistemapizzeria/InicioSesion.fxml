@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="600.0" prefWidth="850.0" style="-fx-background-color: #f4f6f8;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.InicioSesionController">
+    <children>
+        <VBox alignment="CENTER" layoutX="225.0" layoutY="100.0" prefWidth="400.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e0e0e0; -fx-border-radius: 10;" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="225.0" AnchorPane.rightAnchor="225.0" AnchorPane.topAnchor="120.0">
+            <effect>
+                <DropShadow color="#00000020" offsetX="0.0" offsetY="5.0" radius="15.0" />
+            </effect>
+            <padding>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+            <children>
+                <VBox alignment="CENTER" spacing="5.0">
+                    <children>
+                        <Label text="ITALIA PIZZA" textFill="#333333">
+                            <font>
+                                <Font name="System Bold" size="28.0" />
+                            </font>
+                        </Label>
+                        <Label text="Sistema de Italia Pizza" textFill="#666666">
+                            <font>
+                                <Font size="16.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+
+                <Separator prefWidth="200.0">
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                    </VBox.margin>
+                </Separator>
+
+                <VBox alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label text="Favor de iniciar sesión" textFill="#495057">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+
+                <VBox spacing="15.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="Usuario:" textFill="#495057">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="txt_usuario" prefHeight="40.0" promptText="Ingrese su usuario" style="-fx-background-radius: 5; -fx-border-color: #dee2e6; -fx-border-radius: 5;" />
+                            </children>
+                        </VBox>
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="Contraseña:" textFill="#495057">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <PasswordField fx:id="txt_contrasenia" prefHeight="40.0" promptText="Ingrese su contraseña" style="-fx-background-radius: 5; -fx-border-color: #dee2e6; -fx-border-radius: 5;" />
+                                <Label text="* Máximo 8 caracteres, al menos un número y una mayúscula." textFill="#8c8c8c" wrapText="true">
+                                    <font>
+                                        <Font size="11.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                    </VBox.margin>
+                </VBox>
+
+                <Button mnemonicParsing="false" onAction="#clicIniciarSesion" prefHeight="45.0" prefWidth="1000.0" style="-fx-background-color: #0d6efd; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-font-size: 16px;" text="Iniciar Sesión">
+                    <effect>
+                        <DropShadow color="#00000033" offsetY="3.0" />
+                    </effect>
+                </Button>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
