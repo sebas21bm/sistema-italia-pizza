@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * JavaFX App
@@ -16,6 +17,8 @@ public class SistemaPizzeria extends Application {
 
     private static Stage primaryStage;
     private static Scene scene;
+    
+    private static HashMap<String,Object> metadatos; 
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -32,15 +35,24 @@ public class SistemaPizzeria extends Application {
         primaryStage.show();
     }
 
-    static void setRoot(String fxml) throws IOException {
-        //scene.setRoot(loadFXML(fxml));
-        scene.setRoot(UtilidadesFX.cargarFXML(fxml).load());
+    public static void setMetadatos(String nombre, Object valor){
+        if(metadatos == null){
+            metadatos = new HashMap<>();
+        }
+        metadatos.put(nombre, valor);
     }
 
-//    private static Parent loadFXML(String fxml) throws IOException {
-//        FXMLLoader fxmlLoader = new FXMLLoader(SistemaPizzeria.class.getResource(fxml + ".fxml"));
-//        return fxmlLoader.load();
-//    }
+    public static Object getMetadados(String nombre){
+        if(metadatos == null){
+            return null;
+        }
+        return metadatos.get(nombre);
+    }
+    
+    static void setRoot(String fxml, String titulo) throws IOException {
+        scene.setRoot(UtilidadesFX.cargarFXML(fxml).load());
+        primaryStage.setTitle(titulo);
+    }
 
     public static void main(String[] args) {
         launch();
