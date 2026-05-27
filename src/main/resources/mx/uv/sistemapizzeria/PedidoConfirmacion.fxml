@@ -1,11 +1,162 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoConfirmacionController">
-    
+<AnchorPane
+        prefHeight="620.0" prefWidth="600.0"
+        style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #dee2e6; -fx-border-radius: 12;"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="uv.lis.sistemapizzeria.controladores.PedidoConfirmacionController">
+
+    <effect>
+        <DropShadow color="#00000040" offsetX="0" offsetY="8" radius="24.0" />
+    </effect>
+
+    <children>
+        <VBox spacing="0.0"
+              AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <children>
+
+                <!-- ══ ENCABEZADO ══ -->
+                <VBox alignment="CENTER" spacing="6.0">
+                    <padding>
+                        <Insets top="40.0" bottom="28.0" left="40.0" right="40.0" />
+                    </padding>
+                    <children>
+                        <Label text="Resumen de Pedido" textFill="#1a1a1a">
+                            <font><Font name="System Bold" size="30.0" /></font>
+                        </Label>
+                        <Label fx:id="lblSubtitulo" text="Pedido #0045 - En proceso" textFill="#555555">
+                            <font><Font size="14.0" /></font>
+                        </Label>
+                    </children>
+                </VBox>
+
+                <!-- ══ TARJETA DE INFORMACIÓN + TOTAL ══ -->
+                <VBox spacing="0.0"
+                      style="-fx-border-color: #dee2e6; -fx-border-radius: 8; -fx-background-color: white; -fx-background-radius: 8;">
+                    <VBox.margin>
+                        <Insets left="36.0" right="36.0" />
+                    </VBox.margin>
+                    <children>
+
+                        <!-- Fecha y Hora -->
+                        <HBox spacing="0.0" style="-fx-border-color: transparent transparent #dee2e6 transparent;">
+                            <padding><Insets top="16.0" bottom="16.0" left="18.0" right="18.0" /></padding>
+                            <children>
+                                <Label text="Fecha y Hora:" textFill="#1a1a1a" prefWidth="170.0">
+                                    <font><Font name="System Bold" size="13.5" /></font>
+                                </Label>
+                                <Label fx:id="lblFechaHora" text="10/05/2026, 16:05 hrs" textFill="#333333">
+                                    <font><Font size="13.5" /></font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <!-- Atiende -->
+                        <HBox spacing="0.0" style="-fx-border-color: transparent transparent #dee2e6 transparent;">
+                            <padding><Insets top="16.0" bottom="16.0" left="18.0" right="18.0" /></padding>
+                            <children>
+                                <Label text="Atiende:" textFill="#1a1a1a" prefWidth="170.0">
+                                    <font><Font name="System Bold" size="13.5" /></font>
+                                </Label>
+                                <Label fx:id="lblAtiende" text="Maria Lopez" textFill="#333333">
+                                    <font><Font size="13.5" /></font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <!-- Cliente -->
+                        <HBox spacing="0.0" style="-fx-border-color: transparent transparent #dee2e6 transparent;">
+                            <padding><Insets top="16.0" bottom="16.0" left="18.0" right="18.0" /></padding>
+                            <children>
+                                <Label text="Cliente:" textFill="#1a1a1a" prefWidth="170.0">
+                                    <font><Font name="System Bold" size="13.5" /></font>
+                                </Label>
+                                <Label fx:id="lblCliente" text="David de la Mora" textFill="#333333">
+                                    <font><Font size="13.5" /></font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <!-- Dirección -->
+                        <HBox spacing="0.0" style="-fx-border-color: transparent transparent #dee2e6 transparent;">
+                            <padding><Insets top="16.0" bottom="16.0" left="18.0" right="18.0" /></padding>
+                            <children>
+                                <Label text="Direcci&#243;n:" textFill="#1a1a1a" prefWidth="170.0">
+                                    <font><Font name="System Bold" size="13.5" /></font>
+                                </Label>
+                                <Label fx:id="lblDireccion" text="Libertad 13, Xalapa, 45607" textFill="#333333">
+                                    <font><Font size="13.5" /></font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <!-- Teléfono -->
+                        <HBox spacing="0.0" style="-fx-border-color: transparent transparent #dee2e6 transparent;">
+                            <padding><Insets top="16.0" bottom="16.0" left="18.0" right="18.0" /></padding>
+                            <children>
+                                <Label text="Tel&#233;fono:" textFill="#1a1a1a" prefWidth="170.0">
+                                    <font><Font name="System Bold" size="13.5" /></font>
+                                </Label>
+                                <Label fx:id="lblTelefono" text="228 666 6240" textFill="#333333">
+                                    <font><Font size="13.5" /></font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <!-- Total a pagar (dentro de la tarjeta, fondo gris) -->
+                        <HBox alignment="CENTER"
+                              style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6 transparent transparent transparent; -fx-background-radius: 0 0 8 8;">
+                            <padding><Insets top="18.0" bottom="18.0" left="18.0" right="18.0" /></padding>
+                            <children>
+                                <Label fx:id="lblTotal" text="Total a pagar: 330.00" textFill="#1a1a1a">
+                                    <font><Font name="System Bold" size="15.0" /></font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                    </children>
+                </VBox>
+
+                <!-- Espaciador flexible -->
+                <Pane VBox.vgrow="ALWAYS" />
+
+                <!-- ══ BOTONES: Atrás | Confirmar ══ -->
+                <HBox alignment="CENTER" spacing="16.0">
+                    <padding>
+                        <Insets top="28.0" bottom="40.0" />
+                    </padding>
+                    <children>
+
+                        <Button fx:id="btnAtras"
+                                text="Atr&#225;s"
+                                mnemonicParsing="false"
+                                onAction="#clicAtras"
+                                prefHeight="46.0" prefWidth="140.0"
+                                style="-fx-background-color: white; -fx-text-fill: #1a73e8; -fx-border-color: #1a73e8; -fx-border-radius: 6; -fx-background-radius: 6; -fx-cursor: hand;">
+                            <font><Font name="System Bold" size="14.0" /></font>
+                        </Button>
+
+                        <Button fx:id="btnConfirmar"
+                                text="Confirmar"
+                                mnemonicParsing="false"
+                                onAction="#clicConfirmar"
+                                prefHeight="46.0" prefWidth="140.0"
+                                style="-fx-background-color: #1a73e8; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;">
+                            <font><Font name="System Bold" size="14.0" /></font>
+                        </Button>
+
+                    </children>
+                </HBox>
+
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>
