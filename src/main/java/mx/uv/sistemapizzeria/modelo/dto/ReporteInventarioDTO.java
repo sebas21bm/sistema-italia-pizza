@@ -1,0 +1,58 @@
+package mx.uv.sistemapizzeria.modelo.dto;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * DTO que mapea la tabla: reporte_inventario
+ * Campos BD: id_inventario, fecha
+ *
+ * Representa el encabezado de un reporte de validación de inventario.
+ * Se incluye la lista de DetalleReporteDTO para tener el reporte completo.
+ */
+public class ReporteInventarioDTO {
+
+    private int idInventario;
+    private LocalDateTime fecha;
+
+    // Líneas del reporte
+    private List<DetalleReporteDTO> detalles = new ArrayList<>();
+
+    public ReporteInventarioDTO() {}
+
+    // ── Getters y Setters ──────────────────────────────────────────────────
+
+    public int getIdInventario() {
+        return idInventario;
+    }
+
+    public void setIdInventario(int idInventario) {
+        this.idInventario = idInventario;
+    }
+
+    public LocalDateTime getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDateTime fecha) {
+        this.fecha = fecha;
+    }
+
+    public List<DetalleReporteDTO> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetalleReporteDTO> detalles) {
+        this.detalles = detalles;
+    }
+
+    public void agregarDetalle(DetalleReporteDTO detalle) {
+        this.detalles.add(detalle);
+    }
+
+    @Override
+    public String toString() {
+        return "Reporte#" + idInventario + " - " + fecha;
+    }
+}
