@@ -101,11 +101,13 @@
                   <Font name="System Bold" size="16.0" />
                </font>
             </Button>
-            <Button fx:id="btn_ayudaAcercaDe" alignment="CENTER_LEFT" layoutX="31.0" layoutY="963.0" mnemonicParsing="false" onAction="#clicAyudaAcercaDe" prefHeight="25.0" prefWidth="170.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Ayuda / Acerca de">
+            <Button fx:id="btn_ayudaAcercaDe" alignment="CENTER_LEFT" layoutX="28.0" layoutY="963.0" mnemonicParsing="false" onAction="#clicAyudaAcercaDe" prefHeight="25.0" prefWidth="170.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Ayuda / Acerca de">
                <font>
                   <Font size="16.0" />
                </font>
             </Button>
+            <Separator layoutY="951.0" prefHeight="3.0" prefWidth="257.0" />
+            <Separator layoutY="906.0" prefHeight="3.0" prefWidth="257.0" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="pnl_contenido" layoutX="256.0" prefHeight="1024.0" prefWidth="1234.0" style="-fx-background-color: #f3f5fa;">
