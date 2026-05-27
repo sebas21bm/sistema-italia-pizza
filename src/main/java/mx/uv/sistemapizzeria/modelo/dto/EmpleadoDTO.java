@@ -10,11 +10,10 @@ public class EmpleadoDTO {
     private String materno;
     private String telefono;
     private String email;
-    private String tipoEmpleado;
     private boolean estatus;
 
+    private TipoEmpleado tipoEmpleado;
     private DireccionDTO direccion;
-    private RolDTO rol;
 
     // Constructor
     public EmpleadoDTO() {}
@@ -45,17 +44,14 @@ public class EmpleadoDTO {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public String getTipoEmpleado() { return tipoEmpleado; }
-    public void setTipoEmpleado(String tipoEmpleado) { this.tipoEmpleado = tipoEmpleado; }
+    public TipoEmpleado getTipoEmpleado() { return tipoEmpleado; }
+    public void setTipoEmpleado(TipoEmpleado tipoEmpleado) { this.tipoEmpleado = tipoEmpleado; }
 
     public boolean isEstatus() { return estatus; }
     public void setEstatus(boolean estatus) { this.estatus = estatus; }
 
     public DireccionDTO getDireccion() { return direccion; }
     public void setDireccion(DireccionDTO direccion) { this.direccion = direccion; }
-
-    public RolDTO getRol() { return rol; }
-    public void setRol(RolDTO rol) { this.rol = rol; }
 
     // ── Utilidad ─────────────────────────────────────────────────────────────
 

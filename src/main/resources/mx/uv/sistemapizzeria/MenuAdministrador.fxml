@@ -16,9 +16,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="1024.0" prefWidth="1490.0" style="-fx-background-color: #f3f5fa;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.MenuAdministradorController">
+<AnchorPane style="-fx-background-color: #f3f5fa;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.MenuAdministradorController">
    <children>
-      <AnchorPane fx:id="pnl_menuLateral" prefHeight="1024.0" prefWidth="256.0" style="-fx-background-color: white;">
+      <AnchorPane fx:id="pnl_menuLateral" prefWidth="257.0" style="-fx-background-color: white;">
          <children>
             <ImageView fx:id="img_logo" fitHeight="72.0" fitWidth="86.0" layoutX="14.0" layoutY="9.0" preserveRatio="true">
                <image>
@@ -96,21 +96,21 @@
                   </TitledPane>
                </panes>
             </Accordion>
-            <Button fx:id="btn_cerrarSesion" alignment="CENTER_LEFT" layoutX="28.0" layoutY="918.0" mnemonicParsing="false" onAction="#clicCerrarSesion" prefHeight="25.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #301f1f;" text="Cerrar sesión">
+            <Button fx:id="btn_cerrarSesion" alignment="CENTER_LEFT" layoutX="19.0" layoutY="810.0" mnemonicParsing="false" onAction="#clicCerrarSesion" prefHeight="25.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #301f1f;" text="Cerrar sesión">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </Button>
-            <Button fx:id="btn_ayudaAcercaDe" alignment="CENTER_LEFT" layoutX="28.0" layoutY="963.0" mnemonicParsing="false" onAction="#clicAyudaAcercaDe" prefHeight="25.0" prefWidth="170.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Ayuda / Acerca de">
+            <Button fx:id="btn_ayudaAcercaDe" alignment="CENTER_LEFT" layoutX="27.0" layoutY="849.0" mnemonicParsing="false" onAction="#clicAyudaAcercaDe" prefHeight="25.0" prefWidth="170.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Ayuda / Acerca de">
                <font>
                   <Font size="16.0" />
                </font>
             </Button>
-            <Separator layoutY="951.0" prefHeight="3.0" prefWidth="257.0" />
-            <Separator layoutY="906.0" prefHeight="3.0" prefWidth="257.0" />
+            <Separator layoutX="-8.0" layoutY="840.0" prefHeight="3.0" prefWidth="257.0" />
+            <Separator layoutY="804.0" prefHeight="3.0" prefWidth="257.0" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="pnl_contenido" layoutX="256.0" prefHeight="1024.0" prefWidth="1234.0" style="-fx-background-color: #f3f5fa;">
+      <AnchorPane fx:id="pnl_contenido" layoutX="256.0" prefWidth="1234.0" style="-fx-background-color: #f3f5fa;">
          <children>
             <AnchorPane fx:id="pnl_encabezado" prefHeight="72.0" prefWidth="1234.0" style="-fx-background-color: #f3f5fa; -fx-border-color: #d7dde5; -fx-border-width: 0 0 1 0;">
                <children>
