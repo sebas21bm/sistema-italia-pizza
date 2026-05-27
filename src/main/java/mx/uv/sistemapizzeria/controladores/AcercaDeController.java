@@ -6,7 +6,9 @@ package mx.uv.sistemapizzeria.controladores;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.image.ImageView;
 
 /**
  * FXML Controller class
@@ -14,6 +16,9 @@ import javafx.fxml.Initializable;
  * @author macol
  */
 public class AcercaDeController implements Initializable {
+
+    @FXML
+    private ImageView img_logo;
 
     /**
      * Initializes the controller class.

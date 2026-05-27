@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -22,25 +23,11 @@ import javafx.scene.layout.VBox;
  *
  * @author macol
  */
-public class UsuarioEmpleadoRegistroController implements Initializable {
+public class UsuarioEmpleadoOperacionesController implements Initializable {
 
 
-    @FXML
-    private Label lbl_tituloFormulario;
-    @FXML
-    private RadioButton rb_empleado;
-    @FXML
-    private ToggleGroup grupoTipoUsuario;
-    @FXML
-    private RadioButton rb_cliente;
-    @FXML
-    private TextField txt_nombre;
-    @FXML
-    private TextField txt_apellidos;
     @FXML
     private TextField txt_telefono;
-    @FXML
-    private TextField txt_correo;
     @FXML
     private TextField txt_calle;
     @FXML
@@ -48,13 +35,23 @@ public class UsuarioEmpleadoRegistroController implements Initializable {
     @FXML
     private TextField txt_codigoPostal;
     @FXML
-    private VBox vbox_tipoEmpleado;
-    @FXML
     private ComboBox<?> cb_tipoEmpleado;
     @FXML
-    private VBox vbox_contrasenia;
+    private Button btn_cerrar;
     @FXML
-    private PasswordField txt_contrasenia;
+    private TextField txt_nombres;
+    @FXML
+    private TextField txt_apellidoPaterno;
+    @FXML
+    private TextField txt_apellidoMaterno;
+    @FXML
+    private TextField txt_correoElectronico;
+    @FXML
+    private TextField txt_ciudad;
+    @FXML
+    private TextField txt_usuario;
+    @FXML
+    private PasswordField psw_contrasena;
     /**
      * Initializes the controller class.
      */
@@ -69,6 +66,10 @@ public class UsuarioEmpleadoRegistroController implements Initializable {
 
     @FXML
     private void clicGuardar(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicCerrar(ActionEvent event) {
     }
 
 }

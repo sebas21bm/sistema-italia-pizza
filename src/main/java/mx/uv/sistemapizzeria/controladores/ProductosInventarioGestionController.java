@@ -18,7 +18,7 @@ import javafx.scene.control.TextField;
  *
  * @author macol
  */
-public class InsumosGestionController implements Initializable {
+public class ProductosInventarioGestionController implements Initializable {
 
 
     @FXML

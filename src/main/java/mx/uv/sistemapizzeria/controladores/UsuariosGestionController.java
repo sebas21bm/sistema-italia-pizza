@@ -39,23 +39,9 @@ public class UsuariosGestionController implements Initializable {
     @FXML
     private TitledPane tp_administracion;
     @FXML
-    private Label lbl_menuUsuarios;
-    @FXML
     private TitledPane tp_inventarios;
     @FXML
-    private Label lbl_menuProductos;
-    @FXML
-    private Label lbl_menuInsumos;
-    @FXML
-    private Label lbl_menuValidacionInventarios;
-    @FXML
     private TitledPane tp_pedidos;
-    @FXML
-    private Label lbl_menuPedidos;
-    @FXML
-    private Label lbl_cerrarSesion;
-    @FXML
-    private Label lbl_ayudaAcercaDe;
     @FXML
     private AnchorPane pnl_contenido;
     @FXML
@@ -79,11 +65,7 @@ public class UsuariosGestionController implements Initializable {
     @FXML
     private TitledPane tp_filtroEstatus;
     @FXML
-    private RadioButton rb_estatusActivo;
-    @FXML
     private ToggleGroup tg_estatus;
-    @FXML
-    private RadioButton rb_estatusInactivo;
     @FXML
     private TitledPane tp_filtroTipo;
     @FXML
@@ -98,6 +80,26 @@ public class UsuariosGestionController implements Initializable {
     private Button btn_editar;
     @FXML
     private Button btn_eliminar;
+    @FXML
+    private Button btn_menuUsuarios;
+    @FXML
+    private Button btn_menuProductos;
+    @FXML
+    private Button btn_menuInsumos;
+    @FXML
+    private Button btn_menuValidacionInventarios;
+    @FXML
+    private Button btn_menuPedidos;
+    @FXML
+    private Button btn_cerrarSesion;
+    @FXML
+    private Button btn_ayudaAcercaDe;
+    @FXML
+    private RadioButton rb_nombre;
+    @FXML
+    private RadioButton rb_telefono;
+    @FXML
+    private RadioButton rb_direccion;
     /**
      * Initializes the controller class.
      */
@@ -116,6 +118,34 @@ public class UsuariosGestionController implements Initializable {
 
     @FXML
     private void clicEliminar(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicUsuarios(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicProductos(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicInsumos(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicValidacionInventarios(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicPedidos(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicCerrarSesion(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicAyudaAcercaDe(ActionEvent event) {
     }
 
 }

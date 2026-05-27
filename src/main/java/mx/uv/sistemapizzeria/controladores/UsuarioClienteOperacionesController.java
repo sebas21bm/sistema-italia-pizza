@@ -9,56 +9,48 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-
-import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
+
 /**
  * FXML Controller class
  *
  * @author macol
  */
-public class InsumoRegistroController implements Initializable {
+public class UsuarioClienteOperacionesController implements Initializable {
 
+    @FXML
+    private TextField txt_nombres;
+    @FXML
+    private TextField txt_telefono;
+    @FXML
+    private TextField txt_correoElectronico;
+    @FXML
+    private TextField txt_calle;
+    @FXML
+    private TextField txt_numero;
+    @FXML
+    private TextField txt_codigoPostal;
+    @FXML
+    private TextField txt_ciudad;
+    @FXML
+    private Button btn_cancelar;
+    @FXML
+    private Button btn_guardar;
+    @FXML
+    private Button btn_cerrar;
+    @FXML
+    private TextField txt_apellidoPaterno;
+    @FXML
+    private TextField txt_apellidoMaterno;
 
-    @FXML
-    private Label lbl_tituloFormulario;
-    @FXML
-    private TextField txt_codigo;
-    @FXML
-    private TextField txt_nombre;
-    @FXML
-    private TextField txt_existencias;
-    @FXML
-    private TextField txt_fechaCaducidad;
-    @FXML
-    private StackPane spn_foto;
-    @FXML
-    private ImageView img_foto;
-    @FXML
-    private Rectangle rec_placeholderFoto;
-    @FXML
-    private Line lin_placeholderFoto1;
-    @FXML
-    private Line lin_placeholderFoto2;
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        txt_nombres.setDisable(false);
     }    
-    
-    @FXML
-    private void clicSubirFoto(ActionEvent event) {
-    }
-
-    @FXML
-    private void clicBorrar(ActionEvent event) {
-    }
 
     @FXML
     private void clicCancelar(ActionEvent event) {
@@ -68,4 +60,8 @@ public class InsumoRegistroController implements Initializable {
     private void clicGuardar(ActionEvent event) {
     }
 
+    @FXML
+    private void clicCerrar(ActionEvent event) {
+    }
+    
 }

@@ -9,8 +9,13 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
 
 import javafx.scene.control.Label;
+import javafx.scene.control.TitledPane;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 /**
  * FXML Controller class
@@ -25,7 +30,35 @@ public class MenuAdministradorController implements Initializable {
     @FXML
     private Label lbl_rolUsuario;
     @FXML
-    private StackPane panelContenido;
+    private AnchorPane pnl_menuLateral;
+    @FXML
+    private ImageView img_logo;
+    @FXML
+    private Accordion ac_menu;
+    @FXML
+    private TitledPane tp_administracion;
+    @FXML
+    private Button btn_menuUsuarios;
+    @FXML
+    private TitledPane tp_inventarios;
+    @FXML
+    private Button btn_menuProductos;
+    @FXML
+    private Button btn_menuInsumos;
+    @FXML
+    private Button btn_menuValidacionInventarios;
+    @FXML
+    private TitledPane tp_pedidos;
+    @FXML
+    private Button btn_menuPedidos;
+    @FXML
+    private Button btn_cerrarSesion;
+    @FXML
+    private Button btn_ayudaAcercaDe;
+    @FXML
+    private AnchorPane pnl_contenido;
+    @FXML
+    private AnchorPane pnl_encabezado;
     /**
      * Initializes the controller class.
      */
@@ -46,20 +79,21 @@ public class MenuAdministradorController implements Initializable {
     private void clicInsumos(ActionEvent event) {
     }
 
-    @FXML
-    private void clicValidacion(ActionEvent event) {
-    }
 
     @FXML
     private void clicPedidos(ActionEvent event) {
     }
 
     @FXML
-    private void clicMenuCerrarSesion(ActionEvent event) {
+    private void clicValidacionInventarios(ActionEvent event) {
     }
 
     @FXML
-    private void clicMenuAyuda(ActionEvent event) {
+    private void clicCerrarSesion(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicAyudaAcercaDe(ActionEvent event) {
     }
 
 }

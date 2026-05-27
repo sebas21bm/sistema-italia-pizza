@@ -13,7 +13,7 @@ import javafx.fxml.Initializable;
  *
  * @author macol
  */
-public class InsumosValidacionController implements Initializable {
+public class ProductosInventarioValidacionController implements Initializable {
 
     /**
      * Initializes the controller class.

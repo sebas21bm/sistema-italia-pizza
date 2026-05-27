@@ -6,6 +6,8 @@ package mx.uv.sistemapizzeria.controladores;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 /**
@@ -22,5 +24,17 @@ public class UsuarioTipoController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }    
+
+    @FXML
+    private void clicEmpleado(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicCliente(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicCancelar(ActionEvent event) {
+    }
     
 }

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="950.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e0e0e0; -fx-border-radius: 8;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.InsumosGestionController">
+<VBox prefHeight="600.0" prefWidth="950.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e0e0e0; -fx-border-radius: 8;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.ProductosInventarioGestionController">
     <effect>
         <DropShadow color="#0000001a" offsetY="3.0" radius="10.0" />
     </effect>
