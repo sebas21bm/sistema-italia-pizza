@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
+ */
 package mx.uv.sistemapizzeria.controladores;
 
 import java.net.URL;
@@ -5,6 +9,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -12,8 +17,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+/**
+ * FXML Controller class
+ *
+ * @author macol
+ */
+public class UsuarioEmpleadoRegistroController implements Initializable {
 
-public class UsuarioFormularioController implements Initializable {
 
     @FXML
     private Label lbl_tituloFormulario;
@@ -45,12 +55,14 @@ public class UsuarioFormularioController implements Initializable {
     private VBox vbox_contrasenia;
     @FXML
     private PasswordField txt_contrasenia;
-
+    /**
+     * Initializes the controller class.
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }
-
+    }    
+    
     @FXML
     private void clicCancelar(ActionEvent event) {
     }

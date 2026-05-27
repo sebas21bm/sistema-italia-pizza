@@ -6,27 +6,15 @@ package mx.uv.sistemapizzeria.controladores;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 
 /**
  * FXML Controller class
  *
  * @author macol
  */
-public class InicioSesionController implements Initializable {
+public class UsuarioEmpleadoEdicionController implements Initializable {
 
-
-    @FXML
-    private TextField txt_usuario;
-    @FXML
-    private PasswordField txt_contrasenia;
-    @FXML
-    private Label txt_datosCompletosError;
     /**
      * Initializes the controller class.
      */
@@ -35,8 +23,4 @@ public class InicioSesionController implements Initializable {
         // TODO
     }    
     
-    @FXML
-    private void clicIniciarSesion(ActionEvent event) {
-    }
-
 }
