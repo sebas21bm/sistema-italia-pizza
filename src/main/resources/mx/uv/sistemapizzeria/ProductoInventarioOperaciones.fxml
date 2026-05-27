@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -47,10 +54,7 @@
       <TextField fx:id="txt_fechaCaducidad" layoutX="14.0" layoutY="451.0" prefHeight="54.0" prefWidth="487.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 16px;" />
       <AnchorPane fx:id="pnl_foto" layoutX="116.0" layoutY="526.0" prefHeight="111.0" prefWidth="118.0" style="-fx-background-color: #dfe3e8;">
          <children>
-            <ImageView fx:id="img_foto" fitHeight="111.0" fitWidth="118.0" preserveRatio="true" />
-            <Rectangle fill="transparent" height="50.0" layoutX="34.0" layoutY="31.0" stroke="WHITE" strokeWidth="4.0" width="50.0" />
-            <Line endX="24.0" endY="24.0" layoutX="93.0" layoutY="86.0" startX="-24.0" startY="-24.0" stroke="WHITE" strokeWidth="4.0" />
-            <Line endX="-24.0" endY="24.0" layoutX="93.0" layoutY="38.0" startX="24.0" startY="-24.0" stroke="WHITE" strokeWidth="4.0" />
+            <ImageView fx:id="img_foto" fitHeight="111.0" fitWidth="118.0" preserveRatio="true" visible="false" />
          </children>
       </AnchorPane>
       <Button fx:id="btn_subirFoto" layoutX="254.0" layoutY="542.0" mnemonicParsing="false" onAction="#clicSubirFoto" prefHeight="45.0" prefWidth="144.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 15px; -fx-font-weight: bold;" text="Subir Foto" />
