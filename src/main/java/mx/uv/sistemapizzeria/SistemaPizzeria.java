@@ -43,7 +43,7 @@ public class SistemaPizzeria extends Application {
         metadatos.put(nombre, valor);
     }
 
-    public static Object getMetadados(String nombre){
+    public static Object getMetadatos(String nombre){
         if(metadatos == null){
             return null;
         }

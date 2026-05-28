@@ -12,16 +12,11 @@ import java.sql.SQLException;
 
 public class Autenticador {
 
-    public static EmpleadoDTO iniciarSesion(String usuario, String password) throws NoSuchAlgorithmException,
-            SQLException, IOException, ClassNotFoundException, NullPointerException {
+    public static EmpleadoDTO iniciarSesion(String usuario, String password)
+            throws NoSuchAlgorithmException, SQLException, IOException, ClassNotFoundException {
 
-        try {
-            byte[] passwordHashed = hashearContrasenia(password);
-            EmpleadoDTO usuarioLogin = AutenticacionDAO.autenticarUsuario(usuario, passwordHashed);
-            return usuarioLogin;
-        } catch (UsuarioNoEncontradoException e) {
-            throw e;
-        }
+        byte[] passwordHashed = hashearContrasenia(password);
+        return AutenticacionDAO.autenticarUsuario(usuario, passwordHashed);
     }
 
     private static byte[] hashearContrasenia(String contrasenia) throws NoSuchAlgorithmException {

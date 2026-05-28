@@ -11,6 +11,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO para la tabla producto_compuesto_por (recetas).
+ * El identificador compuesto es codigo_menu + codigo_insumo,
+ * pero por la interfaz usamos codigo_menu como identificador principal
+ * para obtener toda la receta de un producto.
+ */
 public class ProductoCompuestoPorDAO implements Operaciones<String, ProductoCompuestoPorDTO> {
 
     // ── buscar(codigoMenu): receta completa del producto ───────────────────
