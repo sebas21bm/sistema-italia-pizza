@@ -34,6 +34,8 @@ import mx.uv.sistemapizzeria.SistemaPizzeria;
 import mx.uv.sistemapizzeria.modelo.dao.PedidosDAO;
 import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
 import mx.uv.sistemapizzeria.utilidades.ExportadorPDF;
+import mx.uv.sistemapizzeria.modelo.dao.EmpleadoDAO;
+import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 /**
@@ -43,8 +45,6 @@ import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
  */
 public class PedidosGestionController implements Initializable {
 
-    @FXML
-    private AnchorPane pnl_menuLateral;
     @FXML
     private ImageView img_logo;
     @FXML
@@ -88,16 +88,6 @@ public class PedidosGestionController implements Initializable {
     @FXML
     private Button btn_buscar;
     @FXML
-    private Button btn_nuevoPedido;
-    @FXML
-    private Button btn_editar;
-    @FXML
-    private Button btn_cancelarPedido;
-    @FXML
-    private Button btn_exportarPDF;
-    @FXML
-    private Button btn_exportarCSV;
-    @FXML
     private Button btn_menuUsuarios;
     @FXML
     private Button btn_menuProductos;
@@ -111,27 +101,82 @@ public class PedidosGestionController implements Initializable {
     private Button btn_cerrarSesion;
     @FXML
     private Button btn_ayudaAcercaDe;
+    @FXML
+    private AnchorPane pnl_menuCajero;
+    @FXML
+    private ImageView img_logo1;
+    @FXML
+    private Accordion ac_menu1;
+    @FXML
+    private TitledPane tp_pedidos1;
+    @FXML
+    private Button btn_menuPedidos1;
+    @FXML
+    private Button btn_cerrarSesion1;
+    @FXML
+    private Button btn_ayudaAcercaDe1;
+    @FXML
+    private AnchorPane pnl_menuAdmin;
 
-    /**
-     * Initializes the controller class.
-     */
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        EmpleadoDTO empleado = (EmpleadoDTO) SistemaPizzeria.getMetadatos("empleado");
+        if((empleado.getTipoEmpleado().toString()).equals("Administrador")){
+            pnl_menuAdmin.setVisible(true);
+            pnl_menuCajero.setVisible(false);
+        }else if((empleado.getTipoEmpleado().toString()).equals("Cajero")){
+            pnl_menuAdmin.setVisible(false);
+            pnl_menuCajero.setVisible(true);
+        }
     }
-
 
     @FXML
     private void clicNuevoPedido(ActionEvent event) {
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("PedidoCreacion");
+            Parent vista = loader.load();
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("Crear Pedido");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicEditar(ActionEvent event) {
+        //TODO si hay uno seleccionado
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("PedidoEdicion");
+            Parent vista = loader.load();
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("Editar de Pedido");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
-    private void clicCancelar(ActionEvent event) {
+    private void clicEliminar(ActionEvent event) {
+        /*
+        TODO Confirmacion o Error
+         */
     }
 
     @FXML
@@ -212,6 +257,7 @@ public class PedidosGestionController implements Initializable {
 
     @FXML
     private void clicBuscar(ActionEvent event) {
+
     }
 
 
@@ -292,4 +338,6 @@ public class PedidosGestionController implements Initializable {
             e.printStackTrace();
         }
     }
+
+
 }

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
@@ -127,17 +133,21 @@
 
             <AnchorPane fx:id="pnl_encabezado" prefHeight="60.0" prefWidth="820.0" style="-fx-background-color: #f3f5fa; -fx-border-color: #d7dde5; -fx-border-width: 0 0 1 0;">
                <children>
-                  <Label fx:id="lbl_nombreUsuario" layoutX="24.0" layoutY="9.0" text="Sebastian" textFill="#202932">
-                     <font>
-                        <Font name="System Bold" size="24.0" />
-                     </font>
-                  </Label>
-
-                  <Label fx:id="lbl_rolUsuario" layoutX="160.0" layoutY="18.0" text="Administrador" textFill="#82868c">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER" layoutX="8.0" layoutY="5.0" prefHeight="50.0" prefWidth="303.0" spacing="15.0">
+                     <children>
+                        <Label fx:id="lbl_nombreUsuario" prefHeight="26.0" prefWidth="109.0" text="Sebastian" textFill="#202932">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Label>
+      
+                        <Label fx:id="lbl_rolUsuario" prefHeight="18.0" prefWidth="109.0" text="Administrador" textFill="#82868c">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
                </children>
             </AnchorPane>
 

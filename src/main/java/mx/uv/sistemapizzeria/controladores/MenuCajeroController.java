@@ -4,17 +4,26 @@
  */
 package mx.uv.sistemapizzeria.controladores;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import mx.uv.sistemapizzeria.SistemaPizzeria;
+import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
+import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 /**
  * FXML Controller class
@@ -46,24 +55,52 @@ public class MenuCajeroController implements Initializable {
     @FXML
     private Label lbl_rolUsuario;
 
-    /**
-     * Initializes the controller class.
-     */
+    private EmpleadoDTO empleado;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
+        this.empleado = (EmpleadoDTO) SistemaPizzeria.getMetadatos("empleado");
+        lbl_nombreUsuario.setText(empleado.getNombre());
+    }
 
     @FXML
     private void clicPedidos(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("PedidosGestion", "Pedidos");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
     private void clicCerrarSesion(ActionEvent event) {
+        SistemaPizzeria.setMetadatos("empleado", null);
+        try {
+            SistemaPizzeria.setRoot("InicioSesion","Sistema Pizzeria - Login");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicAyudaAcercaDe(ActionEvent event) {
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("AcercaDe");
+            Parent vista = loader.load();
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("AcercaDe");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
 }

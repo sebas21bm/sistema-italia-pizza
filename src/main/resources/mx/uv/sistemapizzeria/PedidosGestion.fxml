@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
@@ -94,20 +100,70 @@
                </columns>
             </TableView>
 
-            <Button fx:id="btn_nuevoPedido" layoutX="20.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicNuevoPedido" prefHeight="45.0" prefWidth="155.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="+ Nuevo pedido" />
+            <Button layoutX="20.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicNuevoPedido" prefHeight="45.0" prefWidth="155.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="+ Nuevo pedido" />
 
-            <Button fx:id="btn_editar" layoutX="190.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEditar" prefHeight="45.0" prefWidth="105.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Editar" />
+            <Button layoutX="190.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEditar" prefHeight="45.0" prefWidth="105.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Editar" />
 
-            <Button fx:id="btn_cancelarPedido" layoutX="310.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="45.0" prefWidth="115.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Cancelar" />
+            <Button layoutX="310.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEliminar" prefHeight="45.0" prefWidth="115.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Eliminar" />
 
-            <Button fx:id="btn_exportarPDF" layoutX="440.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicExportarPDF" prefHeight="45.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Exportar PDF" />
+            <Button layoutX="440.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicExportarPDF" prefHeight="45.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Exportar PDF" />
 
-            <Button fx:id="btn_exportarCSV" layoutX="595.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicExportarCSV" prefHeight="45.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Exportar CSV" />
+            <Button layoutX="595.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicExportarCSV" prefHeight="45.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Exportar CSV" />
 
          </children>
       </AnchorPane>
+      <AnchorPane fx:id="pnl_menuCajero" layoutY="1.0" prefHeight="650.0" prefWidth="180.0" style="-fx-background-color: white;">
+         <children>
+            <ImageView fx:id="img_logo1" fitHeight="50.0" fitWidth="60.0" layoutX="10.0" layoutY="8.0" preserveRatio="true">
+               <image>
+                  <Image url="@../../../imagenes/logo%20mini.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="62.0" layoutY="19.0" text="Italia Pizza" textFill="#69727c">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+            </Label>
+            <Label layoutX="111.0" layoutY="39.0" text="Restaurante" textFill="#69727c">
+               <font>
+                  <Font size="8.0" />
+               </font>
+            </Label>
+            <Accordion fx:id="ac_menu1" layoutX="10.0" layoutY="70.0" prefWidth="160.0" style="-fx-background-color: #f1f3f8; -fx-border-color: transparent;">
+               <panes>
+                  <TitledPane fx:id="tp_pedidos1" animated="false" expanded="true" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Pedidos">
+                     <content>
+                        <VBox prefWidth="158.0" spacing="8.0" style="-fx-background-color: #f1f3f8;">
+                           <children>
+                              <Button fx:id="btn_menuPedidos1" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicPedidos" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Pedidos">
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets bottom="8.0" left="12.0" right="8.0" top="8.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </TitledPane>
+               </panes>
+            </Accordion>
+            <Button fx:id="btn_cerrarSesion1" alignment="CENTER_LEFT" layoutX="18.0" layoutY="575.0" mnemonicParsing="false" onAction="#clicCerrarSesion" prefHeight="22.0" prefWidth="130.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #301f1f;" text="Cerrar sesión">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+            <Separator layoutX="10.0" layoutY="604.0" prefHeight="1.0" prefWidth="160.0" />
+            <Button fx:id="btn_ayudaAcercaDe1" alignment="CENTER_LEFT" layoutX="18.0" layoutY="615.0" mnemonicParsing="false" onAction="#clicAyudaAcercaDe" prefHeight="22.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Ayuda / Acerca de">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Button>
+         </children>
+      </AnchorPane>
 
-      <AnchorPane fx:id="pnl_menuLateral" prefHeight="650.0" prefWidth="180.0" style="-fx-background-color: white;">
+      <AnchorPane fx:id="pnl_menuAdmin" prefHeight="650.0" prefWidth="180.0" style="-fx-background-color: white;">
          <children>
 
             <ImageView fx:id="img_logo" fitHeight="50.0" fitWidth="60.0" layoutX="10.0" layoutY="8.0" preserveRatio="true">

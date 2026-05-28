@@ -24,6 +24,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
+import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 
@@ -69,13 +70,16 @@ public class MenuAdministradorController implements Initializable {
     private Button btn_cerrarSesion;
     @FXML
     private Button btn_ayudaAcercaDe;
-    /**
-     * Initializes the controller class.
-     */
+
+    private EmpleadoDTO empleado;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        this.empleado = (EmpleadoDTO) SistemaPizzeria.getMetadatos("empleado");
+        lbl_nombreUsuario.setText(empleado.getNombre());
+        lbl_rolUsuario.setText(empleado.getTipoEmpleado().toString());
     }    
+
 
 
     //NAVEGACION MENÚ
@@ -114,7 +118,6 @@ public class MenuAdministradorController implements Initializable {
         }catch (IOException e){
             e.printStackTrace();
         }
-
     }
 
     @FXML
