@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
@@ -49,13 +50,16 @@ public class SistemaPizzeria extends Application {
         return metadatos.get(nombre);
     }
     
-    public static void setRoot(String fxml, String titulo) throws IOException {
+    public static void setRoot(String fxml, String titulo, boolean modal) throws IOException {
         scene.setRoot(UtilidadesFX.cargarFXML(fxml).load());
         primaryStage.setTitle(titulo);
-        //primaryStage.setMaximized(true);
+        primaryStage.setResizable(true);
+        primaryStage.setFullScreen(true);
         primaryStage.sizeToScene();
         primaryStage.centerOnScreen();
-
+        if(modal){
+            primaryStage.initModality(Modality.APPLICATION_MODAL);
+        }
     }
 
     public static void main(String[] args) {

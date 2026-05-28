@@ -70,6 +70,10 @@ public class ProductoOperacionesController implements Initializable {
     private Button btn_cancelar;
     @FXML
     private Button btn_guardar;
+    @FXML
+    private AnchorPane pnl_receta1;
+    @FXML
+    private TextField txt_cantidadInsumo1;
     /**
      * Initializes the controller class.
      */

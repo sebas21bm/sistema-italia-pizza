@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,67 +10,92 @@
 
 <AnchorPane prefHeight="541.0" prefWidth="443.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoTicketController">
    <children>
+
       <Label alignment="CENTER" layoutX="96.0" layoutY="60.0" prefHeight="40.0" prefWidth="251.0" text="Ticket de Pedido" textFill="#202932">
          <font>
             <Font name="System Bold" size="29.0" />
          </font>
       </Label>
+
       <Label alignment="CENTER" layoutX="121.0" layoutY="109.0" prefHeight="21.0" prefWidth="73.0" text="Pedido #" textFill="#202932">
          <font>
             <Font size="13.0" />
          </font>
       </Label>
+
+      <Label fx:id="lbl_numeroPedido" alignment="CENTER" layoutX="185.0" layoutY="109.0" prefHeight="21.0" prefWidth="39.0" text="0023" textFill="#202932">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+
+      <Label fx:id="lbl_estadoPedido" alignment="CENTER" layoutX="229.0" layoutY="109.0" prefHeight="21.0" prefWidth="73.0" text="Estado" textFill="#202932">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+
       <AnchorPane layoutX="70.0" layoutY="153.0" prefHeight="125.0" prefWidth="316.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
          <children>
             <AnchorPane layoutY="25.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
             <AnchorPane layoutY="50.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
             <AnchorPane layoutY="75.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
             <AnchorPane layoutY="100.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
+
             <Label layoutX="9.0" layoutY="6.0" text="Fecha y Hora:" textFill="#202932">
                <font>
                   <Font name="System Bold" size="11.0" />
                </font>
             </Label>
+
             <Label fx:id="lbl_fechaHora" layoutX="136.0" layoutY="6.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
                <font>
                   <Font size="11.0" />
                </font>
             </Label>
+
             <Label layoutX="9.0" layoutY="31.0" text="Atiende:" textFill="#202932">
                <font>
                   <Font name="System Bold" size="11.0" />
                </font>
             </Label>
+
             <Label fx:id="lbl_empleado" layoutX="136.0" layoutY="31.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
                <font>
                   <Font size="11.0" />
                </font>
             </Label>
+
             <Label layoutX="9.0" layoutY="56.0" text="Cliente:" textFill="#202932">
                <font>
                   <Font name="System Bold" size="11.0" />
                </font>
             </Label>
+
             <Label fx:id="lbl_cliente" layoutX="136.0" layoutY="56.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
                <font>
                   <Font size="11.0" />
                </font>
             </Label>
+
             <Label layoutX="9.0" layoutY="81.0" text="Dirección:" textFill="#202932">
                <font>
                   <Font name="System Bold" size="11.0" />
                </font>
             </Label>
+
             <Label fx:id="lbl_direccion" layoutX="136.0" layoutY="81.0" prefHeight="14.0" prefWidth="170.0" text="" textFill="#202932">
                <font>
                   <Font size="11.0" />
                </font>
             </Label>
+
             <Label layoutX="9.0" layoutY="106.0" text="Teléfono:" textFill="#202932">
                <font>
                   <Font name="System Bold" size="11.0" />
                </font>
             </Label>
+
             <Label fx:id="lbl_telefono" layoutX="136.0" layoutY="106.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
                <font>
                   <Font size="11.0" />
@@ -81,6 +103,9 @@
             </Label>
          </children>
       </AnchorPane>
+
+      <Separator layoutX="70.0" layoutY="284.0" prefHeight="16.0" prefWidth="316.0" />
+
       <TableView fx:id="tbl_productosTicket" layoutX="70.0" layoutY="306.0" prefHeight="89.0" prefWidth="317.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2;">
          <columns>
             <TableColumn fx:id="col_cantidad" prefWidth="63.0" text="Cantidad" />
@@ -89,6 +114,9 @@
             <TableColumn fx:id="col_subtotal" prefWidth="66.0" text="Subtotal" />
          </columns>
       </TableView>
+
+      <Separator layoutX="298.0" layoutY="397.0" prefHeight="16.0" prefWidth="89.0" />
+
       <AnchorPane layoutX="298.0" layoutY="409.0" prefHeight="38.0" prefWidth="89.0" style="-fx-background-color: #f3f4f9;">
          <children>
             <Label alignment="CENTER" layoutX="8.0" layoutY="6.0" prefHeight="14.0" prefWidth="73.0" text="Total a pagar:" textFill="#202932">
@@ -96,6 +124,7 @@
                   <Font name="System Bold" size="11.0" />
                </font>
             </Label>
+
             <Label fx:id="lbl_totalPagar" alignment="CENTER" layoutX="8.0" layoutY="21.0" prefHeight="14.0" prefWidth="73.0" text="" textFill="#202932">
                <font>
                   <Font name="System Bold" size="11.0" />
@@ -103,18 +132,8 @@
             </Label>
          </children>
       </AnchorPane>
+
       <Button layoutX="214.0" layoutY="469.0" mnemonicParsing="false" onAction="#clicAceptar" prefHeight="38.0" prefWidth="173.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="Aceptar" />
-      <Separator layoutX="298.0" layoutY="397.0" prefHeight="16.0" prefWidth="89.0" />
-      <Separator layoutX="70.0" layoutY="284.0" prefHeight="16.0" prefWidth="316.0" />
-      <Label fx:id="lbl_numeroPedido" alignment="CENTER" layoutX="185.0" layoutY="109.0" prefHeight="21.0" prefWidth="39.0" text="0023" textFill="#202932">
-         <font>
-            <Font size="13.0" />
-         </font>
-      </Label>
-      <Label fx:id="lbl_estadoPedido" alignment="CENTER" layoutX="229.0" layoutY="109.0" prefHeight="21.0" prefWidth="73.0" text="Estado" textFill="#202932">
-         <font>
-            <Font size="13.0" />
-         </font>
-      </Label>
+
    </children>
 </AnchorPane>

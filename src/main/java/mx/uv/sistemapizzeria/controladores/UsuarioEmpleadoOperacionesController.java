@@ -35,8 +35,6 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
     @FXML
     private TextField txt_codigoPostal;
     @FXML
-    private ComboBox<?> cb_tipoEmpleado;
-    @FXML
     private Button btn_cerrar;
     @FXML
     private TextField txt_nombres;
@@ -49,9 +47,15 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
     @FXML
     private TextField txt_ciudad;
     @FXML
-    private TextField txt_usuario;
-    @FXML
     private PasswordField psw_contrasena;
+    @FXML
+    private ComboBox<?> cmb_tipoEmpleado;
+    @FXML
+    private Button btn_mostrarContrasena;
+    @FXML
+    private Button btn_cancelar;
+    @FXML
+    private Button btn_guardar;
     /**
      * Initializes the controller class.
      */
@@ -70,6 +74,10 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
 
     @FXML
     private void clicCerrar(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicMostrarContrasena(ActionEvent event) {
     }
 
 }

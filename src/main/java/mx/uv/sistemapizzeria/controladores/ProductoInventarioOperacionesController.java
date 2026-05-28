@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -33,8 +34,6 @@ public class ProductoInventarioOperacionesController implements Initializable {
     @FXML
     private TextField txt_existencias;
     @FXML
-    private TextField txt_fechaCaducidad;
-    @FXML
     private ImageView img_foto;
     @FXML
     private AnchorPane pnl_foto;
@@ -46,6 +45,8 @@ public class ProductoInventarioOperacionesController implements Initializable {
     private Button btn_cancelar;
     @FXML
     private Button btn_guardar;
+    @FXML
+    private DatePicker dp_fechaCaducidad;
     /**
      * Initializes the controller class.
      */

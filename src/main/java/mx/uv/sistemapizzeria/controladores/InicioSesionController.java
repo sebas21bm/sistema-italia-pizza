@@ -91,7 +91,7 @@ public class InicioSesionController implements Initializable {
 
     private void cargarEscena(String rutaMenu) {
         try {
-            SistemaPizzeria.setRoot(rutaMenu, "Menu principal");
+            SistemaPizzeria.setRoot(rutaMenu, "Menu principal", false);
         } catch (IOException e) {
             e.printStackTrace();
         }

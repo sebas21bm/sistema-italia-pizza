@@ -18,7 +18,9 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
+
 
 /**
  * FXML Controller class
@@ -41,15 +43,19 @@ public class MenuAdministradorController implements Initializable {
     @FXML
     private TitledPane tp_administracion;
     @FXML
+    private Button btn_menuValidacionInventarios;
+    @FXML
+    private AnchorPane pnl_contenido;
+    @FXML
+    private AnchorPane pnl_encabezado;
+    @FXML
     private Button btn_menuUsuarios;
     @FXML
     private TitledPane tp_inventarios;
     @FXML
     private Button btn_menuProductos;
     @FXML
-    private Button btn_menuInsumos;
-    @FXML
-    private Button btn_menuValidacionInventarios;
+    private Button btn_menuProductosInventario;
     @FXML
     private TitledPane tp_pedidos;
     @FXML
@@ -58,10 +64,6 @@ public class MenuAdministradorController implements Initializable {
     private Button btn_cerrarSesion;
     @FXML
     private Button btn_ayudaAcercaDe;
-    @FXML
-    private AnchorPane pnl_contenido;
-    @FXML
-    private AnchorPane pnl_encabezado;
     /**
      * Initializes the controller class.
      */
@@ -73,7 +75,7 @@ public class MenuAdministradorController implements Initializable {
     @FXML
     private void clicUsuarios(ActionEvent event) {
         try{
-            SistemaPizzeria.setRoot("UsuariosGestion","Usuarios");
+            SistemaPizzeria.setRoot("UsuariosGestion","Usuarios", false);
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -82,16 +84,16 @@ public class MenuAdministradorController implements Initializable {
     @FXML
     private void clicProductos(ActionEvent event) {
         try {
-            SistemaPizzeria.setRoot("ProductosGestion","Productos");
+            SistemaPizzeria.setRoot("ProductosGestion","Productos", false);
         } catch (IOException e){
             e.printStackTrace();
         }
     }
 
     @FXML
-    private void clicInsumos(ActionEvent event) {
+    private void clicProductosInventario(ActionEvent event) {
         try {
-            SistemaPizzeria.setRoot("ProductosGestion","Productos");
+            SistemaPizzeria.setRoot("ProductosInventarioGestion","Productos de Inventario", false);
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -100,18 +102,40 @@ public class MenuAdministradorController implements Initializable {
 
     @FXML
     private void clicPedidos(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("PedidosGestion", "Pedidos", false);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
     private void clicValidacionInventarios(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("ProductosInventarioValidacion", "Validación de Inventario", false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicCerrarSesion(ActionEvent event) {
+        SistemaPizzeria.setMetadatos("empleado", null);
+        try {
+            SistemaPizzeria.setRoot("InicioSesion","Sistema Pizzeria - Login",false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicAyudaAcercaDe(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("AcercaDe","Acerca de", true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -19,30 +19,31 @@ import javafx.scene.control.TextField;
  */
 public class UsuarioClienteOperacionesController implements Initializable {
 
-    @FXML
     private TextField txt_nombres;
     @FXML
-    private TextField txt_telefono;
+    private TextField txt_nombres1;
     @FXML
-    private TextField txt_correoElectronico;
+    private TextField txt_apellidoPaterno1;
     @FXML
-    private TextField txt_calle;
+    private TextField txt_apellidoMaterno1;
     @FXML
-    private TextField txt_numero;
+    private TextField txt_telefono1;
     @FXML
-    private TextField txt_codigoPostal;
+    private TextField txt_correoElectronico1;
     @FXML
-    private TextField txt_ciudad;
+    private TextField txt_calle1;
     @FXML
-    private Button btn_cancelar;
+    private TextField txt_codigoPostal1;
     @FXML
-    private Button btn_guardar;
+    private TextField txt_numero1;
     @FXML
-    private Button btn_cerrar;
+    private TextField txt_ciudad1;
     @FXML
-    private TextField txt_apellidoPaterno;
+    private Button btn_agregarDireccion1;
     @FXML
-    private TextField txt_apellidoMaterno;
+    private Button btn_cancelar1;
+    @FXML
+    private Button btn_guardar1;
 
     /**
      * Initializes the controller class.
@@ -61,7 +62,7 @@ public class UsuarioClienteOperacionesController implements Initializable {
     }
 
     @FXML
-    private void clicCerrar(ActionEvent event) {
+    private void clicAgregarDireccion(ActionEvent event) {
     }
     
 }

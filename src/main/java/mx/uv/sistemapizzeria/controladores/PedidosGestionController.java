@@ -71,15 +71,31 @@ public class PedidosGestionController implements Initializable {
     @FXML
     private TableColumn<?, ?> col_atiende;
     @FXML
+    private Button btn_buscar;
+    @FXML
     private Button btn_nuevoPedido;
     @FXML
     private Button btn_editar;
     @FXML
-    private Button btn_cancelar;
+    private Button btn_cancelarPedido;
     @FXML
     private Button btn_exportarPDF;
     @FXML
     private Button btn_exportarCSV;
+    @FXML
+    private Button btn_menuUsuarios;
+    @FXML
+    private Button btn_menuProductos;
+    @FXML
+    private Button btn_menuProductosInventario;
+    @FXML
+    private Button btn_menuValidacionInventarios;
+    @FXML
+    private Button btn_menuPedidos;
+    @FXML
+    private Button btn_cerrarSesion;
+    @FXML
+    private Button btn_ayudaAcercaDe;
 
     /**
      * Initializes the controller class.
@@ -135,6 +151,10 @@ public class PedidosGestionController implements Initializable {
 
     @FXML
     private void clicExportarCSV(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicBuscar(ActionEvent event) {
     }
     
 }

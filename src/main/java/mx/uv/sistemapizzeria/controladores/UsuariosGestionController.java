@@ -100,6 +100,8 @@ public class UsuariosGestionController implements Initializable {
     private RadioButton rb_telefono;
     @FXML
     private RadioButton rb_direccion;
+    @FXML
+    private Button btn_buscar;
     /**
      * Initializes the controller class.
      */
@@ -146,6 +148,10 @@ public class UsuariosGestionController implements Initializable {
 
     @FXML
     private void clicAyudaAcercaDe(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicBuscar(ActionEvent event) {
     }
 
 }
