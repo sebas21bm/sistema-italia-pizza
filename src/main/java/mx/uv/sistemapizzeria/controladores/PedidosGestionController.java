@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -23,7 +24,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -87,10 +87,12 @@ public class PedidosGestionController implements Initializable {
     // ── DAO ───────────────────────────────────────────────────────────────────
     private final PedidosDAO dao = new PedidosDAO();
 
+    // ── Lista observable directa (sin FilteredList) ───────────────────────────
+    private final ObservableList<PedidoDTO> listaTabla = FXCollections.observableArrayList();
+
     // ── Inicialización ────────────────────────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Mostrar panel según rol
         EmpleadoDTO empleado = (EmpleadoDTO) SistemaPizzeria.getMetadatos("empleado");
         if ("Administrador".equals(empleado.getTipoEmpleado().toString())) {
             pnl_menuAdmin.setVisible(true);
@@ -101,58 +103,53 @@ public class PedidosGestionController implements Initializable {
         }
 
         configurarColumnas();
+
+        // Conectar la lista directamente a la tabla, una sola vez
+        tbl_pedidos.setItems(listaTabla);
+
+        // Carga inicial: todos los pedidos, sin filtros
         cargarTodos();
     }
 
     // ── Configuración de columnas ─────────────────────────────────────────────
-    @SuppressWarnings("unchecked")
     private void configurarColumnas() {
-        // Folio — entero directo
         col_folio.setCellValueFactory(data ->
                 new javafx.beans.property.SimpleObjectProperty<>(data.getValue().getIdPedido()));
 
-        // Cliente — nombre completo derivado del ClienteDTO anidado
         col_cliente.setCellValueFactory(data -> {
             PedidoDTO p = data.getValue();
-            String nombre = (p.getCliente() != null)
-                    ? p.getCliente().getNombreCompleto()
-                    : "N/A";
+            String nombre = (p.getCliente() != null) ? p.getCliente().getNombreCompleto() : "N/A";
             return new javafx.beans.property.SimpleStringProperty(nombre);
         });
 
-        // Fecha — formateada
         col_fecha.setCellValueFactory(data -> {
             PedidoDTO p = data.getValue();
             String fecha = (p.getFecha() != null) ? p.getFecha().format(FMT) : "-";
             return new javafx.beans.property.SimpleStringProperty(fecha);
         });
 
-        // Total — con signo de pesos y 2 decimales
         col_total.setCellValueFactory(data -> {
             String total = String.format("$%.2f", data.getValue().getTotalPagar());
             return new javafx.beans.property.SimpleStringProperty(total);
         });
 
-        // Estatus — directo
         col_estatus.setCellValueFactory(data ->
                 new javafx.beans.property.SimpleStringProperty(
                         data.getValue().getEstatus() != null ? data.getValue().getEstatus() : "-"));
 
-        // Atiende — teléfono del cliente como referencia (la vista no trae empleado)
         col_atiende.setCellValueFactory(data -> {
             PedidoDTO p = data.getValue();
             String atiende = (p.getCliente() != null && p.getCliente().getTelefono() != null)
-                    ? p.getCliente().getTelefono()
-                    : "-";
+                    ? p.getCliente().getTelefono() : "-";
             return new javafx.beans.property.SimpleStringProperty(atiende);
         });
     }
 
-    // ── Carga de datos ────────────────────────────────────────────────────────
+    // ── Carga todos los pedidos sin filtro alguno ─────────────────────────────
     private void cargarTodos() {
         try {
-            List<PedidoDTO> pedidos = dao.mostrarTodos();
-            tbl_pedidos.setItems(FXCollections.observableArrayList(pedidos));
+            List<PedidoDTO> todos = dao.mostrarTodos();
+            listaTabla.setAll(todos != null ? todos : new ArrayList<>());
         } catch (Exception e) {
             UtilidadesFX.mostrarAlertaSimple(
                     "Error", "No se pudieron cargar los pedidos:\n" + e.getMessage(),
@@ -161,27 +158,32 @@ public class PedidosGestionController implements Initializable {
         }
     }
 
-    private void cargarConLista(List<PedidoDTO> pedidos) {
-        tbl_pedidos.setItems(FXCollections.observableArrayList(pedidos));
-    }
-
-    // ── Búsqueda ──────────────────────────────────────────────────────────────
+    // ── Búsqueda: solo se ejecuta al presionar el botón ───────────────────────
     @FXML
     private void clicBuscar(ActionEvent event) {
-        String termino = txt_buscar.getText().trim();
-
         try {
-            List<PedidoDTO> resultado;
+            // 1. Traer pedidos por estatus desde la BD
+            List<PedidoDTO> porEstatus = obtenerPorEstatusSeleccionado();
+
+            // 2. Filtrar por texto si el campo no está vacío
+            String termino = txt_buscar.getText() == null
+                    ? "" : txt_buscar.getText().trim().toLowerCase();
 
             if (termino.isEmpty()) {
-                // Sin texto: filtrar sólo por estatus seleccionado
-                resultado = obtenerPorEstatusSeleccionado();
+                // Sin texto: mostrar todo lo que devolvió el filtro de estatus
+                listaTabla.setAll(porEstatus != null ? porEstatus : new ArrayList<>());
             } else {
-                // Con texto: buscar por nombre/apellido del cliente
-                resultado = dao.buscarPorCliente(termino);
+                // Con texto: filtrar la lista resultante manualmente
+                List<PedidoDTO> filtrados = new ArrayList<>();
+                if (porEstatus != null) {
+                    for (PedidoDTO pedido : porEstatus) {
+                        if (coincideConTermino(pedido, termino)) {
+                            filtrados.add(pedido);
+                        }
+                    }
+                }
+                listaTabla.setAll(filtrados);
             }
-
-            cargarConLista(resultado);
 
         } catch (Exception e) {
             UtilidadesFX.mostrarAlertaSimple(
@@ -191,8 +193,24 @@ public class PedidosGestionController implements Initializable {
         }
     }
 
+    // ── Verifica si un pedido coincide con el término de búsqueda ─────────────
+    private boolean coincideConTermino(PedidoDTO pedido, String termino) {
+        if (String.valueOf(pedido.getIdPedido()).contains(termino)) return true;
+
+        if (pedido.getCliente() != null) {
+            String nombre = pedido.getCliente().getNombreCompleto();
+            if (nombre != null && nombre.toLowerCase().contains(termino)) return true;
+        }
+
+        if (pedido.getEstatus() != null &&
+                pedido.getEstatus().toLowerCase().contains(termino)) return true;
+
+        return false;
+    }
+
+    // ── Obtiene pedidos de la BD según el radio button seleccionado ───────────
     private List<PedidoDTO> obtenerPorEstatusSeleccionado() throws Exception {
-        if (rb_enProceso.isSelected())  return dao.buscarPorEstatus("En proceso");
+        if (rb_enProceso.isSelected()) return dao.buscarPorEstatus("En proceso");
         if (rb_entregado.isSelected())  return dao.buscarPorEstatus("Entregado");
         if (rb_cancelado.isSelected())  return dao.buscarPorEstatus("Cancelado");
         return dao.mostrarTodos();
@@ -211,7 +229,7 @@ public class PedidosGestionController implements Initializable {
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-            cargarTodos(); // refrescar tabla al volver
+            cargarTodos(); // refresca sin filtros al volver
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -230,7 +248,7 @@ public class PedidosGestionController implements Initializable {
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-            cargarTodos();
+            cargarTodos(); // refresca sin filtros al volver
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -245,8 +263,8 @@ public class PedidosGestionController implements Initializable {
     // ── Exportar PDF ──────────────────────────────────────────────────────────
     @FXML
     private void clicExportarPDF(ActionEvent event) {
-        List<PedidoDTO> pedidos = obtenerPedidosParaExportar();
-        if (pedidos == null || pedidos.isEmpty()) {
+        List<PedidoDTO> pedidos = new ArrayList<>(listaTabla);
+        if (pedidos.isEmpty()) {
             UtilidadesFX.mostrarAlertaSimple("Sin datos",
                     "No hay pedidos para exportar.", Alert.AlertType.WARNING);
             return;
@@ -277,8 +295,8 @@ public class PedidosGestionController implements Initializable {
     // ── Exportar CSV ──────────────────────────────────────────────────────────
     @FXML
     private void clicExportarCSV(ActionEvent event) {
-        List<PedidoDTO> pedidos = obtenerPedidosParaExportar();
-        if (pedidos == null || pedidos.isEmpty()) {
+        List<PedidoDTO> pedidos = new ArrayList<>(listaTabla);
+        if (pedidos.isEmpty()) {
             UtilidadesFX.mostrarAlertaSimple("Sin datos",
                     "No hay pedidos para exportar.", Alert.AlertType.WARNING);
             return;
@@ -303,23 +321,6 @@ public class PedidosGestionController implements Initializable {
                     "No fue posible generar el CSV:\n" + e.getMessage(),
                     Alert.AlertType.ERROR);
             e.printStackTrace();
-        }
-    }
-
-    // ── Helper de exportación ─────────────────────────────────────────────────
-    private List<PedidoDTO> obtenerPedidosParaExportar() {
-        ObservableList<PedidoDTO> items = tbl_pedidos.getItems();
-        if (items != null && !items.isEmpty()) {
-            return items;
-        }
-        try {
-            return dao.mostrarTodos();
-        } catch (Exception e) {
-            UtilidadesFX.mostrarAlertaSimple("Error",
-                    "No se pudieron obtener los pedidos:\n" + e.getMessage(),
-                    Alert.AlertType.ERROR);
-            e.printStackTrace();
-            return null;
         }
     }
 
