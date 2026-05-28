@@ -6,6 +6,7 @@ module mx.uv.sistemapizzeria {
     requires jdk.jshell;
     requires kernel;
     requires layout;
+    requires io;
 
     opens mx.uv.sistemapizzeria to javafx.fxml;
     opens mx.uv.sistemapizzeria.controladores to javafx.fxml;
