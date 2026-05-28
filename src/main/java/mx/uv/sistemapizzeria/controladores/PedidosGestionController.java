@@ -200,7 +200,7 @@ public class PedidosGestionController implements Initializable {
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
 
-        Stage stage = (Stage) btn_exportarPDF.getScene().getWindow();
+        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
         File archivo = fileChooser.showSaveDialog(stage);
 
         if (archivo == null) return; // el usuario canceló

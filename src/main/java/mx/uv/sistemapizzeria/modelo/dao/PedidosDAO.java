@@ -11,7 +11,13 @@ import java.util.List;
 
 public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
 
-    // ── buscar(identificador: int): Pedido ─────────────────────────────────
+    // Columnas reales de vista_lista_pedidos (CONSULTAS.sql):
+    // nombre, paterno, materno, telefono, no_cliente, id_pedido, fecha, total_pagar, estatus
+    private static final String COLS_VISTA =
+            "nombre, paterno, materno, telefono, " +
+                    "no_cliente, id_pedido, fecha, total_pagar, estatus";
+
+    // ── buscar(id_pedido): PedidoDTO con detalles ──────────────────────────
     @Override
     public PedidoDTO buscar(Integer idPedido) throws Exception {
         PedidoDTO pedido = null;
@@ -19,18 +25,13 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
-            String sql = "SELECT p.id_pedido, p.fecha, p.total_pagar, p.estatus, p.no_cliente, " +
-                         "c.nombre, c.paterno, c.materno, c.telefono, c.email, c.estatus AS estatus_cliente, " +
-                         "d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
-                         "FROM pedido p " +
-                         "JOIN cliente c ON p.no_cliente = c.no_cliente " +
-                         "LEFT JOIN cliente_direccion cd ON c.no_cliente = cd.id_cliente LEFT JOIN direccion d ON cd.id_direccion = d.id_direccion " +
-                         "WHERE p.id_pedido = ?";
+            String sql = "SELECT " + COLS_VISTA +
+                    " FROM vista_lista_pedidos WHERE id_pedido = ?";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, idPedido);
                 try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) pedido = mapearPedido(rs);
+                    if (rs.next()) pedido = mapearDesdeVista(rs);
                 }
             }
 
@@ -39,7 +40,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         return pedido;
     }
 
-    // ── editar(pedido: Pedido): boolean ────────────────────────────────────
+    // ── editar(pedido): boolean ────────────────────────────────────────────
     @Override
     public boolean editar(PedidoDTO pedido) throws Exception {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -47,21 +48,18 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
 
             conn.setAutoCommit(false);
             try {
-                // Eliminar detalles anteriores
                 try (PreparedStatement ps = conn.prepareStatement(
                         "DELETE FROM detalles_pedido WHERE id_pedido = ?")) {
                     ps.setInt(1, pedido.getIdPedido());
                     ps.executeUpdate();
                 }
 
-                // Validar existencias y reinsertar
                 for (DetallePedidoDTO det : pedido.getDetalles()) {
                     validarInsumos(conn, det.getCodigoMenu(), det.getCantidad());
                     insertarDetalle(conn, pedido.getIdPedido(), det);
                     descontarInsumos(conn, det.getCodigoMenu(), det.getCantidad());
                 }
 
-                // Actualizar total y estatus
                 try (PreparedStatement ps = conn.prepareStatement(
                         "UPDATE pedido SET total_pagar=?, estatus=? WHERE id_pedido=?")) {
                     ps.setDouble(1, pedido.getTotalPagar());
@@ -79,21 +77,21 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         }
     }
 
-    // ── eliminar(identificador: int): boolean ──────────────────────────────
+    // ── eliminar(id_pedido): cancela el pedido ─────────────────────────────
     @Override
     public boolean eliminar(Integer idPedido) throws Exception {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
-            String sql = "UPDATE pedido SET estatus = 'Cancelado' WHERE id_pedido = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE pedido SET estatus = 'Cancelado' WHERE id_pedido = ?")) {
                 ps.setInt(1, idPedido);
                 return ps.executeUpdate() > 0;
             }
         }
     }
 
-    // ── mostrarTodos(): List<Pedido> ───────────────────────────────────────
+    // ── mostrarTodos(): usa vista_lista_pedidos ────────────────────────────
     @Override
     public List<PedidoDTO> mostrarTodos() throws Exception {
         List<PedidoDTO> pedidos = new ArrayList<>();
@@ -101,145 +99,100 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
-            String sql = "SELECT p.id_pedido, p.fecha, p.total_pagar, p.estatus, p.no_cliente, " +
-                         "c.nombre, c.paterno, c.materno, c.telefono, c.email, c.estatus AS estatus_cliente, " +
-                         "d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
-                         "FROM pedido p " +
-                         "JOIN cliente c ON p.no_cliente = c.no_cliente " +
-                         "LEFT JOIN cliente_direccion cd ON c.no_cliente = cd.id_cliente LEFT JOIN direccion d ON cd.id_direccion = d.id_direccion " +
-                         "ORDER BY p.fecha DESC";
+            String sql = "SELECT " + COLS_VISTA +
+                    " FROM vista_lista_pedidos ORDER BY fecha DESC";
 
             try (PreparedStatement ps = conn.prepareStatement(sql);
                  ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) pedidos.add(mapearPedido(rs));
+                while (rs.next()) pedidos.add(mapearDesdeVista(rs));
             }
         }
         return pedidos;
     }
 
-    // ── registrar(pedido: Pedido): boolean ─────────────────────────────────
+    // ── registrar(pedido): llama al stored procedure de CONSULTAS.sql ──────
     @Override
     public boolean registrar(PedidoDTO pedido) throws Exception {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
-            conn.setAutoCommit(false);
-            try {
-                // 1. Validar insumos
-                for (DetallePedidoDTO det : pedido.getDetalles()) {
-                    validarInsumos(conn, det.getCodigoMenu(), det.getCantidad());
+            // 1. Llenar tabla temporal con cada ítem
+            for (DetallePedidoDTO det : pedido.getDetalles()) {
+                try (CallableStatement cs = conn.prepareCall(
+                        "{CALL registrar_detalle_pedido(?, ?)}")) {
+                    cs.setString(1, det.getCodigoMenu());
+                    cs.setInt(2, det.getCantidad());
+                    cs.execute();
                 }
+            }
 
-                // 2. Insertar cabecera
-                int idGenerado;
-                try (PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO pedido (fecha, total_pagar, estatus, no_cliente) VALUES (NOW(), ?, 'En proceso', ?)",
-                        Statement.RETURN_GENERATED_KEYS)) {
-                    ps.setDouble(1, pedido.getTotalPagar());
-                    ps.setInt(2, pedido.getNoCliente());
-                    ps.executeUpdate();
-                    try (ResultSet keys = ps.getGeneratedKeys()) {
-                        if (!keys.next()) throw new SQLException("No se obtuvo ID del pedido.");
-                        idGenerado = keys.getInt(1);
-                        pedido.setIdPedido(idGenerado);
-                    }
+            // 2. Ejecutar el stored procedure que hace la transacción completa
+            try (CallableStatement cs = conn.prepareCall(
+                    "{CALL registrar_pedido(?, ?, ?)}")) {
+                cs.setTimestamp(1, Timestamp.valueOf(pedido.getFecha()));
+                cs.setString(2, pedido.getEstatus() != null
+                        ? pedido.getEstatus() : "En proceso");
+                cs.setInt(3, pedido.getNoCliente());
+                cs.execute();
+            }
+
+            return true;
+        }
+    }
+
+    // ── buscarPorEstatus(): para los filtros de la tabla ───────────────────
+    public List<PedidoDTO> buscarPorEstatus(String estatus) throws Exception {
+        List<PedidoDTO> pedidos = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+
+            String sql = "SELECT " + COLS_VISTA +
+                    " FROM vista_lista_pedidos WHERE estatus = ? ORDER BY fecha DESC";
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, estatus);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) pedidos.add(mapearDesdeVista(rs));
                 }
-
-                // 3. Insertar detalles y descontar insumos
-                for (DetallePedidoDTO det : pedido.getDetalles()) {
-                    insertarDetalle(conn, idGenerado, det);
-                    descontarInsumos(conn, det.getCodigoMenu(), det.getCantidad());
-                }
-
-                conn.commit();
-                return true;
-            } catch (SQLException | LimiteInsumosException e) {
-                conn.rollback();
-                throw e;
             }
         }
+        return pedidos;
+    }
+
+    // ── buscarPorCliente(): para la barra de búsqueda ─────────────────────
+    public List<PedidoDTO> buscarPorCliente(String termino) throws Exception {
+        List<PedidoDTO> pedidos = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+
+            String sql = "SELECT " + COLS_VISTA +
+                    " FROM vista_lista_pedidos" +
+                    " WHERE nombre LIKE ? OR paterno LIKE ?" +
+                    " ORDER BY fecha DESC";
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                String like = "%" + termino + "%";
+                ps.setString(1, like);
+                ps.setString(2, like);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) pedidos.add(mapearDesdeVista(rs));
+                }
+            }
+        }
+        return pedidos;
     }
 
     // ── Helpers privados ───────────────────────────────────────────────────
 
-    private void validarInsumos(Connection conn, String codigoMenu, int cantidad) throws SQLException {
-        String sql = "SELECT pi.nombre, pi.existencias, pc.cantidad AS por_unidad " +
-                     "FROM producto_compuesto_por pc " +
-                     "JOIN producto_inventario pi ON pc.codigo = pi.codigo " +
-                     "WHERE pc.codigo_menu = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, codigoMenu);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    int existencias = rs.getInt("existencias");
-                    double necesario = rs.getDouble("por_unidad") * cantidad;
-                    if (existencias < necesario) {
-                        throw new LimiteInsumosException(
-                            "Stock insuficiente de \"" + rs.getString("nombre") + "\". " +
-                            "Disponible: " + existencias + ", requerido: " + (int) necesario
-                        );
-                    }
-                }
-            }
-        }
-    }
-
-    private void insertarDetalle(Connection conn, int idPedido, DetallePedidoDTO det) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO detalles_pedido (id_pedido, codigo_menu, cantidad, costo) VALUES (?, ?, ?, ?)")) {
-            ps.setInt(1, idPedido);
-            ps.setString(2, det.getCodigoMenu());
-            ps.setInt(3, det.getCantidad());
-            ps.setDouble(4, det.getCosto());
-            ps.executeUpdate();
-        }
-    }
-
-    private void descontarInsumos(Connection conn, String codigoMenu, int cantidad) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(
-                "UPDATE producto_inventario pi " +
-                "JOIN producto_compuesto_por pc ON pi.codigo = pc.codigo " +
-                "SET pi.existencias = pi.existencias - (pc.cantidad * ?) " +
-                "WHERE pc.codigo_menu = ?")) {
-            ps.setInt(1, cantidad);
-            ps.setString(2, codigoMenu);
-            ps.executeUpdate();
-        }
-    }
-
-    private void cargarDetalles(Connection conn, PedidoDTO pedido) throws SQLException {
-        String sql = "SELECT dp.codigo_menu, dp.cantidad, dp.costo, " +
-                     "pv.nombre, pv.precio, pv.limite, pv.descripcion, pv.foto, pv.estatus " +
-                     "FROM detalles_pedido dp " +
-                     "JOIN producto_venta pv ON dp.codigo_menu = pv.codigo_menu " +
-                     "WHERE dp.id_pedido = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, pedido.getIdPedido());
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    DetallePedidoDTO det = new DetallePedidoDTO();
-                    det.setIdPedido(pedido.getIdPedido());
-                    det.setCodigoMenu(rs.getString("codigo_menu"));
-                    det.setCantidad(rs.getInt("cantidad"));
-                    det.setCosto(rs.getDouble("costo"));
-
-                    ProductoVentaDTO pv = new ProductoVentaDTO();
-                    pv.setCodigoMenu(rs.getString("codigo_menu"));
-                    pv.setNombre(rs.getString("nombre"));
-                    pv.setPrecio(rs.getDouble("precio"));
-                    pv.setLimite(rs.getInt("limite"));
-                    pv.setDescripcion(rs.getString("descripcion"));
-                    pv.setFoto(rs.getString("foto"));
-                    pv.setEstatus(rs.getInt("estatus"));
-                    det.setProductoVenta(pv);
-
-                    pedido.agregarDetalle(det);
-                }
-            }
-        }
-    }
-
-    private PedidoDTO mapearPedido(ResultSet rs) throws SQLException {
+    /**
+     * Mapea una fila de vista_lista_pedidos a PedidoDTO.
+     * Columnas reales de la vista (CONSULTAS.sql):
+     * nombre, paterno, materno, telefono,
+     * no_cliente, id_pedido, fecha, total_pagar, estatus
+     */
+    private PedidoDTO mapearDesdeVista(ResultSet rs) throws SQLException {
         PedidoDTO p = new PedidoDTO();
         p.setIdPedido(rs.getInt("id_pedido"));
         Timestamp ts = rs.getTimestamp("fecha");
@@ -254,18 +207,85 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         c.setPaterno(rs.getString("paterno"));
         c.setMaterno(rs.getString("materno"));
         c.setTelefono(rs.getString("telefono"));
-        c.setEmail(rs.getString("email"));
-        c.setEstatus(rs.getString("estatus_cliente"));
-
-        DireccionDTO d = new DireccionDTO();
-        d.setIdDireccion(rs.getInt("id_direccion"));
-        d.setCalle(rs.getString("calle"));
-        d.setNumero(rs.getString("numero"));
-        d.setCodigoPostal(rs.getString("codigo_postal"));
-        d.setCiudad(rs.getString("ciudad"));
-        c.setDireccion(d);
         p.setCliente(c);
 
         return p;
+    }
+
+    private void cargarDetalles(Connection conn, PedidoDTO pedido) throws SQLException {
+        // Usa vista_detalles_pedido de CONSULTAS.sql
+        String sql = "SELECT codigo_menu, id_pedido, cantidad, costo, " +
+                "total_producto, nombre, precio, foto " +
+                "FROM vista_detalles_pedido WHERE id_pedido = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pedido.getIdPedido());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    DetallePedidoDTO det = new DetallePedidoDTO();
+                    det.setIdPedido(rs.getInt("id_pedido"));
+                    det.setCodigoMenu(rs.getString("codigo_menu"));
+                    det.setCantidad(rs.getInt("cantidad"));
+                    det.setCosto(rs.getDouble("costo"));
+
+                    ProductoVentaDTO pv = new ProductoVentaDTO();
+                    pv.setCodigoMenu(rs.getString("codigo_menu"));
+                    pv.setNombre(rs.getString("nombre"));
+                    pv.setPrecio(rs.getDouble("precio"));
+                    pv.setFoto(rs.getString("foto"));
+                    det.setProductoVenta(pv);
+
+                    pedido.agregarDetalle(det);
+                }
+            }
+        }
+    }
+
+    private void validarInsumos(Connection conn, String codigoMenu, int cantidad)
+            throws SQLException {
+        String sql = "SELECT pi.nombre, pi.existencias, pc.cantidad AS por_unidad " +
+                "FROM producto_compuesto_por pc " +
+                "JOIN producto_inventario pi ON pc.codigo = pi.codigo " +
+                "WHERE pc.codigo_menu = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, codigoMenu);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    double necesario = rs.getDouble("por_unidad") * cantidad;
+                    if (rs.getInt("existencias") < necesario) {
+                        throw new LimiteInsumosException(
+                                "Stock insuficiente de \"" + rs.getString("nombre") + "\". " +
+                                        "Disponible: " + rs.getInt("existencias") +
+                                        ", requerido: " + (int) necesario);
+                    }
+                }
+            }
+        }
+    }
+
+    private void insertarDetalle(Connection conn, int idPedido, DetallePedidoDTO det)
+            throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO detalles_pedido (id_pedido, codigo_menu, cantidad, costo) " +
+                        "VALUES (?, ?, ?, ?)")) {
+            ps.setInt(1, idPedido);
+            ps.setString(2, det.getCodigoMenu());
+            ps.setInt(3, det.getCantidad());
+            ps.setDouble(4, det.getCosto());
+            ps.executeUpdate();
+        }
+    }
+
+    private void descontarInsumos(Connection conn, String codigoMenu, int cantidad)
+            throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(
+                "UPDATE producto_inventario pi " +
+                        "JOIN producto_compuesto_por pc ON pi.codigo = pc.codigo " +
+                        "SET pi.existencias = pi.existencias - (pc.cantidad * ?) " +
+                        "WHERE pc.codigo_menu = ?")) {
+            ps.setInt(1, cantidad);
+            ps.setString(2, codigoMenu);
+            ps.executeUpdate();
+        }
     }
 }
