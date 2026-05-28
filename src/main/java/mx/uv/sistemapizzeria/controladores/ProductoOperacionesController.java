@@ -71,17 +71,30 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private Button btn_guardar;
     @FXML
-    private AnchorPane pnl_receta1;
-    @FXML
     private TextField txt_cantidadInsumo1;
+    @FXML
+    private AnchorPane pnl_sinReceta;
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        configurarReceta();
     }    
-    
+
+    private void configurarReceta(){
+        tg_requiereReceta.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (tg_requiereReceta.getSelectedToggle() != null) {
+                RadioButton conReceta = (RadioButton) tg_requiereReceta.getSelectedToggle();
+                if(conReceta == rb_requiereRecetaSi){
+                    pnl_receta.setVisible(true);
+                }else{
+                    pnl_receta.setVisible(false);
+                    pnl_sinReceta.setVisible(true);
+                }
+            }
+        });
+    }
 
     @FXML
     private void clicAgregarInsumo(ActionEvent event) {

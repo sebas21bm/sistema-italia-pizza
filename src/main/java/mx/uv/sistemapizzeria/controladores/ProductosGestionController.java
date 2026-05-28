@@ -101,6 +101,11 @@ public class ProductosGestionController implements Initializable {
 
     @FXML
     private void clicNuevoProducto(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("ProductoOperaciones", "Producto");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

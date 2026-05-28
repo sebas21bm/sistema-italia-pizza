@@ -27,6 +27,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
+import mx.uv.sistemapizzeria.modelo.dao.EmpleadoDAO;
+import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 /**
@@ -79,16 +81,6 @@ public class PedidosGestionController implements Initializable {
     @FXML
     private Button btn_buscar;
     @FXML
-    private Button btn_nuevoPedido;
-    @FXML
-    private Button btn_editar;
-    @FXML
-    private Button btn_cancelarPedido;
-    @FXML
-    private Button btn_exportarPDF;
-    @FXML
-    private Button btn_exportarCSV;
-    @FXML
     private Button btn_menuUsuarios;
     @FXML
     private Button btn_menuProductos;
@@ -119,14 +111,15 @@ public class PedidosGestionController implements Initializable {
     @FXML
     private AnchorPane pnl_menuAdmin;
 
-    /**
-     * Initializes the controller class.
-     */
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        if((SistemaPizzeria.getMetadatos("empleado").toString()).equals("Administrador")){
+        EmpleadoDTO empleado = (EmpleadoDTO) SistemaPizzeria.getMetadatos("empleado");
+        if((empleado.getTipoEmpleado().toString()).equals("Administrador")){
             pnl_menuAdmin.setVisible(true);
-        }else if((SistemaPizzeria.getMetadatos("empleado").toString()).equals("Cajero")){
+            pnl_menuCajero.setVisible(false);
+        }else if((empleado.getTipoEmpleado().toString()).equals("Cajero")){
+            pnl_menuAdmin.setVisible(false);
             pnl_menuCajero.setVisible(true);
         }
     }    
@@ -134,14 +127,50 @@ public class PedidosGestionController implements Initializable {
 
     @FXML
     private void clicNuevoPedido(ActionEvent event) {
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("PedidoCreacion");
+            Parent vista = loader.load();
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("Crear Pedido");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicEditar(ActionEvent event) {
+        //TODO si hay uno seleccionado
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("PedidoEdicion");
+            Parent vista = loader.load();
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("Editar de Pedido");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
-    private void clicCancelar(ActionEvent event) {
+    private void clicEliminar(ActionEvent event) {
+        /*
+        TODO Confirmacion o Error
+         */
     }
 
     @FXML
@@ -154,6 +183,7 @@ public class PedidosGestionController implements Initializable {
 
     @FXML
     private void clicBuscar(ActionEvent event) {
+
     }
 
 
@@ -234,4 +264,6 @@ public class PedidosGestionController implements Initializable {
             e.printStackTrace();
         }
     }
+
+
 }
