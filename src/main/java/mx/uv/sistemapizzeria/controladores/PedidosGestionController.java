@@ -94,13 +94,13 @@ public class PedidosGestionController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         EmpleadoDTO empleado = (EmpleadoDTO) SistemaPizzeria.getMetadatos("empleado");
-        if ("Administrador".equals(empleado.getTipoEmpleado().toString())) {
+        if((empleado.getTipoEmpleado().toString()).equals("Administrador")){
             pnl_menuAdmin.setVisible(true);
             pnl_menuCajero.setVisible(false);
-        } else {
+        }else if((empleado.getTipoEmpleado().toString()).equals("Cajero")){
             pnl_menuAdmin.setVisible(false);
             pnl_menuCajero.setVisible(true);
-        }
+        }CHernandez1CHernandez1CHernandez1
 
         configurarColumnas();
 
