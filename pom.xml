@@ -26,14 +26,29 @@
             <version>8.3.0</version>
         </dependency>
         <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.9</version>
+        </dependency>
+        <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>kernel</artifactId>
-            <version>7.2.5</version>
+            <version>8.0.5</version>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>layout</artifactId>
-            <version>7.2.5</version>
+            <version>8.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>12.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-fontawesome5-pack</artifactId>
+            <version>12.4.0</version>
         </dependency>
     </dependencies>
     <build>
