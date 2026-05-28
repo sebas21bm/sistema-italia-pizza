@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package mx.uv.sistemapizzeria.controladores;
 
 import java.io.IOException;
@@ -16,7 +12,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import jdk.jshell.execution.Util;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
 import mx.uv.sistemapizzeria.excepciones.UsuarioInactivoException;
 import mx.uv.sistemapizzeria.excepciones.UsuarioNoEncontradoException;
@@ -24,15 +19,10 @@ import mx.uv.sistemapizzeria.logica.Autenticador;
 import mx.uv.sistemapizzeria.logica.CargadorEscenas;
 import mx.uv.sistemapizzeria.modelo.dao.AutenticacionDAO;
 import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
+import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
-/**
- * FXML Controller class
- *
- * @author macol
- */
 public class InicioSesionController implements Initializable {
-
 
     @FXML
     private TextField txt_usuario;
@@ -40,14 +30,10 @@ public class InicioSesionController implements Initializable {
     private PasswordField txt_contrasenia;
     @FXML
     private Label lb_datosCompletosError;
-    /**
-     * Initializes the controller class.
-     */
+
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-    
+    public void initialize(URL url, ResourceBundle rb) {}
+
     @FXML
     private void clicIniciarSesion(ActionEvent event) {
         String usuario = txt_usuario.getText();
@@ -60,33 +46,37 @@ public class InicioSesionController implements Initializable {
         try {
             EmpleadoDTO empleadoLogin = Autenticador.iniciarSesion(usuario, contrasenia);
 
-            UtilidadesFX.mostrarAlertaSimple("Bienvenido(a)", "Bienvendio al sistema: " +
-                    empleadoLogin.getNombreCompleto(), Alert.AlertType.INFORMATION);
+            // 1. Guardar sesión en AMBOS lugares antes de cargar la escena
+            Sesion.empleadoSesion = empleadoLogin;
+            SistemaPizzeria.setMetadatos("empleado", empleadoLogin);
 
+            UtilidadesFX.mostrarAlertaSimple("Bienvenido(a)",
+                    "Bienvenido al sistema: " + empleadoLogin.getNombreCompleto(),
+                    Alert.AlertType.INFORMATION);
+
+            // 2. Cargar escena después de tener la sesión lista
             String rutaMenu = CargadorEscenas.cargarEscenaSegunRol(empleadoLogin.getTipoEmpleado());
-
-            SistemaPizzeria.setMetadatos("empleado",  empleadoLogin);
-
             cargarEscena(rutaMenu);
+
         } catch (NoSuchAlgorithmException | SQLException | IOException | ClassNotFoundException e) {
-            UtilidadesFX.mostrarAlertaSimple("Error", "Ocurrió un error al intentar iniciar sesión. " +
-                    "Causa: " + e.getMessage(), Alert.AlertType.ERROR);
+            UtilidadesFX.mostrarAlertaSimple("Error",
+                    "Ocurrió un error al intentar iniciar sesión. Causa: " + e.getMessage(),
+                    Alert.AlertType.ERROR);
         } catch (UsuarioNoEncontradoException e) {
             UtilidadesFX.mostrarAlertaSimple("Error", e.getMessage(), Alert.AlertType.WARNING);
         } catch (UsuarioInactivoException e) {
             UtilidadesFX.mostrarAlertaSimple("Error", e.getMessage(), Alert.AlertType.WARNING);
         }
-
     }
 
-    private boolean validarEntradaLogin(String usuario, String contrasenia){
-        boolean esValida = true;
+    private boolean validarEntradaLogin(String usuario, String contrasenia) {
         if (usuario == null || usuario.isEmpty() ||
-            contrasenia == null || contrasenia.isEmpty()) {
-            lb_datosCompletosError.setText("Falta información. Debes introduir tu usuario y contraseña");
-            esValida = false;
+                contrasenia == null || contrasenia.isEmpty()) {
+            lb_datosCompletosError.setText(
+                    "Falta información. Debes introducir tu usuario y contraseña.");
+            return false;
         }
-        return esValida;
+        return true;
     }
 
     private void cargarEscena(String rutaMenu) {
@@ -96,5 +86,4 @@ public class InicioSesionController implements Initializable {
             e.printStackTrace();
         }
     }
-
 }

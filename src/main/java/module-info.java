@@ -4,10 +4,13 @@ module mx.uv.sistemapizzeria {
     requires java.sql;
     requires java.base;
     requires jdk.jshell;
+    requires kernel;
+    requires layout;
 
     opens mx.uv.sistemapizzeria to javafx.fxml;
     opens mx.uv.sistemapizzeria.controladores to javafx.fxml;
     opens mx.uv.sistemapizzeria.modelo.dao to javafx.fxml;
     opens mx.uv.sistemapizzeria.modelo.dto to javafx.fxml;
+
     exports mx.uv.sistemapizzeria;
 }

@@ -4,8 +4,10 @@
  */
 package mx.uv.sistemapizzeria.controladores;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
@@ -24,9 +27,13 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
+import mx.uv.sistemapizzeria.modelo.dao.PedidosDAO;
+import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
+import mx.uv.sistemapizzeria.utilidades.ExportadorPDF;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 /**
@@ -108,11 +115,12 @@ public class PedidosGestionController implements Initializable {
     /**
      * Initializes the controller class.
      */
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
-    
+    }
+
 
     @FXML
     private void clicNuevoPedido(ActionEvent event) {
@@ -128,6 +136,74 @@ public class PedidosGestionController implements Initializable {
 
     @FXML
     private void clicExportarPDF(ActionEvent event) {
+        // 1. Obtener la lista de pedidos actualmente visible en la tabla
+        List<PedidoDTO> pedidos = obtenerPedidosParaExportar();
+        if (pedidos == null || pedidos.isEmpty()) {
+            UtilidadesFX.mostrarAlertaSimple(
+                    "Sin datos",
+                    "No hay pedidos para exportar. Realiza una búsqueda primero.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
+        // 2. Pedir al usuario dónde guardar el archivo
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar reporte de pedidos");
+        fileChooser.setInitialFileName("reporte_pedidos.pdf");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
+
+        Stage stage = (Stage) btn_exportarPDF.getScene().getWindow();
+        File archivo = fileChooser.showSaveDialog(stage);
+
+        if (archivo == null) return; // el usuario canceló
+
+        // 3. Generar el PDF
+        try {
+            ExportadorPDF.exportar(pedidos, archivo.getAbsolutePath());
+            UtilidadesFX.mostrarAlertaSimple(
+                    "Exportación exitosa",
+                    "El reporte se guardó en:\n" + archivo.getAbsolutePath(),
+                    Alert.AlertType.INFORMATION);
+        } catch (Exception e) {
+            UtilidadesFX.mostrarAlertaSimple(
+                    "Error al exportar",
+                    "No fue posible generar el PDF:\n" + e.getMessage(),
+                    Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Devuelve los pedidos actualmente cargados en la tabla.
+     * Si la tabla está vacía o aún no se ha buscado, carga todos los pedidos.
+     */
+    @SuppressWarnings("unchecked")
+    private List<PedidoDTO> obtenerPedidosParaExportar() {
+        // Si la tabla ya tiene datos (ej. resultado de una búsqueda), los usa
+        if (tbl_pedidos.getItems() != null && !tbl_pedidos.getItems().isEmpty()) {
+            return (List<PedidoDTO>) tbl_pedidos.getItems();
+        }
+        // Si no hay nada en tabla, carga todos los pedidos de la BD
+        try {
+            PedidosDAO dao = new PedidosDAO();
+            List<PedidoDTO> todos = dao.mostrarTodos();
+            // Cargar detalles de cada pedido para el PDF
+            for (PedidoDTO p : todos) {
+                PedidoDTO completo = dao.buscar(p.getIdPedido());
+                if (completo != null) {
+                    p.setDetalles(completo.getDetalles());
+                }
+            }
+            return todos;
+        } catch (Exception e) {
+            UtilidadesFX.mostrarAlertaSimple(
+                    "Error",
+                    "No se pudieron obtener los pedidos:\n" + e.getMessage(),
+                    Alert.AlertType.ERROR);
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @FXML
