@@ -62,18 +62,56 @@
          </font>
       </Label>
       <TextField fx:id="txt_limite" layoutX="102.0" layoutY="430.0" prefHeight="48.0" prefWidth="656.0" promptText="Placeholder" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 16px; -fx-prompt-text-fill: #68727d;" />
-      <Label layoutX="102.0" layoutY="495.0" text="Requiere receta" textFill="#202932">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
-      <RadioButton fx:id="rb_requiereRecetaSi" layoutX="102.0" layoutY="525.0" mnemonicParsing="false" onAction="#clicRequiereRecetaSi" selected="true" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Sí" textFill="#202932">
-         <toggleGroup>
-            <ToggleGroup fx:id="tg_requiereReceta" />
-         </toggleGroup>
-      </RadioButton>
-      <RadioButton fx:id="rb_requiereRecetaNo" layoutX="177.0" layoutY="525.0" mnemonicParsing="false" onAction="#clicRequiereRecetaNo" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="No" textFill="#202932" toggleGroup="$tg_requiereReceta" />
-      <AnchorPane fx:id="pnl_receta" layoutX="102.0" layoutY="569.0" prefHeight="264.0" prefWidth="656.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
+      <AnchorPane fx:id="pnl_foto" layoutX="235.0" layoutY="845.0" prefHeight="133.0" prefWidth="154.0" style="-fx-background-color: #dfe3e8;">
+         <children>
+            <ImageView fx:id="img_foto" fitHeight="140.0" fitWidth="161.0" preserveRatio="true" />
+         </children>
+      </AnchorPane>
+      <Button fx:id="btn_subirFoto" layoutX="423.0" layoutY="879.0" mnemonicParsing="false" onAction="#clicSubirFoto" prefHeight="39.0" prefWidth="124.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Subir Foto" />
+      <Button fx:id="btn_borrarFoto" layoutX="463.0" layoutY="926.0" mnemonicParsing="false" onAction="#clicBorrarFoto" prefHeight="25.0" prefWidth="45.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #0a2878; -fx-font-size: 14px;" text="Borrar" />
+      <Button fx:id="btn_cancelar" layoutX="235.0" layoutY="1015.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="48.0" prefWidth="122.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 16px; -fx-font-weight: bold;" text="Cancelar" />
+      <Button fx:id="btn_guardar" layoutX="373.0" layoutY="1015.0" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="48.0" prefWidth="122.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;" text="Guardar" />
+      <VBox layoutX="103.0" layoutY="494.0" prefHeight="344.0" prefWidth="656.0" spacing="10.0">
+         <children>
+            <Label text="Requiere receta" textFill="#202932">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <HBox prefHeight="32.0" prefWidth="656.0" spacing="50.0">
+               <children>
+                  <RadioButton fx:id="rb_requiereRecetaSi" mnemonicParsing="false" onAction="#clicRequiereRecetaSi" selected="true" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Sí" textFill="#202932">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="tg_requiereReceta" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="rb_requiereRecetaNo" mnemonicParsing="false" onAction="#clicRequiereRecetaNo" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="No" textFill="#202932" toggleGroup="$tg_requiereReceta" />
+               </children>
+            </HBox>
+            <AnchorPane fx:id="pnl_receta1" prefHeight="264.0" prefWidth="656.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
+               <children>
+                  <Label layoutX="16.0" layoutY="14.0" text="Agregar otros datos" textFill="#202932">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="16.0" layoutY="55.0" text="Existencias" textFill="#202932">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="14.0" layoutY="153.0" text="Fecha de caducidad" textFill="#202932">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="txt_cantidadInsumo1" layoutX="15.0" layoutY="80.0" prefHeight="42.0" prefWidth="201.0" promptText="0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 15px; -fx-prompt-text-fill: #68727d;" />
+                  <DatePicker layoutX="15.0" layoutY="176.0" prefHeight="45.0" prefWidth="201.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+      <AnchorPane fx:id="pnl_receta" layoutX="102.0" layoutY="566.0" prefHeight="264.0" prefWidth="656.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
          <children>
             <Label layoutX="16.0" layoutY="14.0" text="Agregar insumos" textFill="#202932">
                <font>
@@ -101,14 +139,5 @@
             </TableView>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="pnl_foto" layoutX="235.0" layoutY="845.0" prefHeight="133.0" prefWidth="154.0" style="-fx-background-color: #dfe3e8;">
-         <children>
-            <ImageView fx:id="img_foto" fitHeight="140.0" fitWidth="161.0" preserveRatio="true" />
-         </children>
-      </AnchorPane>
-      <Button fx:id="btn_subirFoto" layoutX="423.0" layoutY="879.0" mnemonicParsing="false" onAction="#clicSubirFoto" prefHeight="39.0" prefWidth="124.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Subir Foto" />
-      <Button fx:id="btn_borrarFoto" layoutX="463.0" layoutY="926.0" mnemonicParsing="false" onAction="#clicBorrarFoto" prefHeight="25.0" prefWidth="45.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #0a2878; -fx-font-size: 14px;" text="Borrar" />
-      <Button fx:id="btn_cancelar" layoutX="235.0" layoutY="1015.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="48.0" prefWidth="122.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 16px; -fx-font-weight: bold;" text="Cancelar" />
-      <Button fx:id="btn_guardar" layoutX="373.0" layoutY="1015.0" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="48.0" prefWidth="122.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;" text="Guardar" />
    </children>
 </AnchorPane>

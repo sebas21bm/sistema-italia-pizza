@@ -1,239 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane
-        prefHeight="750.0" prefWidth="600.0"
-        style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #dee2e6; -fx-border-radius: 12;"
-        xmlns="http://javafx.com/javafx/17.0.12"
-        xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="uv.lis.sistemapizzeria.controladores.ResumenPedidoController">
-
-    <effect>
-        <DropShadow color="#00000040" offsetX="0" offsetY="8" radius="24.0" />
-    </effect>
-
-    <children>
-        <VBox spacing="0.0"
-              AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-            <children>
-
-                <!-- ENCABEZADO -->
-                <VBox alignment="CENTER" spacing="6.0">
-                    <padding>
-                        <Insets top="36.0" bottom="24.0" left="40.0" right="40.0" />
-                    </padding>
-                    <children>
-                        <Label text="Resumen de Pedido" textFill="#1a1a1a">
-                            <font><Font name="System Bold" size="30.0" /></font>
-                        </Label>
-                        <Label fx:id="lblSubtitulo" text="Pedido #0045 - En proceso" textFill="#555555">
-                            <font><Font size="14.0" /></font>
-                        </Label>
-                    </children>
-                </VBox>
-
-                <!-- TARJETA DE INFORMACIÓN -->
-                <VBox spacing="0.0"
-                      style="-fx-border-color: #dee2e6; -fx-border-radius: 8; -fx-background-color: white; -fx-background-radius: 8;">
-                    <VBox.margin>
-                        <Insets left="36.0" right="36.0" bottom="20.0" />
-                    </VBox.margin>
-                    <children>
-
-                        <!-- Fecha y Hora -->
-                        <HBox spacing="0.0" style="-fx-border-color: transparent transparent #dee2e6 transparent;">
-                            <padding><Insets top="14.0" bottom="14.0" left="18.0" right="18.0" /></padding>
-                            <children>
-                                <Label text="Fecha y Hora:" textFill="#1a1a1a" prefWidth="160.0">
-                                    <font><Font name="System Bold" size="13.5" /></font>
-                                </Label>
-                                <Label fx:id="lblFechaHora" text="10/05/2026, 16:05 hrs" textFill="#333333">
-                                    <font><Font size="13.5" /></font>
-                                </Label>
-                            </children>
-                        </HBox>
-
-                        <!-- Atiende -->
-                        <HBox spacing="0.0" style="-fx-border-color: transparent transparent #dee2e6 transparent;">
-                            <padding><Insets top="14.0" bottom="14.0" left="18.0" right="18.0" /></padding>
-                            <children>
-                                <Label text="Atiende:" textFill="#1a1a1a" prefWidth="160.0">
-                                    <font><Font name="System Bold" size="13.5" /></font>
-                                </Label>
-                                <Label fx:id="lblAtiende" text="Maria Lopez" textFill="#333333">
-                                    <font><Font size="13.5" /></font>
-                                </Label>
-                            </children>
-                        </HBox>
-
-                        <!-- Cliente -->
-                        <HBox spacing="0.0" style="-fx-border-color: transparent transparent #dee2e6 transparent;">
-                            <padding><Insets top="14.0" bottom="14.0" left="18.0" right="18.0" /></padding>
-                            <children>
-                                <Label text="Cliente:" textFill="#1a1a1a" prefWidth="160.0">
-                                    <font><Font name="System Bold" size="13.5" /></font>
-                                </Label>
-                                <Label fx:id="lblCliente" text="David de la Mora" textFill="#333333">
-                                    <font><Font size="13.5" /></font>
-                                </Label>
-                            </children>
-                        </HBox>
-
-                        <!-- Dirección -->
-                        <HBox spacing="0.0" style="-fx-border-color: transparent transparent #dee2e6 transparent;">
-                            <padding><Insets top="14.0" bottom="14.0" left="18.0" right="18.0" /></padding>
-                            <children>
-                                <Label text="Direcci&#243;n:" textFill="#1a1a1a" prefWidth="160.0">
-                                    <font><Font name="System Bold" size="13.5" /></font>
-                                </Label>
-                                <Label fx:id="lblDireccion" text="Libertad 13, Xalapa, 45607" textFill="#333333">
-                                    <font><Font size="13.5" /></font>
-                                </Label>
-                            </children>
-                        </HBox>
-
-                        <!-- Teléfono -->
-                        <HBox spacing="0.0">
-                            <padding><Insets top="14.0" bottom="14.0" left="18.0" right="18.0" /></padding>
-                            <children>
-                                <Label text="Tel&#233;fono:" textFill="#1a1a1a" prefWidth="160.0">
-                                    <font><Font name="System Bold" size="13.5" /></font>
-                                </Label>
-                                <Label fx:id="lblTelefono" text="228 666 6240" textFill="#333333">
-                                    <font><Font size="13.5" /></font>
-                                </Label>
-                            </children>
-                        </HBox>
-
-                    </children>
-                </VBox>
-
-                <!-- TABLA DE PRODUCTOS -->
-                <VBox spacing="0.0">
-                    <VBox.margin>
-                        <Insets left="36.0" right="36.0" bottom="0.0" />
-                    </VBox.margin>
-                    <children>
-
-                        <!-- Encabezado de columnas -->
-                        <HBox style="-fx-border-color: #dee2e6; -fx-background-color: white; -fx-background-radius: 6 6 0 0; -fx-border-radius: 6 6 0 0;">
-                            <padding><Insets top="12.0" bottom="12.0" left="16.0" right="16.0" /></padding>
-                            <children>
-                                <Label text="Cantidad" textFill="#555555" prefWidth="100.0">
-                                    <font><Font size="13.0" /></font>
-                                </Label>
-                                <Label text="Descripci&#243;n" textFill="#555555" prefWidth="160.0">
-                                    <font><Font size="13.0" /></font>
-                                </Label>
-                                <Label text="P. Unitario" textFill="#555555" prefWidth="110.0">
-                                    <font><Font size="13.0" /></font>
-                                </Label>
-                                <Label text="Subtotal" textFill="#555555" prefWidth="100.0">
-                                    <font><Font size="13.0" /></font>
-                                </Label>
-                            </children>
-                        </HBox>
-
-                        <Separator />
-
-                        <!--
-                            filaProductos: VBox que el controlador usa para
-                            insertar filas dinámicas con agregarFilaProducto().
-                            Las dos filas de abajo son solo placeholder visuales;
-                            el controlador las limpia en initialize() y agrega las reales.
-                        -->
-                        <VBox fx:id="filaProductos" spacing="0.0">
-                            <children>
-
-                                <!-- Fila placeholder 1 -->
-                                <HBox style="-fx-border-color: transparent transparent #dee2e6 transparent;">
-                                    <padding><Insets top="16.0" bottom="16.0" left="16.0" right="16.0" /></padding>
-                                    <children>
-                                        <Label text="2" textFill="#333333" prefWidth="100.0">
-                                            <font><Font size="13.5" /></font>
-                                        </Label>
-                                        <Label text="Pizza Hawaiana" textFill="#333333" prefWidth="160.0" wrapText="true">
-                                            <font><Font size="13.5" /></font>
-                                        </Label>
-                                        <Label text="115.00" textFill="#333333" prefWidth="110.0">
-                                            <font><Font size="13.5" /></font>
-                                        </Label>
-                                        <Label text="230.00" textFill="#333333" prefWidth="100.0">
-                                            <font><Font size="13.5" /></font>
-                                        </Label>
-                                    </children>
-                                </HBox>
-
-                                <!-- Fila placeholder 2 -->
-                                <HBox style="-fx-border-color: transparent transparent #dee2e6 transparent;">
-                                    <padding><Insets top="16.0" bottom="16.0" left="16.0" right="16.0" /></padding>
-                                    <children>
-                                        <Label text="5" textFill="#333333" prefWidth="100.0">
-                                            <font><Font size="13.5" /></font>
-                                        </Label>
-                                        <Label text="Coca-cola" textFill="#333333" prefWidth="160.0" wrapText="true">
-                                            <font><Font size="13.5" /></font>
-                                        </Label>
-                                        <Label text="20" textFill="#333333" prefWidth="110.0">
-                                            <font><Font size="13.5" /></font>
-                                        </Label>
-                                        <Label text="100" textFill="#333333" prefWidth="100.0">
-                                            <font><Font size="13.5" /></font>
-                                        </Label>
-                                    </children>
-                                </HBox>
-
-                            </children>
-                        </VBox>
-
-                        <!-- Fila Total -->
-                        <HBox alignment="CENTER_RIGHT"
-                              style="-fx-border-color: #dee2e6; -fx-background-color: #f8f9fa; -fx-background-radius: 0 0 6 6; -fx-border-radius: 0 0 6 6;">
-                            <padding><Insets top="14.0" bottom="14.0" left="16.0" right="16.0" /></padding>
-                            <children>
-                                <VBox alignment="CENTER_RIGHT" prefWidth="210.0">
-                                    <children>
-                                        <Label text="Total a pagar:" textFill="#1a1a1a">
-                                            <font><Font name="System Bold" size="14.0" /></font>
-                                        </Label>
-                                        <Label fx:id="lblTotal" text="330.00" textFill="#1a1a1a">
-                                            <font><Font name="System Bold" size="16.0" /></font>
-                                        </Label>
-                                    </children>
-                                </VBox>
-                            </children>
-                        </HBox>
-
-                    </children>
-                </VBox>
-
-                <!-- Espaciador -->
-                <Pane VBox.vgrow="ALWAYS" />
-
-                <!-- BOTÓN ACEPTAR -->
-                <HBox alignment="CENTER">
-                    <padding>
-                        <Insets top="28.0" bottom="36.0" />
-                    </padding>
-                    <children>
-                        <Button fx:id="btnAceptar"
-                                text="Aceptar"
-                                mnemonicParsing="false"
-                                onAction="#clicAceptar"
-                                prefHeight="46.0" prefWidth="290.0"
-                                style="-fx-background-color: #1a73e8; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;">
-                            <font><Font name="System Bold" size="15.0" /></font>
-                        </Button>
-                    </children>
-                </HBox>
-
-            </children>
-        </VBox>
-    </children>
+<AnchorPane prefHeight="541.0" prefWidth="443.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoTicketController">
+   <children>
+      <Label alignment="CENTER" layoutX="96.0" layoutY="60.0" prefHeight="40.0" prefWidth="251.0" text="Ticket de Pedido" textFill="#202932">
+         <font>
+            <Font name="System Bold" size="29.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="121.0" layoutY="109.0" prefHeight="21.0" prefWidth="73.0" text="Pedido #" textFill="#202932">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+      <AnchorPane layoutX="70.0" layoutY="153.0" prefHeight="125.0" prefWidth="316.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
+         <children>
+            <AnchorPane layoutY="25.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
+            <AnchorPane layoutY="50.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
+            <AnchorPane layoutY="75.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
+            <AnchorPane layoutY="100.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
+            <Label layoutX="9.0" layoutY="6.0" text="Fecha y Hora:" textFill="#202932">
+               <font>
+                  <Font name="System Bold" size="11.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbl_fechaHora" layoutX="136.0" layoutY="6.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="9.0" layoutY="31.0" text="Atiende:" textFill="#202932">
+               <font>
+                  <Font name="System Bold" size="11.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbl_empleado" layoutX="136.0" layoutY="31.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="9.0" layoutY="56.0" text="Cliente:" textFill="#202932">
+               <font>
+                  <Font name="System Bold" size="11.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbl_cliente" layoutX="136.0" layoutY="56.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="9.0" layoutY="81.0" text="Dirección:" textFill="#202932">
+               <font>
+                  <Font name="System Bold" size="11.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbl_direccion" layoutX="136.0" layoutY="81.0" prefHeight="14.0" prefWidth="170.0" text="" textFill="#202932">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="9.0" layoutY="106.0" text="Teléfono:" textFill="#202932">
+               <font>
+                  <Font name="System Bold" size="11.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbl_telefono" layoutX="136.0" layoutY="106.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <TableView fx:id="tbl_productosTicket" layoutX="70.0" layoutY="306.0" prefHeight="89.0" prefWidth="317.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2;">
+         <columns>
+            <TableColumn fx:id="col_cantidad" prefWidth="63.0" text="Cantidad" />
+            <TableColumn fx:id="col_descripcion" prefWidth="99.0" text="Descripción" />
+            <TableColumn fx:id="col_precioUnitario" prefWidth="87.0" text="P. Unitario" />
+            <TableColumn fx:id="col_subtotal" prefWidth="66.0" text="Subtotal" />
+         </columns>
+      </TableView>
+      <AnchorPane layoutX="298.0" layoutY="409.0" prefHeight="38.0" prefWidth="89.0" style="-fx-background-color: #f3f4f9;">
+         <children>
+            <Label alignment="CENTER" layoutX="8.0" layoutY="6.0" prefHeight="14.0" prefWidth="73.0" text="Total a pagar:" textFill="#202932">
+               <font>
+                  <Font name="System Bold" size="11.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbl_totalPagar" alignment="CENTER" layoutX="8.0" layoutY="21.0" prefHeight="14.0" prefWidth="73.0" text="" textFill="#202932">
+               <font>
+                  <Font name="System Bold" size="11.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <Button layoutX="214.0" layoutY="469.0" mnemonicParsing="false" onAction="#clicAceptar" prefHeight="38.0" prefWidth="173.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="Aceptar" />
+      <Separator layoutX="298.0" layoutY="397.0" prefHeight="16.0" prefWidth="89.0" />
+      <Separator layoutX="70.0" layoutY="284.0" prefHeight="16.0" prefWidth="316.0" />
+      <Label fx:id="lbl_numeroPedido" alignment="CENTER" layoutX="185.0" layoutY="109.0" prefHeight="21.0" prefWidth="39.0" text="0023" textFill="#202932">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+      <Label fx:id="lbl_estadoPedido" alignment="CENTER" layoutX="229.0" layoutY="109.0" prefHeight="21.0" prefWidth="73.0" text="Estado" textFill="#202932">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+   </children>
 </AnchorPane>

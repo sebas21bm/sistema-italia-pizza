@@ -4,6 +4,7 @@
  */
 package mx.uv.sistemapizzeria.controladores;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -17,6 +18,8 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import mx.uv.sistemapizzeria.SistemaPizzeria;
+
 /**
  * FXML Controller class
  *
@@ -69,14 +72,29 @@ public class MenuAdministradorController implements Initializable {
     
     @FXML
     private void clicUsuarios(ActionEvent event) {
+        try{
+            SistemaPizzeria.setRoot("UsuariosGestion","Usuarios");
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicProductos(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("ProductosGestion","Productos");
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicInsumos(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("ProductosGestion","Productos");
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 

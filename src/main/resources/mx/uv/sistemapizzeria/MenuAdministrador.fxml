@@ -64,7 +64,7 @@
                                     <Font size="16.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="btn_menuInsumos" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicInsumos" prefWidth="190.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Insumos">
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicProductosInventario" prefWidth="190.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Productos de Inventario">
                                  <font>
                                     <Font size="16.0" />
                                  </font>
