@@ -116,6 +116,8 @@ public class PedidosGestionController implements Initializable {
     @FXML
     private Button btn_ayudaAcercaDe1;
     @FXML
+    private Button btn_exportarPDF;
+    @FXML
     private AnchorPane pnl_menuAdmin;
 
 
