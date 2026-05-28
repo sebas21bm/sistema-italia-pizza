@@ -4,9 +4,13 @@ module mx.uv.sistemapizzeria {
     requires java.sql;
     requires java.base;
     requires jdk.jshell;
+    requires java.desktop;
+    requires com.opencsv;
     requires kernel;
     requires layout;
     requires io;
+    requires org.kordamp.ikonli.javafx;
+    requires org.kordamp.ikonli.fontawesome5;
 
     opens mx.uv.sistemapizzeria to javafx.fxml;
     opens mx.uv.sistemapizzeria.controladores to javafx.fxml;

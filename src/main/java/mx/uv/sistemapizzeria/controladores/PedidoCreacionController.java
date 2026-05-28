@@ -14,6 +14,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 
 /**
  * FXML Controller class
@@ -32,8 +33,6 @@ public class PedidoCreacionController implements Initializable {
     private TableColumn<?, ?> col_email;
     @FXML
     private ComboBox<?> cmb_cliente;
-    @FXML
-    private Button btn_cerrar;
     @FXML
     private TextField txt_busqueda;
     @FXML
@@ -54,6 +53,8 @@ public class PedidoCreacionController implements Initializable {
     private Button btn_guardar;
     @FXML
     private Button btn_buscar;
+    @FXML
+    private HBox AQUI;
 
     /**
      * Initializes the controller class.
@@ -63,9 +64,6 @@ public class PedidoCreacionController implements Initializable {
         // TODO
     }    
 
-    @FXML
-    private void clicCerrar(ActionEvent event) {
-    }
 
     @FXML
     private void clicDisminuirUno(ActionEvent event) {
@@ -101,6 +99,10 @@ public class PedidoCreacionController implements Initializable {
 
     @FXML
     private void clicBuscar(ActionEvent event) {
+    }
+
+    @FXML
+    private void clicNuevoCliente(ActionEvent event) {
     }
     
 }

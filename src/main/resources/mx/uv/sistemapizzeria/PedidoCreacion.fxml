@@ -18,6 +18,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <AnchorPane prefHeight="570.0" prefWidth="610.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoCreacionController">
    <children>
@@ -34,17 +35,13 @@
          </font>
       </Label>
 
-      <Button fx:id="btn_cerrar" layoutX="580.0" layoutY="12.0" mnemonicParsing="false" onAction="#clicCerrar" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932; -fx-font-size: 20px; -fx-font-weight: bold;" text="×" />
-
       <Label layoutX="32.0" layoutY="80.0" text="Búsqueda:" textFill="#202932">
          <font>
             <Font size="11.0" />
          </font>
       </Label>
 
-      <TextField fx:id="txt_busqueda" layoutX="94.0" layoutY="72.0" prefHeight="29.0" prefWidth="365.0" style="-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #202932; -fx-border-radius: 18; -fx-border-width: 1.5; -fx-font-size: 12px;" />
-
-      <Button fx:id="btn_buscar" layoutX="475.0" layoutY="68.0" mnemonicParsing="false" onAction="#clicBuscar" prefHeight="32.0" prefWidth="81.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" text="Buscar" />
+      <TextField fx:id="txt_busqueda" layoutX="94.0" layoutY="72.0" prefHeight="29.0" prefWidth="282.0" style="-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #202932; -fx-border-radius: 18; -fx-border-width: 1.5; -fx-font-size: 12px;" />
 
       <VBox layoutX="31.0" layoutY="110.0" prefHeight="125.0" prefWidth="542.0" spacing="15.0">
          <children>
@@ -189,6 +186,21 @@
       <Button fx:id="btn_cancelar" layoutX="418.0" layoutY="529.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="32.0" prefWidth="79.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 12px; -fx-font-weight: bold;" text="Cancelar" />
 
       <Button fx:id="btn_guardar" layoutX="507.0" layoutY="529.0" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="32.0" prefWidth="81.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" text="Guardar" />
+
+      <HBox fx:id="AQUI" layoutX="392.0" layoutY="71.0" prefHeight="32.0" prefWidth="181.0" spacing="15.0">
+         <children>
+            <Button fx:id="btn_buscar" mnemonicParsing="false" onAction="#clicBuscar" prefHeight="32.0" prefWidth="38.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="fas-search" iconSize="14" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Buscar" />
+               </tooltip>
+            </Button>
+
+            <Button mnemonicParsing="false" onAction="#clicNuevoCliente" prefHeight="32.0" prefWidth="81.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" text="Buscar" />
+         </children>
+      </HBox>
 
    </children>
 </AnchorPane>
