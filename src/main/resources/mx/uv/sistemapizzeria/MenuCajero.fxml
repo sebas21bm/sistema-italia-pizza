@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
@@ -18,7 +24,7 @@
       <AnchorPane fx:id="pnl_menuLateral" prefHeight="650.0" prefWidth="180.0" style="-fx-background-color: white;">
          <children>
 
-            <ImageView fx:id="img_logo" fitHeight="50.0" fitWidth="60.0" layoutX="10.0" layoutY="8.0" preserveRatio="true">
+            <ImageView fitHeight="50.0" fitWidth="60.0" layoutX="10.0" layoutY="8.0" preserveRatio="true">
                <image>
                   <Image url="@../../../imagenes/logo%20mini.png" />
                </image>
@@ -79,17 +85,21 @@
 
             <AnchorPane fx:id="pnl_encabezado" prefHeight="60.0" prefWidth="820.0" style="-fx-background-color: #f3f5fa; -fx-border-color: #d7dde5; -fx-border-width: 0 0 1 0;">
                <children>
-                  <Label fx:id="lbl_nombreUsuario" layoutX="24.0" layoutY="9.0" text="Isaac" textFill="#202932">
-                     <font>
-                        <Font name="System Bold" size="24.0" />
-                     </font>
-                  </Label>
-
-                  <Label fx:id="lbl_rolUsuario" layoutX="125.0" layoutY="18.0" text="Cajero" textFill="#82868c">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER" layoutX="37.0" layoutY="11.0" prefHeight="27.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <Label fx:id="lbl_nombreUsuario" text="Isaac" textFill="#202932">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Label>
+      
+                        <Label fx:id="lbl_rolUsuario" text="Cajero" textFill="#82868c">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
                </children>
             </AnchorPane>
 

@@ -37,8 +37,6 @@ import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 public class PedidosGestionController implements Initializable {
 
     @FXML
-    private AnchorPane pnl_menuLateral;
-    @FXML
     private ImageView img_logo;
     @FXML
     private Accordion ac_menu;
@@ -104,15 +102,35 @@ public class PedidosGestionController implements Initializable {
     private Button btn_cerrarSesion;
     @FXML
     private Button btn_ayudaAcercaDe;
+    @FXML
+    private AnchorPane pnl_menuCajero;
+    @FXML
+    private ImageView img_logo1;
+    @FXML
+    private Accordion ac_menu1;
+    @FXML
+    private TitledPane tp_pedidos1;
+    @FXML
+    private Button btn_menuPedidos1;
+    @FXML
+    private Button btn_cerrarSesion1;
+    @FXML
+    private Button btn_ayudaAcercaDe1;
+    @FXML
+    private AnchorPane pnl_menuAdmin;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        if((SistemaPizzeria.getMetadatos("empleado").toString()).equals("Administrador")){
+            pnl_menuAdmin.setVisible(true);
+        }else if((SistemaPizzeria.getMetadatos("empleado").toString()).equals("Cajero")){
+            pnl_menuCajero.setVisible(true);
+        }
     }    
-    
+
 
     @FXML
     private void clicNuevoPedido(ActionEvent event) {
