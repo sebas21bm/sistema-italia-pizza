@@ -156,7 +156,7 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
                     ps.setString(8, empleado.getEmail());
                     ps.setBoolean(9, empleado.isEstatus());
                     ps.setString(10, empleado.getTipoEmpleado().name());
-                    ps.setInt(11, empleado.getTipoEmpleado().name().equals("ADMINISTRADOR") ? 1 : 2);
+                    ps.setInt(11, empleado.getTipoEmpleado().name().equals("Administrator") ? 1 : 2);
                     ps.setInt(12, idDireccion);
                     ps.executeUpdate();
                 }

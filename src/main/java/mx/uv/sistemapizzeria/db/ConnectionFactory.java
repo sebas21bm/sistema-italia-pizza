@@ -39,10 +39,10 @@ public class ConnectionFactory {
     private static String determinarRutaProperties(TipoEmpleado tipoEmpleado) {
         String rutaProperties = null;
 
-        if (tipoEmpleado == TipoEmpleado.ADMINISTRADOR) {
+        if (tipoEmpleado == TipoEmpleado.Administrator) {
             rutaProperties = "/config/usuario_administrador.properties";
         }
-        if (tipoEmpleado == TipoEmpleado.CAJERO) {
+        if (tipoEmpleado == TipoEmpleado.Cajero) {
             rutaProperties = "/config/usuario_cajero.properties";
         }
 
