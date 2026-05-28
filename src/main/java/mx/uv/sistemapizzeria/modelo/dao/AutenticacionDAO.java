@@ -4,7 +4,6 @@ import mx.uv.sistemapizzeria.db.ConnectionFactory;
 import mx.uv.sistemapizzeria.excepciones.UsuarioInactivoException;
 import mx.uv.sistemapizzeria.excepciones.UsuarioNoEncontradoException;
 import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
-import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.modelo.dto.TipoEmpleado;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
@@ -49,10 +48,10 @@ public class AutenticacionDAO {
             int idRol = rs.getInt("id_rol");
             switch (idRol) {
                 case 1:
-                    empleadoLogin.setTipoEmpleado(TipoEmpleado.ADMINISTRADOR);
+                    empleadoLogin.setTipoEmpleado(TipoEmpleado.Admnistrador);
                     break;
                 case 2:
-                    empleadoLogin.setTipoEmpleado(TipoEmpleado.CAJERO);
+                    empleadoLogin.setTipoEmpleado(TipoEmpleado.Cajero);
                     break;
                 default:
                     throw new NullPointerException();
