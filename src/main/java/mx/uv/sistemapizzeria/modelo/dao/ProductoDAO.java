@@ -5,6 +5,7 @@ import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class ProductoDAO implements Operaciones<String, ProductoVentaDTO> {
 
     // ── mostrarTodos(): List<Producto> ─────────────────────────────────────
     @Override
-    public List<ProductoVentaDTO> mostrarTodos() throws Exception {
+    public List<ProductoVentaDTO> mostrarTodos() throws SQLException {
         List<ProductoVentaDTO> productos = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -78,6 +79,10 @@ public class ProductoDAO implements Operaciones<String, ProductoVentaDTO> {
                  ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) productos.add(mapearProducto(rs));
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return productos;
     }
