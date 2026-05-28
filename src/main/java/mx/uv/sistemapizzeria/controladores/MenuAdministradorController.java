@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package mx.uv.sistemapizzeria.controladores;
 
 import java.io.IOException;
@@ -12,69 +8,47 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
-
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
+import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 
-/**
- * FXML Controller class
- *
- * @author macol
- */
 public class MenuAdministradorController implements Initializable {
 
+    @FXML private Label lbl_nombreUsuario;
+    @FXML private Label lbl_rolUsuario;
+    @FXML private AnchorPane pnl_menuLateral;
+    @FXML private ImageView img_logo;
+    @FXML private Accordion ac_menu;
+    @FXML private TitledPane tp_administracion;
+    @FXML private Button btn_menuUsuarios;
+    @FXML private TitledPane tp_inventarios;
+    @FXML private Button btn_menuProductos;
+    @FXML private Button btn_menuValidacionInventarios;
+    @FXML private TitledPane tp_pedidos;
+    @FXML private Button btn_menuPedidos;
+    @FXML private Button btn_cerrarSesion;
+    @FXML private Button btn_ayudaAcercaDe;
+    @FXML private AnchorPane pnl_contenido;
+    @FXML private AnchorPane pnl_encabezado;
 
-    @FXML
-    private Label lbl_nombreUsuario;
-    @FXML
-    private Label lbl_rolUsuario;
-    @FXML
-    private AnchorPane pnl_menuLateral;
-    @FXML
-    private ImageView img_logo;
-    @FXML
-    private Accordion ac_menu;
-    @FXML
-    private TitledPane tp_administracion;
-    @FXML
-    private Button btn_menuUsuarios;
-    @FXML
-    private TitledPane tp_inventarios;
-    @FXML
-    private Button btn_menuProductos;
-    @FXML
-    private Button btn_menuInsumos;
-    @FXML
-    private Button btn_menuValidacionInventarios;
-    @FXML
-    private TitledPane tp_pedidos;
-    @FXML
-    private Button btn_menuPedidos;
-    @FXML
-    private Button btn_cerrarSesion;
-    @FXML
-    private Button btn_ayudaAcercaDe;
-    @FXML
-    private AnchorPane pnl_contenido;
-    @FXML
-    private AnchorPane pnl_encabezado;
-    /**
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-    
+        // Cargar nombre y rol del empleado en sesión
+        EmpleadoDTO empleado = (EmpleadoDTO) SistemaPizzeria.getMetadatos("empleado");
+        if (empleado != null) {
+            lbl_nombreUsuario.setText(empleado.getNombreCompleto());
+            lbl_rolUsuario.setText(empleado.getTipoEmpleado().name());
+        }
+    }
+
     @FXML
     private void clicUsuarios(ActionEvent event) {
-        try{
-            SistemaPizzeria.setRoot("UsuariosGestion","Usuarios");
-        }catch(IOException e){
+        try {
+            SistemaPizzeria.setRoot("UsuariosGestion", "Usuarios");
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -82,36 +56,50 @@ public class MenuAdministradorController implements Initializable {
     @FXML
     private void clicProductos(ActionEvent event) {
         try {
-            SistemaPizzeria.setRoot("ProductosGestion","Productos");
-        } catch (IOException e){
+            SistemaPizzeria.setRoot("ProductosGestion", "Productos");
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @FXML
-    private void clicInsumos(ActionEvent event) {
+    private void clicProductosInventario(ActionEvent event) {
         try {
-            SistemaPizzeria.setRoot("ProductosGestion","Productos");
-        } catch (IOException e){
+            SistemaPizzeria.setRoot("ProductosInventarioGestion", "Productos de Inventario");
+        } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-
-    @FXML
-    private void clicPedidos(ActionEvent event) {
     }
 
     @FXML
     private void clicValidacionInventarios(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("ValidacionInventarios", "Validación de Inventarios");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void clicPedidos(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("PedidosGestion", "Pedidos");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicCerrarSesion(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("InicioSesion", "Sistema Pizzeria - Login");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicAyudaAcercaDe(ActionEvent event) {
+        // TODO: abrir ventana de ayuda
     }
-
 }
