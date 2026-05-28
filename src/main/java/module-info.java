@@ -3,6 +3,7 @@ module mx.uv.sistemapizzeria {
     requires javafx.fxml;
     requires java.sql;
     requires java.base;
+    requires jdk.jshell;
 
     opens mx.uv.sistemapizzeria to javafx.fxml;
     opens mx.uv.sistemapizzeria.controladores to javafx.fxml;
