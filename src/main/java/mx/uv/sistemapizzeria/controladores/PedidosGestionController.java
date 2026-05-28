@@ -4,11 +4,15 @@
  */
 package mx.uv.sistemapizzeria.controladores;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -20,6 +24,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import mx.uv.sistemapizzeria.SistemaPizzeria;
+import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 /**
  * FXML Controller class
@@ -104,34 +112,7 @@ public class PedidosGestionController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }    
-
-    @FXML
-    private void clicUsuarios(ActionEvent event) {
-    }
-
-    @FXML
-    private void clicProductos(ActionEvent event) {
-    }
-
-    @FXML
-    private void clicProductosInventario(ActionEvent event) {
-    }
-
-    @FXML
-    private void clicValidacionInventarios(ActionEvent event) {
-    }
-
-    @FXML
-    private void clicPedidos(ActionEvent event) {
-    }
-
-    @FXML
-    private void clicCerrarSesion(ActionEvent event) {
-    }
-
-    @FXML
-    private void clicAyudaAcercaDe(ActionEvent event) {
-    }
+    
 
     @FXML
     private void clicNuevoPedido(ActionEvent event) {
@@ -156,5 +137,83 @@ public class PedidosGestionController implements Initializable {
     @FXML
     private void clicBuscar(ActionEvent event) {
     }
-    
+
+
+    //NAVEGACION MENÚ
+    @FXML
+    private void clicUsuarios(ActionEvent event) {
+        try{
+            SistemaPizzeria.setRoot("UsuariosGestion","Usuarios");
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void clicProductos(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("ProductosGestion","Productos");
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void clicProductosInventario(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("ProductosInventarioGestion","Productos de Inventario");
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    @FXML
+    private void clicPedidos(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("PedidosGestion", "Pedidos");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    @FXML
+    private void clicValidacionInventarios(ActionEvent event) {
+        try {
+            SistemaPizzeria.setRoot("ProductosInventarioValidacion", "Validación de Inventario");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void clicCerrarSesion(ActionEvent event) {
+        SistemaPizzeria.setMetadatos("empleado", null);
+        try {
+            SistemaPizzeria.setRoot("InicioSesion","Sistema Pizzeria - Login");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void clicAyudaAcercaDe(ActionEvent event) {
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("AcercaDe");
+            Parent vista = loader.load();
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("AcercaDe");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

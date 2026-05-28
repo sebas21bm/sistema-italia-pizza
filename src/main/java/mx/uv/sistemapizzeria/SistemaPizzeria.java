@@ -50,16 +50,12 @@ public class SistemaPizzeria extends Application {
         return metadatos.get(nombre);
     }
     
-    public static void setRoot(String fxml, String titulo, boolean modal) throws IOException {
+    public static void setRoot(String fxml, String titulo) throws IOException {
         scene.setRoot(UtilidadesFX.cargarFXML(fxml).load());
         primaryStage.setTitle(titulo);
         primaryStage.setResizable(true);
-        primaryStage.setFullScreen(true);
         primaryStage.sizeToScene();
         primaryStage.centerOnScreen();
-        if(modal){
-            primaryStage.initModality(Modality.APPLICATION_MODAL);
-        }
     }
 
     public static void main(String[] args) {
