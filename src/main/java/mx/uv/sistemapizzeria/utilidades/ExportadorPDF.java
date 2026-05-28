@@ -1,5 +1,6 @@
 package mx.uv.sistemapizzeria.utilidades;
 
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.PageSize;
@@ -16,6 +17,7 @@ import mx.uv.sistemapizzeria.modelo.dto.DetallePedidoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -56,32 +58,62 @@ public class ExportadorPDF {
         doc.close();
     }
 
-    // ── Encabezado del documento ─────────────────────────────────────────
+    // ── Encabezado del documento ─────────────────────────────────────
     private static void agregarEncabezadoDocumento(Document doc, int totalPedidos) {
-        // Título
-        Paragraph titulo = new Paragraph("Italia Pizza")
-                .setFontSize(18)
-                .setBold()
-                .setFontColor(COLOR_ENCABEZADO)
-                .setTextAlignment(TextAlignment.CENTER);
-        doc.add(titulo);
+        // Tabla de dos columnas: [logo] | [título + subtítulo]
+        Table tablaEncabezado = new Table(UnitValue.createPercentArray(new float[]{8, 92}))
+                .useAllAvailableWidth()
+                .setBorder(com.itextpdf.layout.borders.Border.NO_BORDER);
 
-        // Subtítulo
+        // ── Celda izquierda: logo mini ──────────────────────────────────
+        Cell celdaLogo = new Cell()
+                .setBorder(com.itextpdf.layout.borders.Border.NO_BORDER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE);
+
+        try {
+            InputStream isLogo = ExportadorPDF.class
+                    .getResourceAsStream("/imagenes/logo mini.png");
+            if (isLogo != null) {
+                byte[] logoBytes = isLogo.readAllBytes();
+                isLogo.close();
+                Image logo = new Image(ImageDataFactory.create(logoBytes))
+                        .setHeight(45f)
+                        .setAutoScale(false);
+                celdaLogo.add(logo);
+            }
+        } catch (Exception ignored) {
+            // Si no se puede cargar el logo, la celda queda vacía sin romper el PDF
+        }
+        tablaEncabezado.addCell(celdaLogo);
+
+        // ── Celda derecha: título y subtítulo ─────────────────────────
         String ahora = java.time.LocalDateTime.now().format(FMT_FECHA);
-        Paragraph subtitulo = new Paragraph(
-                "Reporte de Pedidos  |  Generado: " + ahora + "  |  Total registros: " + totalPedidos)
-                .setFontSize(10)
-                .setFontColor(new DeviceRgb(64, 64, 64))
-                .setTextAlignment(TextAlignment.CENTER)
-                .setMarginBottom(6f);
-        doc.add(subtitulo);
+
+        Cell celdaTexto = new Cell()
+                .setBorder(com.itextpdf.layout.borders.Border.NO_BORDER)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .add(new Paragraph("Italia Pizza")
+                        .setFontSize(18)
+                        .setBold()
+                        .setFontColor(COLOR_ENCABEZADO)
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setMarginBottom(2f))
+                .add(new Paragraph(
+                        "Reporte de Pedidos  |  Generado: " + ahora + "  |  Total registros: " + totalPedidos)
+                        .setFontSize(10)
+                        .setFontColor(new DeviceRgb(64, 64, 64))
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setMarginBottom(0f));
+        tablaEncabezado.addCell(celdaTexto);
+
+        doc.add(tablaEncabezado);
 
         // Línea separadora
         doc.add(new LineSeparator(new com.itextpdf.kernel.pdf.canvas.draw.SolidLine(1f))
                 .setStrokeColor(COLOR_ENCABEZADO)
+                .setMarginTop(4f)
                 .setMarginBottom(8f));
     }
-
     // ── Tabla con todos los pedidos ──────────────────────────────────────
     private static Table crearTablaPedidos(List<PedidoDTO> pedidos) {
         // Anchos relativos: Folio | Cliente | Fecha | Productos | Total | Estatus

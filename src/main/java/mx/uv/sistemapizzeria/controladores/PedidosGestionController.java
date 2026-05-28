@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
 import mx.uv.sistemapizzeria.modelo.dao.PedidosDAO;
 import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
+import mx.uv.sistemapizzeria.utilidades.ExportadorCSV;
 import mx.uv.sistemapizzeria.utilidades.ExportadorPDF;
 import mx.uv.sistemapizzeria.modelo.dao.EmpleadoDAO;
 import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
@@ -200,7 +201,7 @@ public class PedidosGestionController implements Initializable {
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
 
-        Stage stage = (Stage) btn_exportarPDF.getScene().getWindow();
+        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
         File archivo = fileChooser.showSaveDialog(stage);
 
         if (archivo == null) return; // el usuario canceló
@@ -255,6 +256,42 @@ public class PedidosGestionController implements Initializable {
 
     @FXML
     private void clicExportarCSV(ActionEvent event) {
+        // 1. Obtener la lista de pedidos actualmente visible en la tabla
+        List<PedidoDTO> pedidos = obtenerPedidosParaExportar();
+        if (pedidos == null || pedidos.isEmpty()) {
+            UtilidadesFX.mostrarAlertaSimple(
+                    "Sin datos",
+                    "No hay pedidos para exportar. Realiza una búsqueda primero.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
+        // 2. Pedir al usuario dónde guardar el archivo
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar reporte de pedidos CSV");
+        fileChooser.setInitialFileName("reporte_pedidos.csv");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Archivos CSV (*.csv)", "*.csv"));
+
+        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        File archivo = fileChooser.showSaveDialog(stage);
+
+        if (archivo == null) return; // el usuario canceló
+
+        // 3. Generar el CSV
+        try {
+            ExportadorCSV.exportar(pedidos, archivo.getAbsolutePath());
+            UtilidadesFX.mostrarAlertaSimple(
+                    "Exportación exitosa",
+                    "El reporte CSV se guardó en:\n" + archivo.getAbsolutePath(),
+                    Alert.AlertType.INFORMATION);
+        } catch (Exception e) {
+            UtilidadesFX.mostrarAlertaSimple(
+                    "Error al exportar",
+                    "No fue posible generar el CSV:\n" + e.getMessage(),
+                    Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
     }
 
     @FXML
