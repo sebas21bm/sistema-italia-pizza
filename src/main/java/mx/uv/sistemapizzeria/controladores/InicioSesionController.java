@@ -63,7 +63,7 @@ public class InicioSesionController implements Initializable {
             UtilidadesFX.mostrarAlertaSimple("Bienvenido(a)", "Bienvendio al sistema: " +
                     empleadoLogin.getNombreCompleto(), Alert.AlertType.INFORMATION);
 
-            String rutaMenu = CargadorEscenas.cargarEscenarSegunRol(empleadoLogin.getTipoEmpleado());
+            String rutaMenu = CargadorEscenas.cargarEscenaSegunRol(empleadoLogin.getTipoEmpleado());
 
             SistemaPizzeria.setMetadatos("empleado",  empleadoLogin);
 
@@ -91,7 +91,7 @@ public class InicioSesionController implements Initializable {
 
     private void cargarEscena(String rutaMenu) {
         try {
-            SistemaPizzeria.setRoot(rutaMenu, "Menu principal", false);
+            SistemaPizzeria.setRoot(rutaMenu, "Menu principal");
         } catch (IOException e) {
             e.printStackTrace();
         }
