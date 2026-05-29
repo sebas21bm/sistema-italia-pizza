@@ -1,12 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package mx.uv.sistemapizzeria.controladores;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,33 +15,35 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
 import mx.uv.sistemapizzeria.SistemaPizzeria;
+import mx.uv.sistemapizzeria.modelo.dao.ProductoDAO;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
-/**
- * FXML Controller class
- *
- * @author macol
- */
 public class ProductosGestionController implements Initializable {
-
 
     @FXML
     private TableView<ProductoVentaDTO> tbl_productos;
     @FXML
-    private TableColumn<?, ?> col_codigo;
+    private TableColumn<ProductoVentaDTO, String> col_codigo;
     @FXML
-    private TableColumn<?, ?> col_nombre;
+    private TableColumn<ProductoVentaDTO, String> col_fotografia;
     @FXML
-    private TableColumn<?, ?> col_precio;
+    private TableColumn<ProductoVentaDTO, String> col_nombre;
+    @FXML
+    private TableColumn<ProductoVentaDTO, Double> col_precio;
+    @FXML
+    private TableColumn<ProductoVentaDTO, Integer> col_limite;
+    @FXML
+    private TableColumn<ProductoVentaDTO, String> col_descripcion;
     @FXML
     private AnchorPane pnl_menuLateral;
     @FXML
@@ -74,12 +77,6 @@ public class ProductosGestionController implements Initializable {
     @FXML
     private TextField txt_buscar;
     @FXML
-    private TableColumn<?, ?> col_fotografia;
-    @FXML
-    private TableColumn<?, ?> col_limite;
-    @FXML
-    private TableColumn<?, ?> col_descripcion;
-    @FXML
     private Button btn_nuevoProducto;
     @FXML
     private Button btn_editar;
@@ -87,14 +84,36 @@ public class ProductosGestionController implements Initializable {
     private Button btn_eliminar;
     @FXML
     private Button btn_buscar;
-    /**
-     * Initializes the controller class.
-     */
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        configurarColumnas();
+        cargarDatosTabla();
     }
 
+    private void configurarColumnas() {
+        col_codigo.setCellValueFactory(new PropertyValueFactory<>("codigoMenu"));
+        col_fotografia.setCellValueFactory(new PropertyValueFactory<>("foto"));
+        col_nombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        col_precio.setCellValueFactory(new PropertyValueFactory<>("precio"));
+        col_limite.setCellValueFactory(new PropertyValueFactory<>("limite"));
+        col_descripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
+    }
+
+    private void cargarDatosTabla() {
+        try {
+            ProductoDAO dao = new ProductoDAO();
+            // Se utiliza el método que extrae los productos con estatus = 1
+            List<ProductoVentaDTO> listaProductos = dao.mostrarTodos();
+
+            // ObservableList para actualizar la vista automáticamente
+            ObservableList<ProductoVentaDTO> productosObservables = FXCollections.observableArrayList(listaProductos);
+            tbl_productos.setItems(productosObservables);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.err.println("Error al cargar los productos");
+        }
+    }
 
     @FXML
     private void clicNuevoProducto(ActionEvent event) {
@@ -116,7 +135,6 @@ public class ProductosGestionController implements Initializable {
             e.printStackTrace();
         }
     }
-
 
     @FXML
     private void clicEditar(ActionEvent event) {
@@ -151,14 +169,12 @@ public class ProductosGestionController implements Initializable {
 
     @FXML
     private void clicEliminar(ActionEvent event) {
-
+        // Se ha dejado en blanco intencionalmente para la integración futura
     }
 
     @FXML
     private void clicBuscar(ActionEvent event) {
-
     }
-
 
     //NAVEGACION MENÚ
     @FXML
@@ -188,7 +204,6 @@ public class ProductosGestionController implements Initializable {
         }
     }
 
-
     @FXML
     private void clicPedidos(ActionEvent event) {
         try {
@@ -196,7 +211,6 @@ public class ProductosGestionController implements Initializable {
         }catch (IOException e){
             e.printStackTrace();
         }
-
     }
 
     @FXML
