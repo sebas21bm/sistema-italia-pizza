@@ -29,7 +29,7 @@
          </font>
       </Label>
 
-      <Label layoutX="18.0" layoutY="34.0" text="Registrar Producto" textFill="#202932">
+      <Label fx:id="txt_operacion" layoutX="18.0" layoutY="34.0" text="Registrar Producto" textFill="#202932">
          <font>
             <Font name="System Bold" size="26.0" />
          </font>
@@ -111,7 +111,7 @@
                </font>
             </Label>
 
-            <TextField fx:id="txt_cantidadInsumo1" layoutX="14.0" layoutY="63.0" prefHeight="34.0" prefWidth="125.0" promptText="0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 12px; -fx-prompt-text-fill: #68727d;" />
+            <TextField fx:id="txt_existencias" layoutX="14.0" layoutY="63.0" prefHeight="34.0" prefWidth="125.0" promptText="0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 12px; -fx-prompt-text-fill: #68727d;" />
 
             <Label layoutX="160.0" layoutY="42.0" text="Caducidad" textFill="#202932">
                <font>
@@ -125,13 +125,13 @@
 
       <AnchorPane fx:id="pnl_receta" layoutX="398.0" layoutY="157.0" prefHeight="269.0" prefWidth="340.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
          <children>
-            <Label layoutX="16.0" layoutY="14.0" text="Agregar insumos" textFill="#202932">
+            <Label layoutX="16.0" layoutY="14.0" text="Agregar productos del inventario" textFill="#202932">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
 
-            <Label layoutX="16.0" layoutY="52.0" text="Insumo" textFill="#202932">
+            <Label layoutX="16.0" layoutY="52.0" text="Producto del Inventario" textFill="#202932">
                <font>
                   <Font size="13.0" />
                </font>

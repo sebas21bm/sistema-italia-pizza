@@ -21,7 +21,7 @@
          </font>
       </Label>
 
-      <Label layoutX="17.0" layoutY="35.0" text="Operación Producto Inventario" textFill="#202932">
+      <Label fx:id="txt_operaciones" layoutX="17.0" layoutY="35.0" text="Operación Producto Inventario" textFill="#202932">
          <font>
             <Font name="System Bold" size="26.0" />
          </font>
@@ -57,19 +57,19 @@
          </font>
       </Label>
 
-      <AnchorPane fx:id="pnl_foto" layoutX="116.0" layoutY="428.0" prefHeight="95.0" prefWidth="105.0" style="-fx-background-color: #dfe3e8;">
+      <AnchorPane layoutX="116.0" layoutY="428.0" prefHeight="95.0" prefWidth="105.0" style="-fx-background-color: #dfe3e8;">
          <children>
-            <ImageView fx:id="img_foto" fitHeight="95.0" fitWidth="105.0" preserveRatio="true" visible="false" />
+            <ImageView fitHeight="95.0" fitWidth="105.0" preserveRatio="true" visible="false" />
          </children>
       </AnchorPane>
 
-      <Button fx:id="btn_subirFoto" layoutX="254.0" layoutY="441.0" mnemonicParsing="false" onAction="#clicSubirFoto" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 13px; -fx-font-weight: bold;" text="Subir Foto" />
+      <Button layoutX="254.0" layoutY="441.0" mnemonicParsing="false" onAction="#clicSubirFoto" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 13px; -fx-font-weight: bold;" text="Subir Foto" />
 
       <Button fx:id="btn_borrarFoto" layoutX="294.0" layoutY="493.0" mnemonicParsing="false" onAction="#clicBorrarFoto" prefHeight="25.0" prefWidth="60.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #0a2878; -fx-font-size: 13px;" text="Borrar" />
 
-      <Button fx:id="btn_cancelar" layoutX="202.0" layoutY="548.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="42.0" prefWidth="140.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 15px; -fx-font-weight: bold;" text="Cancelar" />
+      <Button layoutX="202.0" layoutY="548.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="42.0" prefWidth="140.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 15px; -fx-font-weight: bold;" text="Cancelar" />
 
-      <Button fx:id="btn_guardar" layoutX="361.0" layoutY="548.0" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="42.0" prefWidth="140.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;" text="Guardar" />
+      <Button layoutX="361.0" layoutY="548.0" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="42.0" prefWidth="140.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;" text="Guardar" />
       <DatePicker fx:id="dp_fechaCaducidad" layoutX="14.0" layoutY="367.0" prefHeight="40.0" prefWidth="487.0" />
 
    </children>

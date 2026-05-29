@@ -15,7 +15,7 @@ public class ProductoCompuestoPorDTO {
     private double cantidad;
 
     // Objetos anidados (consejo de Sebas)
-    private ProductoInsumoDTO insumo;
+    private ProductoInventarioDTO insumo;
     private ProductoVentaDTO productoVenta;
 
     public ProductoCompuestoPorDTO() {}
@@ -46,11 +46,11 @@ public class ProductoCompuestoPorDTO {
         this.cantidad = cantidad;
     }
 
-    public ProductoInsumoDTO getInsumo() {
+    public ProductoInventarioDTO getInsumo() {
         return insumo;
     }
 
-    public void setInsumo(ProductoInsumoDTO insumo) {
+    public void setInsumo(ProductoInventarioDTO insumo) {
         this.insumo = insumo;
         if (insumo != null) {
             this.codigoInsumo = insumo.getCodigo();

@@ -15,7 +15,7 @@ module mx.uv.sistemapizzeria {
     opens mx.uv.sistemapizzeria to javafx.fxml;
     opens mx.uv.sistemapizzeria.controladores to javafx.fxml;
     opens mx.uv.sistemapizzeria.modelo.dao to javafx.fxml;
-    opens mx.uv.sistemapizzeria.modelo.dto to javafx.fxml;
+    opens mx.uv.sistemapizzeria.modelo.dto to javafx.fxml, javafx.base;
 
     exports mx.uv.sistemapizzeria;
 }
