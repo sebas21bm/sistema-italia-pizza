@@ -1,10 +1,7 @@
 package mx.uv.sistemapizzeria.utilidades;
 
-import mx.uv.sistemapizzeria.modelo.dto.ClienteDTO;
-import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
-import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
-import mx.uv.sistemapizzeria.modelo.dto.ProductoInsumoDTO;
-import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
+import mx.uv.sistemapizzeria.modelo.dto.*;
+import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -309,7 +306,7 @@ public class Validador {
      * @param insumo objeto a validar (no nulo)
      * @return lista de mensajes de error; vacía si el objeto es válido
      */
-    public static List<String> validarProductoInsumo(ProductoInsumoDTO insumo) {
+    public static List<String> validarProductoInsumo(ProductoInventarioDTO insumo) {
         List<String> errores = new ArrayList<>();
 
         if (!esCodigoInsumoValido(insumo.getCodigo())) {
