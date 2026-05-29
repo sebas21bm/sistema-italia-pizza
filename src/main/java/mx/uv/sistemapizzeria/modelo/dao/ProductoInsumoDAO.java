@@ -5,6 +5,7 @@ import mx.uv.sistemapizzeria.modelo.dto.ProductoInsumoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ public class ProductoInsumoDAO implements Operaciones<String, ProductoInsumoDTO>
 
     // ── buscar(identificador: String): ProductoInsumo ──────────────────────
     @Override
-    public ProductoInsumoDTO buscar(String codigo) throws Exception {
+    public ProductoInsumoDTO buscar(String codigo) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -31,7 +32,7 @@ public class ProductoInsumoDAO implements Operaciones<String, ProductoInsumoDTO>
 
     // ── editar(insumo: ProductoInsumo): boolean ────────────────────────────
     @Override
-    public boolean editar(ProductoInsumoDTO insumo) throws Exception {
+    public boolean editar(ProductoInsumoDTO insumo) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -51,7 +52,7 @@ public class ProductoInsumoDAO implements Operaciones<String, ProductoInsumoDTO>
 
     // ── eliminar(identificador: String): boolean ───────────────────────────
     @Override
-    public boolean eliminar(String codigo) throws Exception {
+    public boolean eliminar(String codigo) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -65,7 +66,7 @@ public class ProductoInsumoDAO implements Operaciones<String, ProductoInsumoDTO>
 
     // ── mostrarTodos(): List<ProductoInsumo> ───────────────────────────────
     @Override
-    public List<ProductoInsumoDTO> mostrarTodos() throws Exception {
+    public List<ProductoInsumoDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<ProductoInsumoDTO> insumos = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -84,7 +85,7 @@ public class ProductoInsumoDAO implements Operaciones<String, ProductoInsumoDTO>
 
     // ── registrar(insumo: ProductoInsumo): boolean ─────────────────────────
     @Override
-    public boolean registrar(ProductoInsumoDTO insumo) throws Exception {
+    public boolean registrar(ProductoInsumoDTO insumo) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 

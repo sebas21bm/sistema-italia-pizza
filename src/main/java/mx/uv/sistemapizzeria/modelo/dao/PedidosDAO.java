@@ -5,6 +5,7 @@ import mx.uv.sistemapizzeria.excepciones.LimiteInsumosException;
 import mx.uv.sistemapizzeria.modelo.dto.*;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
 
     // ── buscar(id_pedido): PedidoDTO con detalles ──────────────────────────
     @Override
-    public PedidoDTO buscar(Integer idPedido) throws Exception {
+    public PedidoDTO buscar(Integer idPedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         PedidoDTO pedido = null;
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -42,7 +43,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
 
     // ── editar(pedido): boolean ────────────────────────────────────────────
     @Override
-    public boolean editar(PedidoDTO pedido) throws Exception {
+    public boolean editar(PedidoDTO pedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -79,7 +80,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
 
     // ── eliminar(id_pedido): cancela el pedido ─────────────────────────────
     @Override
-    public boolean eliminar(Integer idPedido) throws Exception {
+    public boolean eliminar(Integer idPedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -93,7 +94,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
 
     // ── mostrarTodos(): usa vista_lista_pedidos ────────────────────────────
     @Override
-    public List<PedidoDTO> mostrarTodos() throws Exception {
+    public List<PedidoDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<PedidoDTO> pedidos = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -112,7 +113,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
 
     // ── registrar(pedido): llama al stored procedure de CONSULTAS.sql ──────
     @Override
-    public boolean registrar(PedidoDTO pedido) throws Exception {
+    public boolean registrar(PedidoDTO pedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 

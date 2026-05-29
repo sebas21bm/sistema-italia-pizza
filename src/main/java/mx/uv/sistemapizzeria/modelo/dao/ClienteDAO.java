@@ -6,6 +6,7 @@ import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
     // ── buscar(identificador: int): Cliente ────────────────────────────────
     // Carga el cliente y su primera dirección asociada vía cliente_direccion
     @Override
-    public ClienteDTO buscar(Integer noCliente) throws Exception {
+    public ClienteDTO buscar(Integer noCliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -40,7 +41,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
 
     // ── editar(cliente: Cliente): boolean ──────────────────────────────────
     @Override
-    public boolean editar(ClienteDTO cliente) throws Exception {
+    public boolean editar(ClienteDTO cliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -85,7 +86,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
 
     // ── eliminar(identificador: int): boolean ──────────────────────────────
     @Override
-    public boolean eliminar(Integer noCliente) throws Exception {
+    public boolean eliminar(Integer noCliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -100,7 +101,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
     // ── mostrarTodos(): List<Cliente> ──────────────────────────────────────
     // Trae cada cliente con su primera dirección asociada
     @Override
-    public List<ClienteDTO> mostrarTodos() throws Exception {
+    public List<ClienteDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<ClienteDTO> clientes = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -130,7 +131,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
     // ── registrar(cliente: Cliente): boolean ───────────────────────────────
     // Inserta dirección, luego cliente, luego vincula en cliente_direccion
     @Override
-    public boolean registrar(ClienteDTO cliente) throws Exception {
+    public boolean registrar(ClienteDTO cliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 

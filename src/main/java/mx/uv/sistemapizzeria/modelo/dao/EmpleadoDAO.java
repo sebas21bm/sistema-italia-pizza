@@ -6,6 +6,7 @@ import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
 
     // ── buscar(identificador: String): Empleado ────────────────────────────
     @Override
-    public EmpleadoDTO buscar(String identificador) throws Exception {
+    public EmpleadoDTO buscar(String identificador) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -37,7 +38,7 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
 
     // ── editar(empleado: Empleado): boolean ────────────────────────────────
     @Override
-    public boolean editar(EmpleadoDTO empleado) throws Exception {
+    public boolean editar(EmpleadoDTO empleado) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -82,7 +83,7 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
 
     // ── eliminar(identificador: String): boolean ───────────────────────────
     @Override
-    public boolean eliminar(String identificador) throws Exception {
+    public boolean eliminar(String identificador) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -96,7 +97,7 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
 
     // ── mostrarTodos(): List<Empleado> ─────────────────────────────────────
     @Override
-    public List<EmpleadoDTO> mostrarTodos() throws Exception {
+    public List<EmpleadoDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<EmpleadoDTO> empleados = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -119,7 +120,7 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
 
     // ── registrar(empleado: Empleado): boolean ─────────────────────────────
     @Override
-    public boolean registrar(EmpleadoDTO empleado) throws Exception {
+    public boolean registrar(EmpleadoDTO empleado) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
