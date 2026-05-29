@@ -13,19 +13,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
+import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
+import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 /**
@@ -37,7 +34,7 @@ public class ProductosGestionController implements Initializable {
 
 
     @FXML
-    private TableView<?> tbl_productos;
+    private TableView<ProductoVentaDTO> tbl_productos;
     @FXML
     private TableColumn<?, ?> col_codigo;
     @FXML
@@ -96,13 +93,25 @@ public class ProductosGestionController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
-    
+    }
+
 
     @FXML
     private void clicNuevoProducto(ActionEvent event) {
+        SistemaPizzeria.setMetadatos("registrar-producto",true);
         try {
-            SistemaPizzeria.setRoot("ProductoOperaciones", "Producto");
+            FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoOperaciones");
+            Parent vista = loader.load();
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("Producto");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -111,14 +120,43 @@ public class ProductosGestionController implements Initializable {
 
     @FXML
     private void clicEditar(ActionEvent event) {
+        SistemaPizzeria.setMetadatos("registrar-producto",false);
+        ProductoVentaDTO producto = tbl_productos.getSelectionModel().getSelectedItem();
+        if(producto == null){
+            UtilidadesFX.mostrarAlertaSimple("Sin Producto Inventario para editar",
+                    "No se ha seleccionado ningún producto de inventario, " +
+                            "selecciona uno para continuar",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoOperaciones");
+            Parent vista = loader.load();
+            ProductoOperacionesController controller = loader.getController();
+            controller.editarProductoInventario(producto);
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("Producto");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicEliminar(ActionEvent event) {
+
     }
 
     @FXML
     private void clicBuscar(ActionEvent event) {
+
     }
 
 

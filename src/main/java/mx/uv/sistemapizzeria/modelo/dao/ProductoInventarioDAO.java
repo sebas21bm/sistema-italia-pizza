@@ -1,7 +1,7 @@
 package mx.uv.sistemapizzeria.modelo.dao;
 
 import mx.uv.sistemapizzeria.db.ConnectionFactory;
-import mx.uv.sistemapizzeria.modelo.dto.ProductoInsumoDTO;
+import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
@@ -9,11 +9,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductoInsumoDAO implements Operaciones<String, ProductoInsumoDTO> {
-
+public class ProductoInventarioDAO implements Operaciones<String, ProductoInventarioDTO> {
     // ── buscar(identificador: String): ProductoInsumo ──────────────────────
     @Override
-    public ProductoInsumoDTO buscar(String codigo) throws Exception {
+    public ProductoInventarioDTO buscarPorCodigo(String codigo) throws Exception {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -29,9 +28,26 @@ public class ProductoInsumoDAO implements Operaciones<String, ProductoInsumoDTO>
         return null;
     }
 
+    public ProductoInventarioDTO buscarPorNombre(String nombre) throws Exception {
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+
+            String sql = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto " +
+                    "FROM producto_inventario WHERE codigo = ?";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, codigo);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) return mapearInsumo(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+
     // ── editar(insumo: ProductoInsumo): boolean ────────────────────────────
     @Override
-    public boolean editar(ProductoInsumoDTO insumo) throws Exception {
+    public boolean editar(ProductoInventarioDTO insumo) throws Exception {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -65,8 +81,8 @@ public class ProductoInsumoDAO implements Operaciones<String, ProductoInsumoDTO>
 
     // ── mostrarTodos(): List<ProductoInsumo> ───────────────────────────────
     @Override
-    public List<ProductoInsumoDTO> mostrarTodos() throws Exception {
-        List<ProductoInsumoDTO> insumos = new ArrayList<>();
+    public List<ProductoInventarioDTO> mostrarTodos() throws Exception {
+        List<ProductoInventarioDTO> insumos = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
@@ -84,7 +100,7 @@ public class ProductoInsumoDAO implements Operaciones<String, ProductoInsumoDTO>
 
     // ── registrar(insumo: ProductoInsumo): boolean ─────────────────────────
     @Override
-    public boolean registrar(ProductoInsumoDTO insumo) throws Exception {
+    public boolean registrar(ProductoInventarioDTO insumo) throws Exception {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -104,8 +120,8 @@ public class ProductoInsumoDAO implements Operaciones<String, ProductoInsumoDTO>
     }
 
     // ── Helper ─────────────────────────────────────────────────────────────
-    private ProductoInsumoDTO mapearInsumo(ResultSet rs) throws SQLException {
-        ProductoInsumoDTO i = new ProductoInsumoDTO();
+    private ProductoInventarioDTO mapearInsumo(ResultSet rs) throws SQLException {
+        ProductoInventarioDTO i = new ProductoInventarioDTO();
         i.setCodigo(rs.getString("codigo"));
         i.setNombre(rs.getString("nombre"));
         i.setEstatus(rs.getInt("estatus"));
