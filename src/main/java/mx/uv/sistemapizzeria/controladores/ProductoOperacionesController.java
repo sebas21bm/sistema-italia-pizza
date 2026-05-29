@@ -17,9 +17,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoCompuestoPorDAO;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoDAO;
-import mx.uv.sistemapizzeria.modelo.dao.ProductoInsumoDAO;
+import mx.uv.sistemapizzeria.modelo.dao.ProductoInventarioDAO;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoCompuestoPorDTO;
-import mx.uv.sistemapizzeria.modelo.dto.ProductoInsumoDTO;
+import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 import javafx.scene.control.Alert;
@@ -45,7 +45,7 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private TextField txt_precio;
     @FXML
-    private ComboBox<ProductoInsumoDTO> cb_insumo;
+    private ComboBox<ProductoInventarioDTO> cb_insumo;
     @FXML
     private TextField txt_cantidadInsumo;
     @FXML
@@ -140,9 +140,9 @@ public class ProductoOperacionesController implements Initializable {
 
     private void cargarInsumosDisponibles() {
         try {
-            ProductoInsumoDAO insumoDAO = new ProductoInsumoDAO();
-            List<ProductoInsumoDTO> insumos = insumoDAO.mostrarTodos();
-            ObservableList<ProductoInsumoDTO> listaObservable = FXCollections.observableArrayList(insumos);
+            ProductoInventarioDAO insumoDAO = new ProductoInventarioDAO();
+            List<ProductoInventarioDTO> insumos = insumoDAO.mostrarTodos();
+            ObservableList<ProductoInventarioDTO> listaObservable = FXCollections.observableArrayList(insumos);
             cb_insumo.setItems(listaObservable);
 
         } catch (Exception e) {
@@ -158,7 +158,7 @@ public class ProductoOperacionesController implements Initializable {
 
     @FXML
     private void clicAgregarInsumo(ActionEvent event) {
-        ProductoInsumoDTO insumoSeleccionado = cb_insumo.getSelectionModel().getSelectedItem();
+        ProductoInventarioDTO insumoSeleccionado = cb_insumo.getSelectionModel().getSelectedItem();
         String cantidadTexto = txt_cantidadInsumo.getText().trim();
 
         if (insumoSeleccionado == null) {
