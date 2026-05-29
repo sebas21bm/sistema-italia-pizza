@@ -7,7 +7,7 @@ public class DetalleReporteDTO {
     private double diferencia;
     private String justificacion;
 
-    private ProductoInsumoDTO insumo;
+    private ProductoInventarioDTO insumo;
 
     public DetalleReporteDTO() {}
 
@@ -45,11 +45,11 @@ public class DetalleReporteDTO {
         this.justificacion = justificacion;
     }
 
-    public ProductoInsumoDTO getInsumo() {
+    public ProductoInventarioDTO getInsumo() {
         return insumo;
     }
 
-    public void setInsumo(ProductoInsumoDTO insumo) {
+    public void setInsumo(ProductoInventarioDTO insumo) {
         this.insumo = insumo;
         if (insumo != null) {
             this.codigoInsumo = insumo.getCodigo();

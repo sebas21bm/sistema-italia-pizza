@@ -13,6 +13,7 @@ public class PedidoDTO {
 
     // FK + objeto anidado del cliente
     private int noCliente;
+    private int idDireccion;  // dirección de entrega del pedido
     private ClienteDTO cliente;
 
     // Líneas del pedido
@@ -62,6 +63,14 @@ public class PedidoDTO {
         this.noCliente = noCliente;
     }
 
+    public int getIdDireccion() {
+        return idDireccion;
+    }
+
+    public void setIdDireccion(int idDireccion) {
+        this.idDireccion = idDireccion;
+    }
+
     public ClienteDTO getCliente() {
         return cliente;
     }
@@ -70,6 +79,10 @@ public class PedidoDTO {
         this.cliente = cliente;
         if (cliente != null) {
             this.noCliente = cliente.getNoCliente();
+            // Fijar dirección automáticamente si el cliente la tiene cargada
+            if (cliente.getDireccion() != null) {
+                this.idDireccion = cliente.getDireccion().getIdDireccion();
+            }
         }
     }
 

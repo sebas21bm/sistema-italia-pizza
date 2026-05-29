@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package mx.uv.sistemapizzeria.controladores;
 
 import java.io.IOException;
@@ -19,25 +15,20 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
 import mx.uv.sistemapizzeria.SistemaPizzeria;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoDAO;
+import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
-/**
- * FXML Controller class
- *
- * @author macol
- */
 public class ProductosGestionController implements Initializable {
-
 
     @FXML
     private TableView<ProductoVentaDTO> tbl_productos;
@@ -93,14 +84,13 @@ public class ProductosGestionController implements Initializable {
     private Button btn_eliminar;
     @FXML
     private Button btn_buscar;
-    /**
-     * Initializes the controller class.
-     */
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         configurarColumnas();
         cargarDatosTabla();
     }
+
     private void configurarColumnas() {
         col_codigo.setCellValueFactory(new PropertyValueFactory<>("codigoMenu"));
         col_fotografia.setCellValueFactory(new PropertyValueFactory<>("foto"));
@@ -127,13 +117,14 @@ public class ProductosGestionController implements Initializable {
 
     @FXML
     private void clicNuevoProducto(ActionEvent event) {
+        SistemaPizzeria.setMetadatos("registrar-producto",true);
         try {
             FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoOperaciones");
             Parent vista = loader.load();
             Scene escena = new Scene(vista);
 
             Stage stage = new Stage();
-            stage.setTitle("ProductoOperaciones");
+            stage.setTitle("Producto");
             stage.setResizable(false);
             stage.setScene(escena);
 
@@ -143,67 +134,47 @@ public class ProductosGestionController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        /*try {
-            SistemaPizzeria.setRoot("ProductoOperaciones", "Producto");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
-
 
     @FXML
     private void clicEditar(ActionEvent event) {
+        SistemaPizzeria.setMetadatos("registrar-producto",false);
+        ProductoVentaDTO producto = tbl_productos.getSelectionModel().getSelectedItem();
+        if(producto == null){
+            UtilidadesFX.mostrarAlertaSimple("Sin Producto Inventario para editar",
+                    "No se ha seleccionado ningún producto de inventario, " +
+                            "selecciona uno para continuar",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoOperaciones");
+            Parent vista = loader.load();
+            ProductoOperacionesController controller = loader.getController();
+            controller.editarProductoInventario(producto);
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("Producto");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicEliminar(ActionEvent event) {
-        ProductoVentaDTO producto = tbl_productos.getSelectionModel().getSelectedItem();
-
-        if (producto == null) {
-            UtilidadesFX.mostrarAlertaSimple("Atención", "Selecciona un producto de la tabla.", Alert.AlertType.WARNING);
-            return;
-        }
-
-        try {
-            ProductoDAO dao = new ProductoDAO();
-
-            // 1. Validación de la regla de negocio
-            if (dao.tienePedidos(producto.getCodigoMenu())) {
-                UtilidadesFX.mostrarAlertaSimple("Operación denegada",
-                        "El producto ya está en el historial de un pedido y no puede eliminarse.", Alert.AlertType.WARNING);
-                return;
-            }
-
-            // 2. Confirmación
-            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmacion.setTitle("Confirmar eliminación");
-            confirmacion.setHeaderText(null);
-            confirmacion.setContentText("¿Deseas eliminar el producto: " + producto.getNombre() + "?");
-
-            // 3. Ejecución si el usuario acepta
-            if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-                if (dao.eliminar(producto.getCodigoMenu())) {
-                    UtilidadesFX.mostrarAlertaSimple("Éxito", "Producto eliminado correctamente.", Alert.AlertType.INFORMATION);
-                    cargarDatosTabla(); // Refresca la vista
-                } else {
-                    UtilidadesFX.mostrarAlertaSimple("Error", "No se pudo eliminar el producto de la base de datos.", Alert.AlertType.ERROR);
-                }
-            }
-
-        } catch (java.sql.SQLException ex) {
-            ex.printStackTrace(); // Solo para los desarrolladores en consola
-            UtilidadesFX.mostrarAlertaSimple("Error de BD", "Problema al conectar con la base de datos. Contacte a soporte.", Alert.AlertType.ERROR);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            UtilidadesFX.mostrarAlertaSimple("Error", "Ocurrió un error inesperado en el sistema.", Alert.AlertType.ERROR);
-        }
+        // Se ha dejado en blanco intencionalmente para la integración futura
     }
 
     @FXML
     private void clicBuscar(ActionEvent event) {
     }
-
 
     //NAVEGACION MENÚ
     @FXML
@@ -233,7 +204,6 @@ public class ProductosGestionController implements Initializable {
         }
     }
 
-
     @FXML
     private void clicPedidos(ActionEvent event) {
         try {
@@ -241,7 +211,6 @@ public class ProductosGestionController implements Initializable {
         }catch (IOException e){
             e.printStackTrace();
         }
-
     }
 
     @FXML

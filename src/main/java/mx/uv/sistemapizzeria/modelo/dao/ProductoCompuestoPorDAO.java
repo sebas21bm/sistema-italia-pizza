@@ -2,8 +2,7 @@ package mx.uv.sistemapizzeria.modelo.dao;
 
 import mx.uv.sistemapizzeria.db.ConnectionFactory;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoCompuestoPorDTO;
-import mx.uv.sistemapizzeria.modelo.dto.ProductoInsumoDTO;
-import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
+import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
@@ -127,7 +126,7 @@ public class ProductoCompuestoPorDAO implements Operaciones<String, ProductoComp
         pc.setCodigoMenu(rs.getString("codigo_menu"));
         pc.setCantidad(rs.getDouble("cantidad"));
 
-        ProductoInsumoDTO insumo = new ProductoInsumoDTO();
+        ProductoInventarioDTO insumo = new ProductoInventarioDTO();
         insumo.setCodigo(rs.getString("codigo"));
         insumo.setNombre(rs.getString("nombre_insumo"));
         insumo.setExistencias(rs.getInt("existencias"));

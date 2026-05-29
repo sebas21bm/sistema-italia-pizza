@@ -81,7 +81,9 @@ public class ClienteDTO {
     }
 
     public String getNombreCompleto() {
-        return nombre + " " + paterno + " " + materno;
+        return (nombre != null ? nombre : "") + " "
+                + (paterno != null ? paterno : "") + " "
+                + (materno != null ? materno : "");
     }
 
     @Override
