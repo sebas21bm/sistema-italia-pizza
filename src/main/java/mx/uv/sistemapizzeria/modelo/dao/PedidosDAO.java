@@ -112,12 +112,28 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
     }
 
     // ── registrar(pedido): llama al stored procedure de CONSULTAS.sql ──────
+    // IMPORTANTE: La tabla temporal temp_detalles_pedido es de sesión MySQL.
+    // Cada conexión JDBC es una sesión nueva → hay que crearla explícitamente.
+    // NO se usa setAutoCommit(false) porque registrar_pedido ya maneja
+    // su propio START TRANSACTION / COMMIT / ROLLBACK internamente.
     @Override
     public boolean registrar(PedidoDTO pedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
-            // 1. Llenar tabla temporal con cada ítem
+            // 0. Crear la tabla temporal en esta sesión JDBC y limpiarla
+            try (Statement st = conn.createStatement()) {
+                st.execute(
+                        "CREATE TEMPORARY TABLE IF NOT EXISTS temp_detalles_pedido (" +
+                                "  codigo_menu VARCHAR(5) NOT NULL, " +
+                                "  cantidad    INT        NOT NULL, " +
+                                "  costo       DOUBLE     NOT NULL" +
+                                ")"
+                );
+                st.execute("DELETE FROM temp_detalles_pedido");
+            }
+
+            // 1. Llenar tabla temporal con cada ítem del pedido
             for (DetallePedidoDTO det : pedido.getDetalles()) {
                 try (CallableStatement cs = conn.prepareCall(
                         "{CALL registrar_detalle_pedido(?, ?)}")) {
@@ -127,13 +143,16 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                 }
             }
 
-            // 2. Ejecutar el stored procedure que hace la transacción completa
+            // 2. Stored procedure que hace toda la transacción:
+            //    INSERT pedido → INSERT detalles → validar stock → descontar insumos → COMMIT
+            //    4 parámetros: fecha, estatus, no_cliente, id_direccion
             try (CallableStatement cs = conn.prepareCall(
-                    "{CALL registrar_pedido(?, ?, ?)}")) {
+                    "{CALL registrar_pedido(?, ?, ?, ?)}")) {
                 cs.setTimestamp(1, Timestamp.valueOf(pedido.getFecha()));
                 cs.setString(2, pedido.getEstatus() != null
                         ? pedido.getEstatus() : "En proceso");
                 cs.setInt(3, pedido.getNoCliente());
+                cs.setInt(4, pedido.getIdDireccion());
                 cs.execute();
             }
 
