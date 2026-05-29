@@ -262,10 +262,13 @@ public class UsuariosGestionController implements Initializable {
         try {
             FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioTipo");
             Parent vista = loader.load();
+            Scene scene = new Scene(vista);
+
             Stage stage = new Stage();
             stage.setTitle("Nuevo Usuario");
             stage.setResizable(false);
-            stage.setScene(new Scene(vista));
+            stage.setScene(scene);
+
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
@@ -414,9 +417,4 @@ public class UsuariosGestionController implements Initializable {
         }
     }
 
-    @FXML
-    private void clicInsumos(ActionEvent event) {
-        try { SistemaPizzeria.setRoot("ProductosInventarioGestion", "Productos de Inventario"); }
-        catch (IOException e) { e.printStackTrace(); }
-    }
 }

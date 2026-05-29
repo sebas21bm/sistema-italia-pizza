@@ -18,6 +18,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
 /**
  * FXML Controller class
  *
@@ -66,6 +68,8 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
     
     @FXML
     private void clicCancelar(ActionEvent event) {
+        Stage stage = (Stage) txt_ciudad.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
