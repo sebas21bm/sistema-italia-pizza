@@ -1,6 +1,12 @@
 package mx.uv.sistemapizzeria.controladores;
 
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -79,8 +85,6 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private Button btn_guardar;
     @FXML
-    private TextField txt_cantidadInsumo1;
-    @FXML
     private AnchorPane pnl_sinReceta;
     
     // Variables agregadas por el equipo
@@ -90,8 +94,11 @@ public class ProductoOperacionesController implements Initializable {
     private TextField txt_existencias;
 
     private ObservableList<ProductoCompuestoPorDTO> listaInsumosReceta = FXCollections.observableArrayList();
-    private String rutaFotoLocal = "";
+    private File archivoFotoSeleccionado = null;
     private Boolean registro;
+    @FXML
+    private DatePicker dp_caducidad;
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -212,7 +219,124 @@ public class ProductoOperacionesController implements Initializable {
 
     @FXML
     private void clicGuardar(ActionEvent event) {
-        // Se ha dejado en blanco intencionalmente para implementar los Procedimientos Almacenados
+        String codigo = txt_codigo.getText().trim().toUpperCase();
+        String nombre = txt_nombre.getText().trim();
+        String descripcion = txt_descripcion.getText().trim();
+        String precioTxt = txt_precio.getText().trim();
+        String limiteTxt = txt_limite.getText().trim();
+
+        // Validación de formato del código del producto (P0000) P + cuatro números
+        if (!codigo.matches("^P[0-9]{4}$")) {
+            UtilidadesFX.mostrarAlertaSimple("Formato de código", "El código debe iniciar con 'P' seguido de 4 números exactos (Ej. P0001, P0120).", Alert.AlertType.WARNING);
+            return;
+        }
+
+        if (nombre.isEmpty() || precioTxt.isEmpty()) {
+            UtilidadesFX.mostrarAlertaSimple("Campos incompletos", "Por favor, ingrese el Nombre y el Precio del producto.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        double precio = 0;
+        int limite = 0;
+
+        try {
+            precio = Double.parseDouble(precioTxt);
+            if (precio <= 0) {
+                UtilidadesFX.mostrarAlertaSimple("Dato inválido", "El precio debe ser mayor a 0.", Alert.AlertType.WARNING);
+                return;
+            }
+            if (!limiteTxt.isEmpty()) {
+                limite = Integer.parseInt(limiteTxt);
+                if (limite <= 0) {
+                    UtilidadesFX.mostrarAlertaSimple("Dato inválido", "El límite debe ser mayor a 0.", Alert.AlertType.WARNING);
+                    return;
+                }
+            }
+        } catch (NumberFormatException e) {
+            UtilidadesFX.mostrarAlertaSimple("Formato incorrecto", "El precio y el límite deben ser valores numéricos.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        boolean requiereReceta = rb_requiereRecetaSi.isSelected();
+        int existencias = 0;
+        LocalDate fechaCaducidad = null;
+
+        // Validaciones específicas según el tipo de producto (con o sin receta)
+        if (requiereReceta) {
+            if (listaInsumosReceta.isEmpty()) {
+                UtilidadesFX.mostrarAlertaSimple("Receta vacía", "Debe agregar al menos un insumo a la receta.", Alert.AlertType.WARNING);
+                return;
+            }
+        } else {
+            String existenciasTxt = txt_existencias.getText().trim();
+            if (existenciasTxt.isEmpty()) {
+                UtilidadesFX.mostrarAlertaSimple("Campos incompletos", "Por favor, indique las existencias iniciales del producto.", Alert.AlertType.WARNING);
+                return;
+            }
+            try {
+                existencias = Integer.parseInt(existenciasTxt);
+                if (existencias < 0) {
+                    UtilidadesFX.mostrarAlertaSimple("Dato inválido", "Las existencias no pueden ser negativas.", Alert.AlertType.WARNING);
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                UtilidadesFX.mostrarAlertaSimple("Formato incorrecto", "Las existencias deben ser un número entero.", Alert.AlertType.WARNING);
+                return;
+            }
+
+            fechaCaducidad = dp_caducidad.getValue();
+            if (fechaCaducidad == null) {
+                UtilidadesFX.mostrarAlertaSimple("Dato requerido", "Por favor, indique la fecha de caducidad del producto.", Alert.AlertType.WARNING);
+                return;
+            }
+        }
+
+        try {
+            // Información del producto
+            ProductoVentaDTO productoVenta = new ProductoVentaDTO();
+            productoVenta.setCodigoMenu(codigo);
+            productoVenta.setNombre(nombre);
+            productoVenta.setDescripcion(descripcion);
+            productoVenta.setPrecio(precio);
+            productoVenta.setLimite(limite);
+
+            // Gestión de la fotografía
+            String nombreFoto = "";
+            if (archivoFotoSeleccionado != null) {
+                nombreFoto = archivoFotoSeleccionado.getName();
+                String rutaProyecto = System.getProperty("user.dir");
+                Path destinoVenta = Paths.get(rutaProyecto, "source", "imagenes", "productos", nombreFoto);
+                Files.createDirectories(destinoVenta.getParent());
+                Files.copy(archivoFotoSeleccionado.toPath(), destinoVenta, StandardCopyOption.REPLACE_EXISTING);
+
+                // Si no tiene receta, también se copia a inventario
+                if (!requiereReceta) {
+                    Path destinoInv = Paths.get(rutaProyecto, "source", "imagenes", "productosInventario", nombreFoto);
+                    Files.createDirectories(destinoInv.getParent());
+                    Files.copy(archivoFotoSeleccionado.toPath(), destinoInv, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+            productoVenta.setFoto(nombreFoto);
+
+            // Lógica del DAO
+            ProductoDAO daoVenta = new ProductoDAO();
+            if (requiereReceta) {
+                daoVenta.registrarConReceta(productoVenta, listaInsumosReceta);
+            } else {
+                daoVenta.registrarSinReceta(productoVenta, existencias, fechaCaducidad);
+            }
+
+            UtilidadesFX.mostrarAlertaSimple("Éxito", "El producto ha sido registrado correctamente.", Alert.AlertType.INFORMATION);
+            clicCancelar(event);
+
+        } catch (SQLException ex) {
+            // Este bloque atrapa los mensajes personalizados que envía la base de datos
+            ex.printStackTrace();
+            UtilidadesFX.mostrarAlertaSimple("Operación rechazada", ex.getMessage(), Alert.AlertType.WARNING);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            UtilidadesFX.mostrarAlertaSimple("Error Inesperado", "Ha ocurrido un fallo en el sistema al procesar el registro.", Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
@@ -235,8 +359,7 @@ public class ProductoOperacionesController implements Initializable {
         File archivoSeleccionado = fileChooser.showOpenDialog(null);
 
         if (archivoSeleccionado != null) {
-            rutaFotoLocal = archivoSeleccionado.getAbsolutePath();
-
+            archivoFotoSeleccionado = archivoSeleccionado;
             Image imagen = new Image(archivoSeleccionado.toURI().toString());
             img_foto.setImage(imagen);
         }
@@ -244,5 +367,7 @@ public class ProductoOperacionesController implements Initializable {
 
     @FXML
     private void clicBorrarFoto(ActionEvent event) {
+        archivoFotoSeleccionado = null; // Limpiar la memoria del archivo
+        img_foto.setImage(null);       // Quitar la foto de la pantalla
     }
 }
