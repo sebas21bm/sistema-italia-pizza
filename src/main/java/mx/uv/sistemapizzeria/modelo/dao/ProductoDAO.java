@@ -104,6 +104,23 @@ public class ProductoDAO implements Operaciones<String, ProductoVentaDTO> {
         }
     }
 
+    // ── Validar si el producto está en un pedido ───────────────────────────
+    public boolean tienePedidos(String codigoMenu) throws SQLException {
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) throw new SQLException("Error: Sin conexión a la base de datos.");
+
+            String sql = "SELECT 1 FROM detalles_pedido WHERE codigo_menu = ? LIMIT 1";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, codigoMenu);
+                try (ResultSet rs = ps.executeQuery()) {
+                    return rs.next();
+                }
+            }
+        } catch (java.io.IOException | ClassNotFoundException ex) {
+            throw new SQLException("Fallo al cargar la configuración o el driver de BD: " + ex.getMessage(), ex);
+        }
+    }
+
     // ── Helper ─────────────────────────────────────────────────────────────
     private ProductoVentaDTO mapearProducto(ResultSet rs) throws SQLException {
         ProductoVentaDTO p = new ProductoVentaDTO();
