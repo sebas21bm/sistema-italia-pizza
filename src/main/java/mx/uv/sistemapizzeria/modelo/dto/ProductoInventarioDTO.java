@@ -9,7 +9,7 @@ import java.time.LocalDate;
  * Representa la materia prima / insumos del inventario físico
  * (harina, queso, tomate, refrescos en stock, etc.).
  */
-public class ProductoInsumoDTO {
+public class ProductoInventarioDTO {
 
     private String codigo;
     private String nombre;
@@ -18,7 +18,7 @@ public class ProductoInsumoDTO {
     private LocalDate fechaCaducidad;
     private String foto;            // ruta/path VARCHAR(255)
 
-    public ProductoInsumoDTO() {}
+    public ProductoInventarioDTO() {}
 
     // ── Getters y Setters ──────────────────────────────────────────────────
 

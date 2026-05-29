@@ -20,6 +20,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import mx.uv.sistemapizzeria.SistemaPizzeria;
+import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
+import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
+
 /**
  * FXML Controller class
  *
@@ -71,15 +75,26 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private Button btn_guardar;
     @FXML
-    private TextField txt_cantidadInsumo1;
-    @FXML
     private AnchorPane pnl_sinReceta;
-    /**
-     * Initializes the controller class.
-     */
+    @FXML
+    private Label txt_operacion;
+    @FXML
+    private TextField txt_existencias;
+
+    private Boolean registro;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        this.registro = (Boolean) SistemaPizzeria.getMetadatos("registrar-producto");
+
+        if(registro){
+            txt_operacion.setText("Registrar Producto Inventario");
+        }else{
+            txt_operacion.setText("Editar Producto Inventario");
+            txt_codigo.setDisable(true);
+        }
         configurarReceta();
+
     }    
 
     private void configurarReceta(){
@@ -94,6 +109,10 @@ public class ProductoOperacionesController implements Initializable {
                 }
             }
         });
+    }
+
+    public void editarProductoInventario(ProductoVentaDTO producto){
+        txt_codigo.setText(producto.getCodigoMenu());
     }
 
     @FXML

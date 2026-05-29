@@ -172,7 +172,7 @@ public class ReporteInventarioDAO implements Operaciones<Integer, ReporteInventa
         det.setDiferencia(rs.getDouble("diferencia"));
         det.setJustificacion(rs.getString("justificacion"));
 
-        ProductoInsumoDTO insumo = new ProductoInsumoDTO();
+        ProductoInventarioDTO insumo = new ProductoInventarioDTO();
         insumo.setCodigo(rs.getString("codigo"));
         insumo.setNombre(rs.getString("nombre"));
         insumo.setExistencias(rs.getInt("existencias"));
