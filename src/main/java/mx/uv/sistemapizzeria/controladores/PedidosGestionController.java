@@ -32,6 +32,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
 import mx.uv.sistemapizzeria.modelo.dao.PedidosDAO;
+import mx.uv.sistemapizzeria.controladores.PedidoEdicionController;
 import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
 import mx.uv.sistemapizzeria.utilidades.ExportadorCSV;
@@ -100,7 +101,7 @@ public class PedidosGestionController implements Initializable {
         }else if((empleado.getTipoEmpleado().toString()).equals("Cajero")){
             pnl_menuAdmin.setVisible(false);
             pnl_menuCajero.setVisible(true);
-        }CHernandez1CHernandez1CHernandez1
+        }
 
         configurarColumnas();
 
@@ -238,11 +239,35 @@ public class PedidosGestionController implements Initializable {
     // ── Editar ────────────────────────────────────────────────────────────────
     @FXML
     private void clicEditar(ActionEvent event) {
+        PedidoDTO seleccionado = tbl_pedidos.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            UtilidadesFX.mostrarAlertaSimple("Selección requerida",
+                    "Selecciona un pedido de la tabla para editarlo.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
+        // Solo se pueden editar pedidos en proceso
+        if (!"En proceso".equals(seleccionado.getEstatus())) {
+            UtilidadesFX.mostrarAlertaSimple("No editable",
+                    "Solo se pueden editar pedidos con estatus 'En proceso'.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
         try {
+            // Cargar el pedido completo (con detalles) desde la BD
+            PedidoDTO pedidoCompleto = dao.buscar(seleccionado.getIdPedido());
+
             FXMLLoader loader = UtilidadesFX.cargarFXML("PedidoEdicion");
             Parent vista = loader.load();
+
+            // Inyectar el pedido en el controller de edición
+            PedidoEdicionController controller = loader.getController();
+            controller.setPedido(pedidoCompleto != null ? pedidoCompleto : seleccionado);
+
             Stage stage = new Stage();
-            stage.setTitle("Editar Pedido");
+            stage.setTitle("Editar Pedido #" + seleccionado.getIdPedido());
             stage.setResizable(false);
             stage.setScene(new Scene(vista));
             stage.centerOnScreen();
@@ -251,13 +276,63 @@ public class PedidosGestionController implements Initializable {
             cargarTodos(); // refresca sin filtros al volver
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            UtilidadesFX.mostrarAlertaSimple("Error",
+                    "No se pudo cargar el pedido:\n" + e.getMessage(),
+                    Alert.AlertType.ERROR);
+            e.printStackTrace();
         }
     }
 
     // ── Eliminar ──────────────────────────────────────────────────────────────
     @FXML
     private void clicEliminar(ActionEvent event) {
-        // TODO: confirmación y llamada a dao.eliminar(id)
+        PedidoDTO seleccionado = tbl_pedidos.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            UtilidadesFX.mostrarAlertaSimple("Selección requerida",
+                    "Selecciona un pedido de la tabla para cancelarlo.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
+        if ("Cancelado".equals(seleccionado.getEstatus())) {
+            UtilidadesFX.mostrarAlertaSimple("Ya cancelado",
+                    "El pedido #" + seleccionado.getIdPedido() + " ya está cancelado.",
+                    Alert.AlertType.INFORMATION);
+            return;
+        }
+
+        // Confirmación antes de cancelar
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar cancelación");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText("¿Deseas cancelar el pedido #" + seleccionado.getIdPedido()
+                + " del cliente " + (seleccionado.getCliente() != null
+                ? seleccionado.getCliente().getNombreCompleto() : "")
+                + "?\nEsta acción no se puede deshacer.");
+
+        confirmacion.showAndWait().ifPresent(respuesta -> {
+            if (respuesta == javafx.scene.control.ButtonType.OK) {
+                try {
+                    boolean resultado = dao.eliminar(seleccionado.getIdPedido());
+                    if (resultado) {
+                        UtilidadesFX.mostrarAlertaSimple("Pedido cancelado",
+                                "El pedido #" + seleccionado.getIdPedido() + " fue cancelado.",
+                                Alert.AlertType.INFORMATION);
+                        cargarTodos();
+                    } else {
+                        UtilidadesFX.mostrarAlertaSimple("Sin cambios",
+                                "No se encontró el pedido o ya estaba cancelado.",
+                                Alert.AlertType.WARNING);
+                    }
+                } catch (Exception e) {
+                    UtilidadesFX.mostrarAlertaSimple("Error",
+                            "No se pudo cancelar el pedido:\n" + e.getMessage(),
+                            Alert.AlertType.ERROR);
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     // ── Exportar PDF ──────────────────────────────────────────────────────────
