@@ -4,6 +4,7 @@ import mx.uv.sistemapizzeria.db.ConnectionFactory;
 import mx.uv.sistemapizzeria.modelo.dto.*;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ public class ReporteInventarioDAO implements Operaciones<Integer, ReporteInventa
 
     // ── buscar(idInventario): ReporteInventario con detalles ───────────────
     @Override
-    public ReporteInventarioDTO buscar(Integer idInventario) throws Exception {
+    public ReporteInventarioDTO buscar(Integer idInventario) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         ReporteInventarioDTO reporte = null;
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -53,13 +54,13 @@ public class ReporteInventarioDAO implements Operaciones<Integer, ReporteInventa
 
     // ── editar(reporte): no aplica — los reportes son inmutables ──────────
     @Override
-    public boolean editar(ReporteInventarioDTO reporte) throws Exception {
+    public boolean editar(ReporteInventarioDTO reporte) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         throw new UnsupportedOperationException("Los reportes de inventario no son editables.");
     }
 
     // ── eliminar(idInventario): boolean ───────────────────────────────────
     @Override
-    public boolean eliminar(Integer idInventario) throws Exception {
+    public boolean eliminar(Integer idInventario) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -87,7 +88,7 @@ public class ReporteInventarioDAO implements Operaciones<Integer, ReporteInventa
 
     // ── mostrarTodos(): List<ReporteInventario> (sin detalles) ─────────────
     @Override
-    public List<ReporteInventarioDTO> mostrarTodos() throws Exception {
+    public List<ReporteInventarioDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<ReporteInventarioDTO> reportes = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -110,7 +111,7 @@ public class ReporteInventarioDAO implements Operaciones<Integer, ReporteInventa
 
     // ── registrar(reporte): boolean — transacción completa ─────────────────
     @Override
-    public boolean registrar(ReporteInventarioDTO reporte) throws Exception {
+    public boolean registrar(ReporteInventarioDTO reporte) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 

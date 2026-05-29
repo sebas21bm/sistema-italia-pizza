@@ -18,7 +18,7 @@ import javafx.scene.control.TextField;
  * @author macol
  */
 public class UsuarioClienteOperacionesController implements Initializable {
-
+    @FXML
     private TextField txt_nombres;
     @FXML
     private TextField txt_nombres1;
@@ -50,8 +50,11 @@ public class UsuarioClienteOperacionesController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        txt_nombres.setDisable(false);
-    }    
+        if (txt_nombres1 != null) {
+            txt_nombres1.setDisable(false);
+        }
+        //txt_nombres1.setDisable(false);
+    }
 
     @FXML
     private void clicCancelar(ActionEvent event) {
@@ -64,5 +67,5 @@ public class UsuarioClienteOperacionesController implements Initializable {
     @FXML
     private void clicAgregarDireccion(ActionEvent event) {
     }
-    
+
 }

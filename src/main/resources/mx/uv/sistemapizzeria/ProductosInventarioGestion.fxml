@@ -151,7 +151,7 @@
 
             <TableView fx:id="tbl_productoInventario" fixedCellSize="70.0" layoutX="20.0" layoutY="130.0" prefHeight="405.0" prefWidth="760.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
                <columns>
-                  <TableColumn prefWidth="75.0" text="Código" />
+                  <TableColumn fx:id="col_codigo" prefWidth="75.0" text="Código" />
                   <TableColumn fx:id="col_nombre" prefWidth="174.0" text="Nombre" />
                   <TableColumn fx:id="col_fotografia" prefWidth="181.0" text="Fotografía" />
                   <TableColumn fx:id="col_existencias" prefWidth="105.0" text="Existencias" />

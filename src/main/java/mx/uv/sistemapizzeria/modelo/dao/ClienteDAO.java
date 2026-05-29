@@ -6,6 +6,7 @@ import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +16,18 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
     // ── buscar(identificador: int): Cliente ────────────────────────────────
     // Carga el cliente y su primera dirección asociada vía cliente_direccion
     @Override
-    public ClienteDTO buscar(Integer noCliente) throws Exception {
+    public ClienteDTO buscar(Integer noCliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
             String sql = "SELECT c.no_cliente, c.nombre, c.paterno, c.materno, c.telefono, " +
-                         "c.email, c.estatus, " +
-                         "d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
-                         "FROM cliente c " +
-                         "LEFT JOIN cliente_direccion cd ON c.no_cliente = cd.id_cliente " +
-                         "LEFT JOIN direccion d ON cd.id_direccion = d.id_direccion " +
-                         "WHERE c.no_cliente = ? " +
-                         "LIMIT 1";
+                    "c.email, c.estatus, " +
+                    "d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
+                    "FROM cliente c " +
+                    "LEFT JOIN cliente_direccion cd ON c.no_cliente = cd.no_cliente " +
+                    "LEFT JOIN direccion d ON cd.id_direccion = d.id_direccion " +
+                    "WHERE c.no_cliente = ? " +
+                    "LIMIT 1";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, noCliente);
@@ -40,7 +41,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
 
     // ── editar(cliente: Cliente): boolean ──────────────────────────────────
     @Override
-    public boolean editar(ClienteDTO cliente) throws Exception {
+    public boolean editar(ClienteDTO cliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -49,7 +50,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                 // 1. Actualizar dirección (si existe)
                 if (cliente.getDireccion() != null && cliente.getDireccion().getIdDireccion() > 0) {
                     String sqlDir = "UPDATE direccion SET calle=?, numero=?, codigo_postal=?, ciudad=? " +
-                                    "WHERE id_direccion=?";
+                            "WHERE id_direccion=?";
                     try (PreparedStatement ps = conn.prepareStatement(sqlDir)) {
                         DireccionDTO d = cliente.getDireccion();
                         ps.setString(1, d.getCalle());
@@ -63,7 +64,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
 
                 // 2. Actualizar datos del cliente
                 String sql = "UPDATE cliente SET nombre=?, paterno=?, materno=?, " +
-                             "telefono=?, email=?, estatus=? WHERE no_cliente=?";
+                        "telefono=?, email=?, estatus=? WHERE no_cliente=?";
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
                     ps.setString(1, cliente.getNombre());
                     ps.setString(2, cliente.getPaterno());
@@ -85,7 +86,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
 
     // ── eliminar(identificador: int): boolean ──────────────────────────────
     @Override
-    public boolean eliminar(Integer noCliente) throws Exception {
+    public boolean eliminar(Integer noCliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -100,20 +101,24 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
     // ── mostrarTodos(): List<Cliente> ──────────────────────────────────────
     // Trae cada cliente con su primera dirección asociada
     @Override
-    public List<ClienteDTO> mostrarTodos() throws Exception {
+    public List<ClienteDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<ClienteDTO> clientes = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
             String sql = "SELECT c.no_cliente, c.nombre, c.paterno, c.materno, c.telefono, " +
-                         "c.email, c.estatus, " +
-                         "d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
-                         "FROM cliente c " +
-                         "LEFT JOIN cliente_direccion cd ON c.no_cliente = cd.id_cliente " +
-                         "LEFT JOIN direccion d ON cd.id_direccion = d.id_direccion " +
-                         "GROUP BY c.no_cliente " +
-                         "ORDER BY c.paterno, c.nombre";
+                    "c.email, c.estatus, " +
+                    "d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
+                    "FROM cliente c " +
+                    "LEFT JOIN cliente_direccion cd ON c.no_cliente = cd.no_cliente " +
+                    "    AND cd.id_direccion = (" +
+                    "        SELECT MIN(cd2.id_direccion) " +
+                    "        FROM cliente_direccion cd2 " +
+                    "        WHERE cd2.no_cliente = c.no_cliente" +
+                    "    ) " +
+                    "LEFT JOIN direccion d ON cd.id_direccion = d.id_direccion " +
+                    "ORDER BY c.paterno, c.nombre";
 
             try (PreparedStatement ps = conn.prepareStatement(sql);
                  ResultSet rs = ps.executeQuery()) {
@@ -126,7 +131,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
     // ── registrar(cliente: Cliente): boolean ───────────────────────────────
     // Inserta dirección, luego cliente, luego vincula en cliente_direccion
     @Override
-    public boolean registrar(ClienteDTO cliente) throws Exception {
+    public boolean registrar(ClienteDTO cliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -135,7 +140,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                 // 1. Insertar cliente
                 int noCliente;
                 String sqlCliente = "INSERT INTO cliente (nombre, paterno, materno, telefono, email, estatus) " +
-                                    "VALUES (?, ?, ?, ?, ?, ?)";
+                        "VALUES (?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement ps = conn.prepareStatement(sqlCliente, Statement.RETURN_GENERATED_KEYS)) {
                     ps.setString(1, cliente.getNombre());
                     ps.setString(2, cliente.getPaterno());
@@ -170,7 +175,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                     }
 
                     // 3. Vincular cliente <-> dirección
-                    String sqlVinculo = "INSERT INTO cliente_direccion (id_cliente, id_direccion) VALUES (?, ?)";
+                    String sqlVinculo = "INSERT INTO cliente_direccion (no_cliente, id_direccion) VALUES (?, ?)";
                     try (PreparedStatement ps = conn.prepareStatement(sqlVinculo)) {
                         ps.setInt(1, noCliente);
                         ps.setInt(2, idDireccion);

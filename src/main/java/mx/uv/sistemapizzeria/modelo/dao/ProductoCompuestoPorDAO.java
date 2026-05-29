@@ -6,6 +6,7 @@ import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +22,13 @@ public class ProductoCompuestoPorDAO implements Operaciones<String, ProductoComp
     // ── buscar(codigoMenu): receta completa del producto ───────────────────
     // Devuelve el primer insumo que coincida; para la receta completa usa obtenerReceta()
     @Override
-    public ProductoCompuestoPorDTO buscar(String codigoMenu) throws Exception {
+    public ProductoCompuestoPorDTO buscar(String codigoMenu) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<ProductoCompuestoPorDTO> receta = obtenerReceta(codigoMenu);
         return receta.isEmpty() ? null : receta.get(0);
     }
 
     /** Obtiene todos los insumos que componen un producto del menú. */
-    public List<ProductoCompuestoPorDTO> obtenerReceta(String codigoMenu) throws Exception {
+    public List<ProductoCompuestoPorDTO> obtenerReceta(String codigoMenu) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<ProductoCompuestoPorDTO> receta = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -51,7 +52,7 @@ public class ProductoCompuestoPorDAO implements Operaciones<String, ProductoComp
 
     // ── editar(item): boolean ──────────────────────────────────────────────
     @Override
-    public boolean editar(ProductoCompuestoPorDTO item) throws Exception {
+    public boolean editar(ProductoCompuestoPorDTO item) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -68,7 +69,7 @@ public class ProductoCompuestoPorDAO implements Operaciones<String, ProductoComp
 
     // ── eliminar(codigoMenu): elimina toda la receta de ese producto ───────
     @Override
-    public boolean eliminar(String codigoMenu) throws Exception {
+    public boolean eliminar(String codigoMenu) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -82,7 +83,7 @@ public class ProductoCompuestoPorDAO implements Operaciones<String, ProductoComp
 
     // ── mostrarTodos(): todas las recetas del sistema ──────────────────────
     @Override
-    public List<ProductoCompuestoPorDTO> mostrarTodos() throws Exception {
+    public List<ProductoCompuestoPorDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<ProductoCompuestoPorDTO> lista = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -104,7 +105,7 @@ public class ProductoCompuestoPorDAO implements Operaciones<String, ProductoComp
 
     // ── registrar(item): boolean ───────────────────────────────────────────
     @Override
-    public boolean registrar(ProductoCompuestoPorDTO item) throws Exception {
+    public boolean registrar(ProductoCompuestoPorDTO item) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 

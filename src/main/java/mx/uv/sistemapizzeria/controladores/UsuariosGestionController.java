@@ -14,21 +14,17 @@ import javafx.fxml.Initializable;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
+import mx.uv.sistemapizzeria.modelo.dao.ClienteDAO;
+import mx.uv.sistemapizzeria.modelo.dao.EmpleadoDAO;
+import mx.uv.sistemapizzeria.modelo.dto.ClienteDTO;
+import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 /**
@@ -121,10 +117,42 @@ public class UsuariosGestionController implements Initializable {
     
     @FXML
     private void clicNuevoUsuario(ActionEvent event) {
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioTipo");
+            Parent vista = loader.load();
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("UsuarioTipo");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicEditar(ActionEvent event) {
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioTipo");
+            Parent vista = loader.load();
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("UsuarioTipo");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

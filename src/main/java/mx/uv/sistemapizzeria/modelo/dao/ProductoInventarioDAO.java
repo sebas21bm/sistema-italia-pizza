@@ -5,130 +5,140 @@ import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
+import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductoInventarioDAO implements Operaciones<String, ProductoInventarioDTO> {
-    // ── buscar(identificador: String): ProductoInsumo ──────────────────────
     @Override
-    public ProductoInventarioDTO buscarPorCodigo(String codigo) throws Exception {
+    public boolean registrar(ProductoInventarioDTO insumo) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            String sql = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto " +
-                         "FROM producto_inventario WHERE codigo = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, codigo);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) return mapearInsumo(rs);
-                }
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
+            String consulta = "INSERT INTO producto_inventario (codigo, nombre, estatus, existencias, fecha_caducidad, foto) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement sentencia = conn.prepareStatement(consulta);
+            sentencia.setString(1, insumo.getCodigo());
+            sentencia.setString(2, insumo.getNombre());
+            sentencia.setInt(3, insumo.getEstatus());
+            sentencia.setInt(4, insumo.getExistencias());
+            sentencia.setDate(5, insumo.getFechaCaducidad() != null
+                    ? Date.valueOf(insumo.getFechaCaducidad()) : null);
+            sentencia.setString(6, insumo.getFoto());
+            return (sentencia.executeUpdate() != 0);
         }
-        return null;
     }
 
-    public ProductoInventarioDTO buscarPorNombre(String nombre) throws Exception {
-        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            String sql = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto " +
-                    "FROM producto_inventario WHERE codigo = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, codigo);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) return mapearInsumo(rs);
-                }
-            }
-        }
-        return null;
-    }
-
-
-    // ── editar(insumo: ProductoInsumo): boolean ────────────────────────────
     @Override
-    public boolean editar(ProductoInventarioDTO insumo) throws Exception {
+    public boolean editar(ProductoInventarioDTO insumo) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            String sql = "UPDATE producto_inventario SET nombre=?, existencias=?, fecha_caducidad=?, foto=? " +
-                         "WHERE codigo=?";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, insumo.getNombre());
-                ps.setInt(2, insumo.getExistencias());
-                ps.setDate(3, insumo.getFechaCaducidad() != null
-                        ? Date.valueOf(insumo.getFechaCaducidad()) : null);
-                ps.setString(4, insumo.getFoto());
-                ps.setString(5, insumo.getCodigo());
-                return ps.executeUpdate() > 0;
+            if (conn == null){
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
+            String consulta = "UPDATE producto_inventario SET nombre=?, existencias=?, fecha_caducidad=?, foto=? " +
+                    "WHERE codigo=?";
+            PreparedStatement sentencia = conn.prepareStatement(consulta);
+            sentencia.setString(1, insumo.getNombre());
+            sentencia.setInt(2, insumo.getExistencias());
+            LocalDate fecha = insumo.getFechaCaducidad();
+            sentencia.setDate(3, Date.valueOf(fecha));
+            sentencia.setString(4, insumo.getFoto());
+            sentencia.setString(5, insumo.getCodigo());
+            return (sentencia.executeUpdate() != 0);
         }
     }
 
-    // ── eliminar(identificador: String): boolean ───────────────────────────
     @Override
-    public boolean eliminar(String codigo) throws Exception {
+    public boolean eliminar(String codigo) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            String sql = "UPDATE producto_inventario SET estatus = 0 WHERE codigo = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, codigo);
-                return ps.executeUpdate() > 0;
+            if (conn == null){
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
+            String consulta = "UPDATE estatus = 0 "
+                    + "FROM producto_inventario WHERE codigo = ?";
+            PreparedStatement sentencia = conn.prepareStatement(consulta);
+            sentencia.setString(1, codigo);
+            return (sentencia.executeUpdate() != 0);
         }
     }
 
-    // ── mostrarTodos(): List<ProductoInsumo> ───────────────────────────────
     @Override
-    public List<ProductoInventarioDTO> mostrarTodos() throws Exception {
-        List<ProductoInventarioDTO> insumos = new ArrayList<>();
-
-        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            String sql = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto " +
-                         "FROM producto_inventario WHERE estatus = 1 ORDER BY nombre";
-
-            try (PreparedStatement ps = conn.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) insumos.add(mapearInsumo(rs));
+    public List<ProductoInventarioDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+        List<ProductoInventarioDTO> lista = new ArrayList<>();
+        try(Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())){
+            if (conn == null){
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION + "MOSTRAR");
             }
+            String consulta = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto FROM producto_inventario";
+            PreparedStatement sentencia = conn.prepareStatement(consulta);
+            ResultSet resultado = sentencia.executeQuery();
+            while (resultado.next()) {
+                ProductoInventarioDTO productoInventario = new ProductoInventarioDTO();
+                productoInventario.setCodigo(resultado.getString("codigo"));
+                productoInventario.setNombre(resultado.getString("nombre"));
+                productoInventario.setEstatus(resultado.getInt("estatus"));
+                productoInventario.setExistencias(resultado.getInt("existencias"));
+                Date fecha = resultado.getDate("fecha_caducidad");
+                productoInventario.setFechaCaducidad(fecha.toLocalDate());
+                productoInventario.setFoto(resultado.getString("foto"));
+                lista.add(productoInventario);
+            }
+            return lista;
         }
-        return insumos;
     }
 
-    // ── registrar(insumo: ProductoInsumo): boolean ─────────────────────────
     @Override
-    public boolean registrar(ProductoInventarioDTO insumo) throws Exception {
+    public ProductoInventarioDTO buscar(String codigo) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+        ProductoInventarioDTO productoInventario = new ProductoInventarioDTO();
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            String sql = "INSERT INTO producto_inventario (codigo, nombre, estatus, existencias, fecha_caducidad, foto) " +
-                         "VALUES (?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, insumo.getCodigo());
-                ps.setString(2, insumo.getNombre());
-                ps.setInt(3, insumo.getEstatus());
-                ps.setInt(4, insumo.getExistencias());
-                ps.setDate(5, insumo.getFechaCaducidad() != null
-                        ? Date.valueOf(insumo.getFechaCaducidad()) : null);
-                ps.setString(6, insumo.getFoto());
-                return ps.executeUpdate() > 0;
+            if (conn == null){
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
+            String consulta = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto "
+                    + "FROM producto_inventario WHERE codigo = ?";
+            PreparedStatement sentencia = conn.prepareStatement(consulta);
+            sentencia.setString(1, codigo);
+            ResultSet resultado = sentencia.executeQuery();
+            if (resultado.next()) {
+                productoInventario.setCodigo(resultado.getString("codigo"));
+                productoInventario.setNombre(resultado.getString("nombre"));
+                productoInventario.setEstatus(resultado.getInt("estatus"));
+                productoInventario.setExistencias(resultado.getInt("existencias"));
+                Date fecha = resultado.getDate("fecha_caducidad");
+                productoInventario.setFechaCaducidad(fecha.toLocalDate());
+                productoInventario.setFoto(resultado.getString("foto"));
+            }
+            return productoInventario;
         }
     }
 
-    // ── Helper ─────────────────────────────────────────────────────────────
-    private ProductoInventarioDTO mapearInsumo(ResultSet rs) throws SQLException {
-        ProductoInventarioDTO i = new ProductoInventarioDTO();
-        i.setCodigo(rs.getString("codigo"));
-        i.setNombre(rs.getString("nombre"));
-        i.setEstatus(rs.getInt("estatus"));
-        i.setExistencias(rs.getInt("existencias"));
-        Date fecha = rs.getDate("fecha_caducidad");
-        if (fecha != null) i.setFechaCaducidad(fecha.toLocalDate());
-        i.setFoto(rs.getString("foto"));
-        return i;
+
+    public List<ProductoInventarioDTO> buscarPorNombre(String nombre) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+        List<ProductoInventarioDTO> lista = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null){
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
+            String consulta = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto "
+                        + "FROM producto_inventario WHERE nombre LIKE ?";
+            PreparedStatement sentencia = conn.prepareStatement(consulta);
+            sentencia.setString(1, "%" + nombre + "%");
+            ResultSet resultado = sentencia.executeQuery();
+            while (resultado.next()) {
+                ProductoInventarioDTO productoInventario = new ProductoInventarioDTO();
+                productoInventario.setCodigo(resultado.getString("codigo"));
+                productoInventario.setNombre(resultado.getString("nombre"));
+                productoInventario.setEstatus(resultado.getInt("estatus"));
+                productoInventario.setExistencias(resultado.getInt("existencias"));
+                Date fecha = resultado.getDate("fecha_caducidad");
+                productoInventario.setFechaCaducidad(fecha.toLocalDate());
+                productoInventario.setFoto(resultado.getString("foto"));
+                lista.add(productoInventario);
+            }
+            return lista;
+        }
     }
 }
