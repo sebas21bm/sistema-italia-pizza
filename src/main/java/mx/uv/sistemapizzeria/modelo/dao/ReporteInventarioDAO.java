@@ -11,184 +11,63 @@ import java.util.List;
 
 public class ReporteInventarioDAO {
 
+    public List<DetalleReporteDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+        List<DetalleReporteDTO> lista = new ArrayList<>();
 
-    /*
-    CALL registrar_detalle_reporte(
-    'I0000', (codigo)
-    5, (diferencia)
-    'Se encontraron 5 unidades adicionales');  (justificacion)
-     */
+        try(Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())){
+            if (conn == null){
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
+            String consulta = "SELECT codigo, nombre, existencias FROM producto_inventario WHERE estatus = 1";
+            PreparedStatement sentencia = conn.prepareStatement(consulta);
+            ResultSet resultado = sentencia.executeQuery();
+            while (resultado.next()) {
+                DetalleReporteDTO productoInventario = new DetalleReporteDTO();
+                productoInventario.setCodigo(resultado.getString("codigo"));
+                productoInventario.setDescripcionProductoInventario(resultado.getString("nombre"));
+                productoInventario.setExistencias(resultado.getDouble("existencias"));
+                lista.add(productoInventario);
+            }
+            return lista;
+        }
+    }
 
-    /*
-    CALL registrar_reporte();
-     */
 
-    public ReporteInventarioDTO buscar(Integer idInventario) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
-        ReporteInventarioDTO reporte = null;
-
+    public boolean registrarDetalle(List<DetalleReporteDTO> detallesReporte) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
 
-            // Cabecera
-            String sqlCab = "SELECT id_inventario, fecha FROM reporte_inventario WHERE id_inventario = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sqlCab)) {
-                ps.setInt(1, idInventario);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        reporte = new ReporteInventarioDTO();
-                        reporte.setIdInventario(rs.getInt("id_inventario"));
-                        Timestamp ts = rs.getTimestamp("fecha");
-                        if (ts != null) reporte.setFecha(ts.toLocalDateTime());
+            String consulta = "CREATE TEMPORARY TABLE temp_detalles_reporte( " +
+                    "codigo VARCHAR(5) NOT NULL, " +
+                    "diferencia DOUBLE NOT NULL, " +
+                    "justificacion VARCHAR(255) NOT NULL" +
+                    ");";
+            PreparedStatement sentenciaTabla = conn.prepareStatement(consulta);
+            sentenciaTabla.executeUpdate();
+
+
+            PreparedStatement sentenciaLimpiarTabla = conn.prepareStatement("TRUNCATE temp_detalles_reporte;");
+            sentenciaLimpiarTabla.executeUpdate();
+
+            for(DetalleReporteDTO detalle : detallesReporte){
+                if(detalle.getDiferencia() != 0) {
+                    String consultaDetalle = "CALL registrar_detalle_reporte( ?, ?, ?);";
+                    PreparedStatement sentencia = conn.prepareStatement(consultaDetalle);
+                    sentencia.setString(1, detalle.getCodigo());
+                    sentencia.setDouble(2, detalle.getDiferencia());
+                    sentencia.setString(3, detalle.getJustificacion());
+                    if (sentencia.executeUpdate() == 0) {
+                        return false;
                     }
                 }
             }
+            PreparedStatement sentenciaReporte = conn.prepareStatement("CALL registrar_reporte();");
+            sentenciaReporte.executeUpdate();
 
-            if (reporte == null) return null;
-
-            // Detalles
-            String sqlDet = "SELECT dr.id_inventario, dr.codigo, dr.diferencia, dr.justificacion, " +
-                            "pi.nombre, pi.existencias, pi.estatus " +
-                            "FROM detalle_reporte dr " +
-                            "JOIN producto_inventario pi ON dr.codigo = pi.codigo " +
-                            "WHERE dr.id_inventario = ?";
-
-            try (PreparedStatement ps = conn.prepareStatement(sqlDet)) {
-                ps.setInt(1, idInventario);
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) reporte.agregarDetalle(mapearDetalle(rs));
-                }
-            }
-        }
-        return reporte;
-    }
-
-    // ── editar(reporte): no aplica — los reportes son inmutables ──────────
-    @Override
-    public boolean editar(ReporteInventarioDTO reporte) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
-        throw new UnsupportedOperationException("Los reportes de inventario no son editables.");
-    }
-
-    // ── eliminar(idInventario): boolean ───────────────────────────────────
-    @Override
-    public boolean eliminar(Integer idInventario) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
-        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            conn.setAutoCommit(false);
-            try {
-                // Eliminar detalles primero (integridad referencial)
-                try (PreparedStatement ps = conn.prepareStatement(
-                        "DELETE FROM detalle_reporte WHERE id_inventario = ?")) {
-                    ps.setInt(1, idInventario);
-                    ps.executeUpdate();
-                }
-                try (PreparedStatement ps = conn.prepareStatement(
-                        "DELETE FROM reporte_inventario WHERE id_inventario = ?")) {
-                    ps.setInt(1, idInventario);
-                    int rows = ps.executeUpdate();
-                    conn.commit();
-                    return rows > 0;
-                }
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
-            }
+            return true;
         }
     }
 
-    // ── mostrarTodos(): List<ReporteInventario> (sin detalles) ─────────────
-    @Override
-    public List<ReporteInventarioDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
-        List<ReporteInventarioDTO> reportes = new ArrayList<>();
-
-        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            String sql = "SELECT id_inventario, fecha FROM reporte_inventario ORDER BY fecha DESC";
-            try (PreparedStatement ps = conn.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    ReporteInventarioDTO r = new ReporteInventarioDTO();
-                    r.setIdInventario(rs.getInt("id_inventario"));
-                    Timestamp ts = rs.getTimestamp("fecha");
-                    if (ts != null) r.setFecha(ts.toLocalDateTime());
-                    reportes.add(r);
-                }
-            }
-        }
-        return reportes;
-    }
-
-    // ── registrar(reporte): boolean — transacción completa ─────────────────
-    @Override
-    public boolean registrar(ReporteInventarioDTO reporte) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
-        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            conn.setAutoCommit(false);
-            try {
-                // 1. Insertar cabecera
-                int idGenerado;
-                try (PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO reporte_inventario (fecha) VALUES (NOW())",
-                        Statement.RETURN_GENERATED_KEYS)) {
-                    ps.executeUpdate();
-                    try (ResultSet keys = ps.getGeneratedKeys()) {
-                        if (!keys.next()) throw new SQLException("No se obtuvo ID del reporte.");
-                        idGenerado = keys.getInt(1);
-                        reporte.setIdInventario(idGenerado);
-                    }
-                }
-
-                // 2. Insertar detalles y ajustar existencias en producto_inventario
-                String sqlDet = "INSERT INTO detalle_reporte (id_inventario, codigo, diferencia, justificacion) " +
-                                "VALUES (?, ?, ?, ?)";
-                String sqlAjuste = "UPDATE producto_inventario SET existencias = existencias + ? WHERE codigo = ?";
-
-                try (PreparedStatement psDet    = conn.prepareStatement(sqlDet);
-                     PreparedStatement psAjuste = conn.prepareStatement(sqlAjuste)) {
-
-                    for (DetalleReporteDTO det : reporte.getDetalles()) {
-                        psDet.setInt(1, idGenerado);
-                        psDet.setString(2, det.getCodigo());
-                        psDet.setDouble(3, det.getDiferencia());
-                        psDet.setString(4, det.getJustificacion());
-                        psDet.addBatch();
-
-                        if (det.hayDiferencia()) {
-                            psAjuste.setDouble(1, det.getDiferencia());
-                            psAjuste.setString(2, det.getCodigo());
-                            psAjuste.addBatch();
-                        }
-                    }
-                    psDet.executeBatch();
-                    psAjuste.executeBatch();
-                }
-
-                conn.commit();
-                return true;
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
-            }
-        }
-    }
-
-    // ── Helper ─────────────────────────────────────────────────────────────
-    private DetalleReporteDTO mapearDetalle(ResultSet rs) throws SQLException {
-        DetalleReporteDTO det = new DetalleReporteDTO();
-        det.setIdInventario(rs.getInt("id_inventario"));
-        det.setCodigo(rs.getString("codigo"));
-        det.setDiferencia(rs.getDouble("diferencia"));
-        det.setJustificacion(rs.getString("justificacion"));
-
-        ProductoInventarioDTO insumo = new ProductoInventarioDTO();
-        insumo.setCodigo(rs.getString("codigo"));
-        insumo.setNombre(rs.getString("nombre"));
-        insumo.setExistencias(rs.getInt("existencias"));
-        insumo.setEstatus(rs.getInt("estatus"));
-        det.setInsumo(insumo);
-
-        return det;
-    }
 }

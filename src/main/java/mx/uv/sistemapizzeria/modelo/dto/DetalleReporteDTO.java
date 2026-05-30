@@ -5,8 +5,9 @@ public class DetalleReporteDTO {
     private int idInventario;
     private String codigo;
     private String descripcionProductoInventario;
-    private Integer conteoFisico;
-    private double diferencia;
+    private Double existencias;
+    private Double conteoFisico;
+    private Double diferencia;
     private String justificacion;
 
     public DetalleReporteDTO() {
@@ -36,19 +37,19 @@ public class DetalleReporteDTO {
         this.descripcionProductoInventario = descripcionProductoInventario;
     }
 
-        public Integer getConteoFisico() {
+        public Double getConteoFisico() {
         return conteoFisico;
     }
 
-    public void setConteoFisico(Integer conteoFisico) {
+    public void setConteoFisico(Double conteoFisico) {
         this.conteoFisico = conteoFisico;
     }
     
-    public double getDiferencia() {
+    public Double getDiferencia() {
         return diferencia;
     }
 
-    public void setDiferencia(double diferencia) {
+    public void setDiferencia(Double diferencia) {
         this.diferencia = diferencia;
     }
 
@@ -60,6 +61,16 @@ public class DetalleReporteDTO {
         this.justificacion = justificacion;
     }
 
+    public Double getExistencias() {
+        return existencias;
+    }
+
+    public void setExistencias(Double existencias) {
+        this.existencias = existencias;
+    }
+
+    
+    
     public boolean hayDiferencia() {
         return diferencia != 0;
     }

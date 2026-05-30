@@ -69,7 +69,7 @@ public class ProductoInventarioDAO implements Operaciones<String, ProductoInvent
         List<ProductoInventarioDTO> lista = new ArrayList<>();
         try(Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())){
             if (conn == null){
-                throw new SQLException(Constantes.MSJ_SIN_CONEXION + "MOSTRAR");
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
             String consulta = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto FROM producto_inventario WHERE estatus = 1";
             PreparedStatement sentencia = conn.prepareStatement(consulta);
