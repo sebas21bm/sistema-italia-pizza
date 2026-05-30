@@ -46,17 +46,17 @@ public class ProductosInventarioValidacionController implements Initializable {
     @FXML
     private TableView<DetalleReporteDTO> tbl_validacionInsumos;
     @FXML
-    private TableColumn col_codigo;
+    private TableColumn<DetalleReporteDTO, String> col_codigo;
     @FXML
-    private TableColumn col_existencias;
+    private TableColumn<DetalleReporteDTO, Integer> col_existencias;
     @FXML
-    private TableColumn col_conteoFisicoReal;
+    private TableColumn<DetalleReporteDTO, Integer> col_conteoFisicoReal;
     @FXML
-    private TableColumn col_diferencia;
+    private TableColumn<DetalleReporteDTO, Double> col_diferencia;
     @FXML
-    private TableColumn col_productoInventario;
+    private TableColumn<DetalleReporteDTO, String> col_productoInventario;
     @FXML
-    private TableColumn col_justificacion;
+    private TableColumn<DetalleReporteDTO, String> col_justificacion;
 
     private ObservableList<DetalleReporteDTO> detallesReporte;
     private ReporteInventarioDAO reporteInventarioDAO = new ReporteInventarioDAO();
@@ -70,21 +70,31 @@ public class ProductosInventarioValidacionController implements Initializable {
     private void configurarTabla(){
         col_codigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
         col_productoInventario.setCellValueFactory(new PropertyValueFactory<>("descripcionProductoInventario"));
-        col_existencias.setCellValueFactory(new PropertyValueFactory<>("existencias"));
         col_conteoFisicoReal.setCellValueFactory(new PropertyValueFactory<>("conteoFisico"));
         col_diferencia.setCellValueFactory(new PropertyValueFactory<>("diferencia"));
         col_justificacion.setCellValueFactory(new PropertyValueFactory<>("justificacion"));
 
-        col_conteoFisicoReal;
+        // CORRECCIÓN: Extraemos de forma segura las existencias del insumo vinculado
+        col_existencias.setCellValueFactory(cellData -> {
+            DetalleReporteDTO fila = cellData.getValue();
+            if (fila != null && fila.getInsumo() != null) {
+                return new javafx.beans.property.SimpleIntegerProperty(fila.getInsumo().getExistencias()).asObject();
+            }
+            return new javafx.beans.property.SimpleObjectProperty<>(0);
+        });
 
-        col_justificacion.setCellFactory(col -> new TableCell<ReporteInventarioDTO, String>() {
-            private final TextArea txt_justificacion= new TextArea();
+        col_justificacion.setCellFactory(col -> new TableCell<DetalleReporteDTO, String>() {
+            private final TextArea txt_justificacion = new TextArea();
 
             @Override
             protected void updateItem(String justificacion, boolean empty){
                 super.updateItem(justificacion, empty);
-
-
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    txt_justificacion.setText(justificacion);
+                    setGraphic(txt_justificacion);
+                }
             }
         });
     }
@@ -92,14 +102,33 @@ public class ProductosInventarioValidacionController implements Initializable {
     private void cargarInformacionDetalleProductosInventario(){
         try {
             detallesReporte = FXCollections.observableArrayList();
-            List<DetalleReporteDTO> detallesReporteBD = reporteInventarioDAO.mostrarTodos();
-            detallesReporte.addAll(detallesReporteBD);
+
+            // 1. Instanciamos el DAO de inventario para obtener los insumos físicos actuales
+            mx.uv.sistemapizzeria.modelo.dao.ProductoInventarioDAO inventarioDAO = new mx.uv.sistemapizzeria.modelo.dao.ProductoInventarioDAO();
+            List<ProductoInventarioDTO> insumosBD = inventarioDAO.mostrarTodos();
+
+            // 2. Convertimos cada producto del inventario en un renglón para la hoja de validación
+            for (ProductoInventarioDTO insumo : insumosBD) {
+                DetalleReporteDTO detalleFila = new DetalleReporteDTO();
+                detalleFila.setCodigo(insumo.getCodigo());
+                detalleFila.setDescripcionProductoInventario(insumo.getNombre());
+                detalleFila.setInsumo(insumo); // Vinculamos el DTO de inventario que agregamos previamente
+
+                // Inicializamos los valores por defecto para que el usuario empiece a auditar
+                detalleFila.setConteoFisico(insumo.getExistencias()); // Sugerimos la misma cantidad inicial
+                detalleFila.setDiferencia(0.0);
+                detalleFila.setJustificacion("");
+
+                detallesReporte.add(detalleFila);
+            }
+
             tbl_validacionInsumos.setItems(detallesReporte);
-        }catch(SQLException e){
+
+        } catch(SQLException e) {
             UtilidadesFX.mostrarAlertaSimple("Error al consultar",
                     e.getMessage(),
                     Alert.AlertType.ERROR);
-        }catch(NullPointerException | ClassNotFoundException | IOException n){
+        } catch(NullPointerException | ClassNotFoundException | IOException n) {
             UtilidadesFX.mostrarAlertaSimple("Error al cargar productos al inventario",
                     MSJ_ERROR_CARGA_DATOS,
                     Alert.AlertType.ERROR);

@@ -9,6 +9,8 @@ public class DetalleReporteDTO {
     private double diferencia;
     private String justificacion;
 
+    private ProductoInventarioDTO insumo;
+
     public DetalleReporteDTO() {
     }
 
@@ -58,6 +60,14 @@ public class DetalleReporteDTO {
 
     public void setJustificacion(String justificacion) {
         this.justificacion = justificacion;
+    }
+
+    public ProductoInventarioDTO getInsumo() {
+        return insumo;
+    }
+
+    public void setInsumo(ProductoInventarioDTO insumo) {
+        this.insumo = insumo;
     }
 
     public boolean hayDiferencia() {

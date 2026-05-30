@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,6 +23,7 @@ import mx.uv.sistemapizzeria.SistemaPizzeria;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoInventarioDAO;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
+import mx.uv.sistemapizzeria.utilidades.Validador;
 
 import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 
@@ -62,7 +64,6 @@ public class ProductoInventarioOperacionesController implements Initializable {
         }else{
             txt_operaciones.setText("Editar Producto Inventario");
             txt_codigo.setDisable(true);
-            txt_nombre.setDisable(true);
         }
     }
 
@@ -100,20 +101,28 @@ public class ProductoInventarioOperacionesController implements Initializable {
 
     private ProductoInventarioDTO recuperarDatos(){
         ProductoInventarioDTO productoInventario = new ProductoInventarioDTO();
-        productoInventario.setCodigo(txt_codigo.getText());
-        productoInventario.setNombre(txt_nombre.getText());
-        productoInventario.setExistencias(Integer.parseInt(txt_existencias.getText()));
+        productoInventario.setCodigo(txt_codigo.getText().trim().toUpperCase());
+        productoInventario.setNombre(txt_nombre.getText().trim());
+        productoInventario.setExistencias(Integer.parseInt(txt_existencias.getText().trim()));
         productoInventario.setFechaCaducidad(dp_fechaCaducidad.getValue());
         productoInventario.setFoto(rutaFotoActual);
         return productoInventario;
     }
 
-    private void registrarProductoInventario(){
+    private boolean registrarProductoInventario(){
         try {
+            String codigoIngresado = txt_codigo.getText().trim().toUpperCase();
+            if (productoInventarioDAO.buscar(codigoIngresado) != null) {
+                UtilidadesFX.mostrarAlertaSimple("Código duplicado",
+                        "Ya existe un producto en el inventario registrado con el código " + codigoIngresado + ".",
+                        Alert.AlertType.WARNING);
+                return false;
+            }
             if (productoInventarioDAO.registrar(recuperarDatos())) {
                 UtilidadesFX.mostrarAlertaSimple("Registro exitoso",
                         "Se ha registrado el producto de inventario correctamente",
                         Alert.AlertType.INFORMATION);
+                return true;
             } else {
                 UtilidadesFX.mostrarAlertaSimple("Falló registro",
                         "El registro del producto de inventario no pudo realizarse," +
@@ -129,14 +138,16 @@ public class ProductoInventarioOperacionesController implements Initializable {
                 MSJ_ERROR_CARGA_DATOS,
                 Alert.AlertType.ERROR);
         }
+        return false;
     }
 
-    public void editarProductoInventario(){
+    public boolean editarProductoInventario(){
         try {
             if (productoInventarioDAO.editar(recuperarDatos())) {
                 UtilidadesFX.mostrarAlertaSimple("Edición exitosa",
                         "Se ha editado el producto de inventario correctamente",
                         Alert.AlertType.INFORMATION);
+                return true;
             } else {
                 UtilidadesFX.mostrarAlertaSimple("Falló la edición",
                         "La edición del producto de inventario no pudo realizarse," +
@@ -152,6 +163,49 @@ public class ProductoInventarioOperacionesController implements Initializable {
                     MSJ_ERROR_CARGA_DATOS,
                     Alert.AlertType.ERROR);
         }
+        return false;
+    }
+
+    private boolean datosSonValidos() {
+        String codigo = txt_codigo.getText().trim();
+        String nombre = txt_nombre.getText().trim();
+        String existenciasTxt = txt_existencias.getText().trim();
+
+        // Impedir guardar cuando los campos están vacios
+        if (codigo.isEmpty() || nombre.isEmpty() || existenciasTxt.isEmpty()) {
+            UtilidadesFX.mostrarAlertaSimple("Campos vacíos", "Por favor, complete todos los campos obligatorios.", Alert.AlertType.WARNING);
+            return false;
+        }
+
+        // Manejo de letras en el campo de existencias
+        int existencias;
+        try {
+            existencias = Integer.parseInt(existenciasTxt);
+        } catch (NumberFormatException e) {
+            UtilidadesFX.mostrarAlertaSimple("Formato incorrecto", "El campo de existencias debe contener un número entero válido.", Alert.AlertType.WARNING);
+            return false;
+        }
+
+        // En caso de que no se haya elegido una fecha mostrar advertencia
+        if (dp_fechaCaducidad.getValue() == null) {
+            UtilidadesFX.mostrarAlertaSimple("Dato requerido", "Por favor, seleccione la fecha de caducidad del producto.", Alert.AlertType.WARNING);
+            return false;
+        }
+
+        // Cumplimiento de las reglas de la base de datos (Ejemplo: Código = I0000, existencias >= 0)
+        ProductoInventarioDTO tempInsumo = new ProductoInventarioDTO();
+        tempInsumo.setCodigo(codigo);
+        tempInsumo.setNombre(nombre);
+        tempInsumo.setExistencias(existencias);
+
+        List<String> errores = Validador.validarProductoInsumo(tempInsumo);
+
+        if (!errores.isEmpty()) {
+            UtilidadesFX.mostrarAlertaSimple("Datos inválidos", Validador.formatearErrores(errores), Alert.AlertType.WARNING);
+            return false; // Frena la ejecución
+        }
+
+        return true; // Todo salío bien
     }
 
     @FXML
@@ -177,6 +231,8 @@ public class ProductoInventarioOperacionesController implements Initializable {
 
     @FXML
     private void clicGuardar(ActionEvent event) {
+        if (!datosSonValidos()) return;
+
         if(registro){
             registrarProductoInventario();
             ((Stage)txt_existencias.getScene().getWindow()).close();
