@@ -203,4 +203,18 @@ public class ProductoDAO implements Operaciones<String, ProductoVentaDTO> {
             System.out.printf(msjErrorCargaDatos);
         }
     }
+
+    public void eliminarProductoVenta(String codigoMenu) throws SQLException {
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+
+            String sql = "{CALL eliminar_producto_venta(?)}";
+            try (PreparedStatement ps = conn.prepareCall(sql)) {
+                ps.setString(1, codigoMenu);
+                ps.executeUpdate();
+            }
+        } catch (IOException | ClassNotFoundException ex) {
+            throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+        }
+    }
 }
