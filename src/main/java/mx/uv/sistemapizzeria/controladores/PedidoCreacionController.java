@@ -79,34 +79,51 @@ public class PedidoCreacionController implements Initializable {
     private final ClienteDAO clienteDAO = new ClienteDAO();
     private final ProductoDAO productoDAO = new ProductoDAO();
 
-    private final List<ClienteDTO> todosLosClientes = new ArrayList<>();
-    private final ObservableList<ClienteDTO> listaTabla = FXCollections.observableArrayList();
+    private final List<ClienteDTO>             todosLosClientes = new ArrayList<>();
+    private final ObservableList<ClienteDTO>   listaTabla       = FXCollections.observableArrayList();
 
-    private final ProductoVentaDTO[] productos = new ProductoVentaDTO[3];
-    private final int[] cantidades = {0, 0, 0};
-    private Label[] lblCantidades;
+    // Lista dinámica: ya no es fija de tamaño 3
+    private List<ProductoVentaDTO> productos  = new ArrayList<>();
+    private int[]                  cantidades = new int[0];
+    private Label[]                lblCantidades;
+
     private ClienteDTO clienteSeleccionado;
+
+    // Arrays de los controles de las tarjetas (en orden 0-1-2)
+    // Si el día de mañana se agrega una tarjeta 4 en el FXML, solo se añade aquí.
+    private final ImageView[]                                imgs       = new ImageView[3];
+    private final Label[]                                    lblNombres = new Label[3];
+    private final Label[]                                    lblPrecios = new Label[3];
+    private final Label[]                                    lblLimites = new Label[3];
+    private final javafx.scene.control.Button[]              btnDismin  = new javafx.scene.control.Button[3];
+    private final javafx.scene.control.Button[]              btnAgreg   = new javafx.scene.control.Button[3];
 
     // ── Inicialización ────────────────────────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        lblCantidades = new Label[]{ lbl_cantUno, lbl_cantDos, lbl_cantTres };
+        // Poblar arrays de controles desde los campos @FXML
+        imgs[0] = img_uno;   imgs[1] = img_dos;   imgs[2] = img_tres;
+        lblNombres[0] = lbl_nombreUno; lblNombres[1] = lbl_nombreDos; lblNombres[2] = lbl_nombreTres;
+        lblPrecios[0] = lbl_precioUno; lblPrecios[1] = lbl_precioDos; lblPrecios[2] = lbl_precioTres;
+        lblLimites[0] = lbl_limiteUno; lblLimites[1] = lbl_limiteDos; lblLimites[2] = lbl_limiteTres;
+        lblCantidades  = new Label[]{ lbl_cantUno, lbl_cantDos, lbl_cantTres };
+        btnDismin[0]   = btn_disminuirUno; btnDismin[1] = btn_disminuirDos; btnDismin[2] = btn_disminuirTres;
+        btnAgreg[0]    = btn_agregarUno;   btnAgreg[1]  = btn_agregarDos;   btnAgreg[2]  = btn_agregarTres;
 
         configurarColumnas();
         tbl_clientes.setItems(listaTabla);
 
+        // Al seleccionar un cliente, llenar el ComboBox con TODAS sus direcciones
         tbl_clientes.getSelectionModel().selectedItemProperty()
                 .addListener((obs, old, nuevo) -> {
                     clienteSeleccionado = nuevo;
                     cmb_cliente.getItems().clear();
-                    /*
-                    TODO se va a cambiar a que muestre toda la List<DireccionesDTO> del cliente seleccionado, no es solo uno
-                    if (nuevo != null && nuevo.getDireccion() != null) {
-                        cmb_cliente.getItems().add(nuevo.getDireccion());
+                    if (nuevo != null
+                            && nuevo.getDirecciones() != null
+                            && !nuevo.getDirecciones().isEmpty()) {
+                        cmb_cliente.getItems().addAll(nuevo.getDirecciones());
                         cmb_cliente.getSelectionModel().selectFirst();
                     }
-
-                     */
                 });
 
         cargarClientes();
@@ -139,35 +156,35 @@ public class PedidoCreacionController implements Initializable {
         }
     }
 
-    // ── Carga los primeros 3 productos activos desde BD y rellena tarjetas ───
+    // ── Carga productos desde BD de forma dinámica ────────────────────────────
+    // Rellena solo las tarjetas que existan en el FXML (máx 3 por ahora).
+    // Si hay menos productos que tarjetas, las sobrantes se deshabilitan.
     private void cargarProductos() {
         try {
             List<ProductoVentaDTO> lista = productoDAO.mostrarTodos();
-            ImageView[] imgs = { img_uno, img_dos, img_tres };
-            Label[]  nombres  = { lbl_nombreUno,  lbl_nombreDos,  lbl_nombreTres  };
-            Label[]  precios  = { lbl_precioUno,  lbl_precioDos,  lbl_precioTres  };
-            Label[]  limites  = { lbl_limiteUno,  lbl_limiteDos,  lbl_limiteTres  };
+            productos  = lista != null ? lista : new ArrayList<>();
+            cantidades = new int[productos.size()];  // todo en 0
 
-            for (int i = 0; i < 3; i++) {
-                if (lista != null && i < lista.size()) {
-                    ProductoVentaDTO p = lista.get(i);
-                    productos[i] = p;
-
-                    nombres[i].setText(p.getNombre() != null ? p.getNombre() : "—");
-                    precios[i].setText("Precio: $" + String.format("%.2f", p.getPrecio()));
-                    limites[i].setText("Límite por cliente: " + p.getLimite());
+            int tarjetas = imgs.length; // 3 tarjetas en el FXML actual
+            for (int i = 0; i < tarjetas; i++) {
+                if (i < productos.size()) {
+                    ProductoVentaDTO p = productos.get(i);
+                    lblNombres[i].setText(p.getNombre() != null ? p.getNombre() : "—");
+                    lblPrecios[i].setText("Precio: $" + String.format("%.2f", p.getPrecio()));
+                    lblLimites[i].setText("Límite por cliente: " + p.getLimite());
                     lblCantidades[i].setText("Agregados al pedido: 0");
-
                     if (p.getFoto() != null && !p.getFoto().isEmpty()) {
                         try {
                             imgs[i].setImage(new Image("file:" + p.getFoto(), true));
                         } catch (Exception ignored) { }
                     }
                 } else {
-                    nombres[i].setText("Sin producto");
-                    precios[i].setText("—");
-                    limites[i].setText("—");
-                    deshabilitarTarjeta(i);
+                    // No hay producto para esta tarjeta: deshabilitar
+                    lblNombres[i].setText("Sin producto");
+                    lblPrecios[i].setText("—");
+                    lblLimites[i].setText("—");
+                    btnDismin[i].setDisable(true);
+                    btnAgreg[i].setDisable(true);
                 }
             }
         } catch (Exception e) {
@@ -177,23 +194,16 @@ public class PedidoCreacionController implements Initializable {
         }
     }
 
-    private void deshabilitarTarjeta(int i) {
-        javafx.scene.control.Button[] disminuir = { btn_disminuirUno, btn_disminuirDos, btn_disminuirTres };
-        javafx.scene.control.Button[] agregar   = { btn_agregarUno,   btn_agregarDos,   btn_agregarTres   };
-        disminuir[i].setDisable(true);
-        agregar[i].setDisable(true);
-    }
-
     // ── Modificar cantidad en una tarjeta ────────────────────────────────────
     private void modificarCantidad(int idx, int delta) {
-        if (productos[idx] == null) return;
-        int nueva = cantidades[idx] + delta;
+        if (idx >= productos.size()) return;
+        int nueva  = cantidades[idx] + delta;
         if (nueva < 0) nueva = 0;
-        int limite = productos[idx].getLimite();
+        int limite = productos.get(idx).getLimite();
         if (limite > 0 && nueva > limite) {
             UtilidadesFX.mostrarAlertaSimple("Límite alcanzado",
                     "No puedes agregar más de " + limite
-                            + " unidades de " + productos[idx].getNombre() + ".",
+                            + " unidades de " + productos.get(idx).getNombre() + ".",
                     Alert.AlertType.WARNING);
             return;
         }
@@ -214,7 +224,6 @@ public class PedidoCreacionController implements Initializable {
     private void clicBuscar(ActionEvent event) {
         String termino = txt_busqueda.getText() == null
                 ? "" : txt_busqueda.getText().trim().toLowerCase();
-
         if (termino.isEmpty()) {
             listaTabla.setAll(todosLosClientes);
             return;
@@ -223,7 +232,7 @@ public class PedidoCreacionController implements Initializable {
         for (ClienteDTO c : todosLosClientes) {
             if (c.getNombreCompleto().toLowerCase().contains(termino)
                     || (c.getTelefono() != null && c.getTelefono().contains(termino))
-                    || (c.getEmail() != null && c.getEmail().toLowerCase().contains(termino))) {
+                    || (c.getEmail()    != null && c.getEmail().toLowerCase().contains(termino))) {
                 filtrados.add(c);
             }
         }
@@ -248,6 +257,7 @@ public class PedidoCreacionController implements Initializable {
     @FXML
     private void clicGuardar(ActionEvent event) {
 
+        // 1. Validar cliente seleccionado
         if (clienteSeleccionado == null) {
             UtilidadesFX.mostrarAlertaSimple("Cliente requerido",
                     "Selecciona un cliente de la tabla antes de continuar.",
@@ -255,6 +265,17 @@ public class PedidoCreacionController implements Initializable {
             return;
         }
 
+        // 2. Validar dirección seleccionada
+        DireccionDTO dirSeleccionada = cmb_cliente.getValue();
+        if (dirSeleccionada == null) {
+            UtilidadesFX.mostrarAlertaSimple("Dirección requerida",
+                    "El cliente no tiene dirección registrada o no seleccionaste ninguna.\n"
+                            + "Registra una dirección antes de continuar.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
+        // 3. Validar que haya al menos un producto
         boolean hayProductos = false;
         for (int c : cantidades) if (c > 0) { hayProductos = true; break; }
         if (!hayProductos) {
@@ -264,40 +285,26 @@ public class PedidoCreacionController implements Initializable {
             return;
         }
 
+        // 4. Construir el pedido
         PedidoDTO pedido = new PedidoDTO();
         pedido.setFecha(LocalDateTime.now());
         pedido.setEstatus("En proceso");
         pedido.setCliente(clienteSeleccionado);
         pedido.setNoCliente(clienteSeleccionado.getNoCliente());
+        pedido.setDireccion(dirSeleccionada);   // dirección viaja en el pedido
 
-        /*
-        DireccionDTO dirSeleccionada = cmb_cliente.getValue();
-        if (dirSeleccionada == null && clienteSeleccionado.getDireccion() != null) {
-            dirSeleccionada = clienteSeleccionado.getDireccion();
-        }
-        if (dirSeleccionada != null) {
-            pedido.setDireccion(dirSeleccionada.getIdDireccion());
-            clienteSeleccionado.setDireccion(dirSeleccionada);
-        } else {
-            UtilidadesFX.mostrarAlertaSimple("Dirección requerida",
-                    "El cliente no tiene dirección registrada. " +
-                            "Registra una dirección antes de continuar.",
-                    javafx.scene.control.Alert.AlertType.WARNING);
-            return;
-        }
-        
-         */
-
+        // 5. Agregar detalles de forma dinámica (no limitado a 3)
         double total = 0;
-        for (int i = 0; i < 3; i++) {
-            if (cantidades[i] > 0 && productos[i] != null) {
+        for (int i = 0; i < productos.size(); i++) {
+            if (cantidades[i] > 0) {
+                ProductoVentaDTO p = productos.get(i);
                 DetallePedidoDTO det = new DetallePedidoDTO();
-                det.setCodigoMenu(productos[i].getCodigoMenu());
+                det.setCodigoMenu(p.getCodigoMenu());
                 det.setCantidad(cantidades[i]);
-                det.setCosto(productos[i].getPrecio());
-                det.setProductoVenta(productos[i]);
+                det.setCosto(p.getPrecio());
+                det.setProductoVenta(p);
                 pedido.agregarDetalle(det);
-                total += productos[i].getPrecio() * cantidades[i];
+                total += p.getPrecio() * cantidades[i];
             }
         }
         pedido.setTotalPagar(total);
@@ -317,7 +324,6 @@ public class PedidoCreacionController implements Initializable {
             ctrl.setPedido(pedido, stageCreacion);
 
             Stage stageConf = new Stage();
-            // CORRECCIÓN: initOwner e initModality ANTES de setScene
             stageConf.initOwner(stageCreacion);
             stageConf.initModality(Modality.WINDOW_MODAL);
             stageConf.setTitle("Confirmar pedido");

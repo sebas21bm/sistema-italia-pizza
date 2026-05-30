@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -7,7 +8,7 @@
 <?import javafx.scene.text.*?>
 <?import org.kordamp.ikonli.javafx.*?>
 
-<AnchorPane prefHeight="570.0" prefWidth="610.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoCreacionController">
+<AnchorPane prefHeight="570.0" prefWidth="610.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoCreacionController">
    <children>
 
       <Label layoutX="17.0" layoutY="14.0" text="Formulario" textFill="#6f7882">
@@ -22,22 +23,19 @@
          <font><Font size="11.0" /></font>
       </Label>
 
-      <TextField fx:id="txt_busqueda" layoutX="94.0" layoutY="72.0" prefHeight="29.0" prefWidth="282.0"
-                 style="-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #202932; -fx-border-radius: 18; -fx-border-width: 1.5; -fx-font-size: 12px;" />
+      <TextField fx:id="txt_busqueda" layoutX="94.0" layoutY="72.0" prefHeight="29.0" prefWidth="282.0" style="-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #202932; -fx-border-radius: 18; -fx-border-width: 1.5; -fx-font-size: 12px;" />
 
       <VBox layoutX="31.0" layoutY="110.0" prefHeight="125.0" prefWidth="542.0" spacing="15.0">
          <children>
-            <TableView fx:id="tbl_clientes" prefHeight="94.0" prefWidth="542.0"
-                       style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
+            <TableView fx:id="tbl_clientes" prefHeight="94.0" prefWidth="542.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
                <columns>
-                  <TableColumn fx:id="col_nombre"   prefWidth="270.0" text="Nombre" />
+                  <TableColumn fx:id="col_nombre" prefWidth="270.0" text="Nombre" />
                   <TableColumn fx:id="col_telefono" prefWidth="100.0" text="Teléfono" />
-                  <TableColumn fx:id="col_email"    prefWidth="170.0" text="Email" />
+                  <TableColumn fx:id="col_email" prefWidth="170.0" text="Email" />
                </columns>
             </TableView>
 
-            <ComboBox fx:id="cmb_cliente" prefHeight="36.0" prefWidth="542.0" promptText="Direcciones"
-                      style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #d9dde5; -fx-border-width: 1; -fx-font-size: 11px;" />
+            <ComboBox fx:id="cmb_cliente" prefHeight="36.0" prefWidth="542.0" promptText="Direcciones" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #d9dde5; -fx-border-width: 1; -fx-font-size: 11px;" />
          </children>
       </VBox>
 
@@ -46,69 +44,54 @@
          <children>
 
             <!-- TARJETA 1 -->
-            <VBox prefHeight="250.0" prefWidth="181.0" spacing="7.0"
-                  style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
+            <VBox prefHeight="250.0" prefWidth="181.0" spacing="7.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
                <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
                <children>
                   <ImageView fx:id="img_uno" fitHeight="75.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label fx:id="lbl_cantUno"    text="Agregados al pedido: 0" textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_nombreUno"  text="—"                      textFill="#202932"><font><Font name="System Bold" size="18.0" /></font></Label>
-                  <Label fx:id="lbl_precioUno"  text="Precio: —"              textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_limiteUno"  text="Límite por cliente: —"  textFill="#202932"><font><Font size="11.0" /></font></Label>
+                  <Label fx:id="lbl_cantUno" text="Agregados al pedido: 0" textFill="#202932"><font><Font size="11.0" /></font></Label>
+                  <Label fx:id="lbl_nombreUno" text="—" textFill="#202932"><font><Font name="System Bold" size="18.0" /></font></Label>
+                  <Label fx:id="lbl_precioUno" text="Precio: —" textFill="#202932"><font><Font size="11.0" /></font></Label>
+                  <Label fx:id="lbl_limiteUno" text="Límite por cliente: —" textFill="#202932"><font><Font size="11.0" /></font></Label>
                   <HBox spacing="10.0">
                      <children>
-                        <Button fx:id="btn_disminuirUno" mnemonicParsing="false" onAction="#clicDisminuirUno"
-                                prefHeight="20.0" prefWidth="68.0" text="Disminuir"
-                                style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" />
-                        <Button fx:id="btn_agregarUno"   mnemonicParsing="false" onAction="#clicAgregarUno"
-                                prefHeight="20.0" prefWidth="67.0" text="Agregar"
-                                style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                        <Button fx:id="btn_disminuirUno" mnemonicParsing="false" onAction="#clicDisminuirUno" prefHeight="20.0" prefWidth="68.0" style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" text="Disminuir" />
+                        <Button fx:id="btn_agregarUno" mnemonicParsing="false" onAction="#clicAgregarUno" prefHeight="20.0" prefWidth="67.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" text="Agregar" />
                      </children>
                   </HBox>
                </children>
             </VBox>
 
             <!-- TARJETA 2 -->
-            <VBox prefHeight="250.0" prefWidth="181.0" spacing="7.0"
-                  style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
+            <VBox prefHeight="250.0" prefWidth="181.0" spacing="7.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
                <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
                <children>
                   <ImageView fx:id="img_dos" fitHeight="75.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label fx:id="lbl_cantDos"    text="Agregados al pedido: 0" textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_nombreDos"  text="—"                      textFill="#202932"><font><Font name="System Bold" size="18.0" /></font></Label>
-                  <Label fx:id="lbl_precioDos"  text="Precio: —"              textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_limiteDos"  text="Límite por cliente: —"  textFill="#202932"><font><Font size="11.0" /></font></Label>
+                  <Label fx:id="lbl_cantDos" text="Agregados al pedido: 0" textFill="#202932"><font><Font size="11.0" /></font></Label>
+                  <Label fx:id="lbl_nombreDos" text="—" textFill="#202932"><font><Font name="System Bold" size="18.0" /></font></Label>
+                  <Label fx:id="lbl_precioDos" text="Precio: —" textFill="#202932"><font><Font size="11.0" /></font></Label>
+                  <Label fx:id="lbl_limiteDos" text="Límite por cliente: —" textFill="#202932"><font><Font size="11.0" /></font></Label>
                   <HBox spacing="10.0">
                      <children>
-                        <Button fx:id="btn_disminuirDos" mnemonicParsing="false" onAction="#clicDisminuirDos"
-                                prefHeight="20.0" prefWidth="68.0" text="Disminuir"
-                                style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" />
-                        <Button fx:id="btn_agregarDos"   mnemonicParsing="false" onAction="#clicAgregarDos"
-                                prefHeight="20.0" prefWidth="67.0" text="Agregar"
-                                style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                        <Button fx:id="btn_disminuirDos" mnemonicParsing="false" onAction="#clicDisminuirDos" prefHeight="20.0" prefWidth="68.0" style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" text="Disminuir" />
+                        <Button fx:id="btn_agregarDos" mnemonicParsing="false" onAction="#clicAgregarDos" prefHeight="20.0" prefWidth="67.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" text="Agregar" />
                      </children>
                   </HBox>
                </children>
             </VBox>
 
             <!-- TARJETA 3 -->
-            <VBox prefHeight="250.0" prefWidth="181.0" spacing="7.0"
-                  style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
+            <VBox prefHeight="250.0" prefWidth="181.0" spacing="7.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
                <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
                <children>
                   <ImageView fx:id="img_tres" fitHeight="75.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label fx:id="lbl_cantTres"    text="Agregados al pedido: 0" textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_nombreTres"  text="—"                      textFill="#202932"><font><Font name="System Bold" size="18.0" /></font></Label>
-                  <Label fx:id="lbl_precioTres"  text="Precio: —"              textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_limiteTres"  text="Límite por cliente: —"  textFill="#202932"><font><Font size="11.0" /></font></Label>
+                  <Label fx:id="lbl_cantTres" text="Agregados al pedido: 0" textFill="#202932"><font><Font size="11.0" /></font></Label>
+                  <Label fx:id="lbl_nombreTres" text="—" textFill="#202932"><font><Font name="System Bold" size="18.0" /></font></Label>
+                  <Label fx:id="lbl_precioTres" text="Precio: —" textFill="#202932"><font><Font size="11.0" /></font></Label>
+                  <Label fx:id="lbl_limiteTres" text="Límite por cliente: —" textFill="#202932"><font><Font size="11.0" /></font></Label>
                   <HBox spacing="10.0">
                      <children>
-                        <Button fx:id="btn_disminuirTres" mnemonicParsing="false" onAction="#clicDisminuirTres"
-                                prefHeight="20.0" prefWidth="68.0" text="Disminuir"
-                                style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" />
-                        <Button fx:id="btn_agregarTres"   mnemonicParsing="false" onAction="#clicAgregarTres"
-                                prefHeight="20.0" prefWidth="67.0" text="Agregar"
-                                style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                        <Button fx:id="btn_disminuirTres" mnemonicParsing="false" onAction="#clicDisminuirTres" prefHeight="20.0" prefWidth="68.0" style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" text="Disminuir" />
+                        <Button fx:id="btn_agregarTres" mnemonicParsing="false" onAction="#clicAgregarTres" prefHeight="20.0" prefWidth="67.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" text="Agregar" />
                      </children>
                   </HBox>
                </children>
@@ -117,22 +100,21 @@
          </children>
       </HBox>
 
-      <Button fx:id="btn_cancelar" layoutX="418.0" layoutY="529.0" mnemonicParsing="false" onAction="#clicCancelar"
-              prefHeight="32.0" prefWidth="79.0" text="Cancelar"
-              style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 12px; -fx-font-weight: bold;" />
+      <Button fx:id="btn_cancelar" layoutX="418.0" layoutY="529.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="32.0" prefWidth="79.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 12px; -fx-font-weight: bold;" text="Cancelar" />
 
-      <Button fx:id="btn_guardar" layoutX="507.0" layoutY="529.0" mnemonicParsing="false" onAction="#clicGuardar"
-              prefHeight="32.0" prefWidth="81.0" text="Guardar"
-              style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" />
+      <Button fx:id="btn_guardar" layoutX="507.0" layoutY="529.0" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="32.0" prefWidth="81.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" text="Guardar" />
 
       <HBox fx:id="AQUI" layoutX="392.0" layoutY="71.0" prefHeight="32.0" prefWidth="181.0" spacing="15.0">
          <children>
-            <Button fx:id="btn_buscar" mnemonicParsing="false" onAction="#clicBuscar"
-                    prefHeight="32.0" prefWidth="38.0"
-                    style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" />
-            <Button mnemonicParsing="false" onAction="#clicNuevoCliente"
-                    prefHeight="32.0" prefWidth="109.0" text="Nuevo Cliente"
-                    style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" />
+            <Button fx:id="btn_buscar" mnemonicParsing="false" onAction="#clicBuscar" prefHeight="32.0" prefWidth="38.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../imagenes/search%20icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button mnemonicParsing="false" onAction="#clicNuevoCliente" prefHeight="32.0" prefWidth="109.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" text="Nuevo Cliente" />
          </children>
       </HBox>
 

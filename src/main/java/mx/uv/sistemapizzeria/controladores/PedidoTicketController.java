@@ -14,6 +14,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.modelo.dto.DetallePedidoDTO;
+import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
 import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
@@ -76,37 +77,39 @@ public class PedidoTicketController implements Initializable {
     }
 
     private void poblarEncabezado(PedidoDTO pedido) {
-        /* TODO lo mismo que en todos los de direccion, se tiene que cambiar la implementacion
         if (lbl_fechaHora != null) {
             lbl_fechaHora.setText(pedido.getFecha() != null ? pedido.getFecha().format(FMT) : "-");
         }
+
         if (lbl_empleado != null) {
             EmpleadoDTO emp = Sesion.empleadoSesion;
             lbl_empleado.setText(emp != null ? emp.getNombreCompleto() : "-");
         }
+
         if (lbl_cliente != null) {
             lbl_cliente.setText(pedido.getCliente() != null
                     ? pedido.getCliente().getNombreCompleto() : "-");
         }
+
+        // La dirección viene del pedido, no del cliente
         if (lbl_direccion != null) {
-            String dir = "-";
-            if (pedido.getCliente() != null && pedido.getCliente().getDireccion() != null) {
-                var d = pedido.getCliente().getDireccion();
+            DireccionDTO d = pedido.getDireccion();
+            if (d != null) {
                 String calle  = d.getCalle()        != null ? d.getCalle()        : "";
-                String numero = d.getNumero()        != null ? d.getNumero()       : "";
-                String ciudad = d.getCiudad()        != null ? d.getCiudad()       : "";
-                String cp     = d.getCodigoPostal()  != null ? d.getCodigoPostal() : "";
-                dir = calle + " " + numero + ", " + ciudad + " C.P. " + cp;
+                String numero = d.getNumero()       != null ? d.getNumero()       : "";
+                String ciudad = d.getCiudad()       != null ? d.getCiudad()       : "";
+                String cp     = d.getCodigoPostal() != null ? d.getCodigoPostal() : "";
+                lbl_direccion.setText((calle + " " + numero + ", " + ciudad + " C.P. " + cp).trim());
+            } else {
+                lbl_direccion.setText("-");
             }
-            lbl_direccion.setText(dir);
         }
+
         if (lbl_telefono != null) {
             String tel = (pedido.getCliente() != null && pedido.getCliente().getTelefono() != null)
                     ? pedido.getCliente().getTelefono() : "-";
             lbl_telefono.setText(tel);
         }
-
-         */
     }
 
     private void poblarTabla(PedidoDTO pedido) {
@@ -123,6 +126,7 @@ public class PedidoTicketController implements Initializable {
             String folio = pedido.getIdPedido() > 0 ? String.valueOf(pedido.getIdPedido()) : "—";
             lbl_numeroPedido.setText("Pedido #" + folio);
         }
+
         if (lbl_estadoPedido != null) {
             lbl_estadoPedido.setText(pedido.getEstatus() != null ? pedido.getEstatus() : "En proceso");
         }

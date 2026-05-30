@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.modelo.dao.PedidosDAO;
+import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
 import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
@@ -70,20 +71,18 @@ public class PedidoConfirmacionController implements Initializable {
             lblCliente.setText(nombre);
         }
 
+        // La dirección viene del pedido, no del cliente
         if (lblDireccion != null) {
-            /*
-            TODO cambiar la implementacion por la cuestión de direcciones
-            String dir = "-";
-            if (pedido.getCliente() != null && pedido.getCliente().getDireccion() != null) {
-                var d = pedido.getCliente().getDireccion();
-                dir = (d.getCalle()        != null ? d.getCalle()        : "") + " "
-                        + (d.getNumero()        != null ? d.getNumero()       : "") + ", "
-                        + (d.getCiudad()        != null ? d.getCiudad()       : "") + " C.P. "
-                        + (d.getCodigoPostal()  != null ? d.getCodigoPostal() : "");
+            DireccionDTO d = pedido.getDireccion();
+            if (d != null) {
+                String dir = (d.getCalle()       != null ? d.getCalle()       : "") + " "
+                        + (d.getNumero()      != null ? d.getNumero()      : "") + ", "
+                        + (d.getCiudad()      != null ? d.getCiudad()      : "") + " C.P. "
+                        + (d.getCodigoPostal()!= null ? d.getCodigoPostal(): "");
+                lblDireccion.setText(dir.trim());
+            } else {
+                lblDireccion.setText("-");
             }
-            lblDireccion.setText(dir);
-
-             */
         }
 
         if (lblTelefono != null) {
@@ -150,11 +149,9 @@ public class PedidoConfirmacionController implements Initializable {
             Parent vista = loader.load();
 
             PedidoTicketController ticketCtrl = loader.getController();
-            // Inyectar datos ANTES de construir la Scene
             ticketCtrl.setPedido(pedidoConfirmado);
 
             Stage stage = new Stage();
-            // CORRECCIÓN: initOwner e initModality ANTES de setScene
             if (stageCreacion != null) stage.initOwner(stageCreacion);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setTitle("Ticket de pedido");
