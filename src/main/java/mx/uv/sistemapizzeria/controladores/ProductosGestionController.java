@@ -2,6 +2,7 @@ package mx.uv.sistemapizzeria.controladores;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -169,7 +170,41 @@ public class ProductosGestionController implements Initializable {
 
     @FXML
     private void clicEliminar(ActionEvent event) {
-        // Se ha dejado en blanco intencionalmente para la integración futura
+
+        // Obtener el producto seleccionado de la tabla
+        ProductoVentaDTO productoSeleccionado = tbl_productos.getSelectionModel().getSelectedItem();
+
+        if (productoSeleccionado == null) {
+            UtilidadesFX.mostrarAlertaSimple("Selección requerida", "Por favor, seleccione antes un producto de la tabla para poder eliminarlo", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Alert alertaConfirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        alertaConfirmacion.setTitle("Confirmar eliminación");
+        alertaConfirmacion.setHeaderText("¿Estás seguro de que deseas eliminar: " + productoSeleccionado.getNombre() + "?");
+        alertaConfirmacion.setContentText("El producto será dado de baja del sistema.");
+
+        // Mostrar ventana emergente de confirmación
+        Optional<ButtonType> resultado = alertaConfirmacion.showAndWait();
+
+        // Si el usuario acepto eliminar el producto entonces sucede la eliminación
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            try {
+                ProductoDAO producto = new ProductoDAO();
+                producto.eliminarProductoVenta(productoSeleccionado.getCodigoMenu());
+
+                UtilidadesFX.mostrarAlertaSimple("Éxito", "El producto fue eliminado correctamente", Alert.AlertType.CONFIRMATION);
+
+                // Refrescar la tabla se simula con este método:
+                cargarDatosTabla();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                UtilidadesFX.mostrarAlertaSimple("No se puede eliminar", ex.getMessage(), Alert.AlertType.WARNING);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                UtilidadesFX.mostrarAlertaSimple("Error Inesperado", "Ha ocurrido un fallo en el sistema al intentar eliminar el producto.", Alert.AlertType.ERROR);
+            }
+        }
     }
 
     @FXML
