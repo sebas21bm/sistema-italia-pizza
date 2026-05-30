@@ -37,7 +37,7 @@ public class DetalleReporteDTO {
         this.descripcionProductoInventario = descripcionProductoInventario;
     }
 
-        public Double getConteoFisico() {
+    public Double getConteoFisico() {
         return conteoFisico;
     }
 
@@ -68,8 +68,6 @@ public class DetalleReporteDTO {
     public void setExistencias(Double existencias) {
         this.existencias = existencias;
     }
-
-    
     
     public boolean hayDiferencia() {
         return diferencia != 0;

@@ -28,9 +28,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
-import mx.uv.sistemapizzeria.modelo.dao.ReporteInventarioDAO;
+import mx.uv.sistemapizzeria.modelo.dao.DetalleReporteInventarioDAO;
 import mx.uv.sistemapizzeria.modelo.dto.DetalleReporteDTO;
-import mx.uv.sistemapizzeria.modelo.dto.ReporteInventarioDTO;
 import mx.uv.sistemapizzeria.utilidades.ExportadorPDFGeneral;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
@@ -44,7 +43,7 @@ import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 public class ProductosInventarioValidacionController implements Initializable {
 
     @FXML
-    private TableView<DetalleReporteDTO> tbl_validacionInsumos;
+    private TableView<DetalleReporteDTO> tbl_validacionProductosInventario;
     @FXML
     private TableColumn col_codigo;
     @FXML
@@ -57,7 +56,7 @@ public class ProductosInventarioValidacionController implements Initializable {
     private TableColumn col_productoInventario;
 
     private ObservableList<DetalleReporteDTO> detallesReporte;
-    private ReporteInventarioDAO reporteInventarioDAO = new ReporteInventarioDAO();
+    private DetalleReporteInventarioDAO reporteInventarioDAO = new DetalleReporteInventarioDAO();
     private boolean validacionCalculada = false;
 
     @Override
@@ -132,7 +131,7 @@ public class ProductosInventarioValidacionController implements Initializable {
     }
 
     private void configurarColumnaJustificacion() {
-        boolean existeColumna = tbl_validacionInsumos.getColumns()
+        boolean existeColumna = tbl_validacionProductosInventario.getColumns()
                 .stream()
                 .anyMatch(col -> "Justificación".equals(col.getText()));
 
@@ -203,8 +202,8 @@ public class ProductosInventarioValidacionController implements Initializable {
             }
         });
 
-        tbl_validacionInsumos.getColumns().add(col_justificacion);
-        tbl_validacionInsumos.setPrefWidth(750);
+        tbl_validacionProductosInventario.getColumns().add(col_justificacion);
+        tbl_validacionProductosInventario.setPrefWidth(750);
 
     }
 
@@ -230,7 +229,7 @@ public class ProductosInventarioValidacionController implements Initializable {
             detallesReporte = FXCollections.observableArrayList();
             List<DetalleReporteDTO> detallesReporteBD = reporteInventarioDAO.mostrarTodos();
             detallesReporte.addAll(detallesReporteBD);
-            tbl_validacionInsumos.setItems(detallesReporte);
+            tbl_validacionProductosInventario.setItems(detallesReporte);
         }catch(SQLException e){
             UtilidadesFX.mostrarAlertaSimple("Error al consultar",
                     e.getMessage(),
@@ -243,20 +242,20 @@ public class ProductosInventarioValidacionController implements Initializable {
     }
 
     private List<DetalleReporteDTO> recuperarDatos() {
-        return List.copyOf(tbl_validacionInsumos.getItems());
+        return List.copyOf(tbl_validacionProductosInventario.getItems());
     }
 
 
     @FXML
     private void clicCalcularDiferencia(ActionEvent event) {
-        for (DetalleReporteDTO detalle : tbl_validacionInsumos.getItems()) {
+        for (DetalleReporteDTO detalle : tbl_validacionProductosInventario.getItems()) {
             Double conteoFisico = detalle.getConteoFisico();
             Double existencias = Double.valueOf(detalle.getExistencias());
 
             conteoFisico = conteoFisico != null ? conteoFisico : 0.0;
             existencias = existencias != null ? existencias : 0.0;
 
-            Double diferencia = conteoFisico - existencias;
+            Double diferencia = existencias - conteoFisico;
             detalle.setDiferencia(diferencia);
 
             if (Double.compare(diferencia, 0.0) == 0) {
@@ -266,7 +265,7 @@ public class ProductosInventarioValidacionController implements Initializable {
 
         validacionCalculada = true;
         configurarColumnaJustificacion();
-        tbl_validacionInsumos.refresh();
+        tbl_validacionProductosInventario.refresh();
     }
 
     @FXML
@@ -279,7 +278,7 @@ public class ProductosInventarioValidacionController implements Initializable {
 
 
         selector.setInitialFileName("ValidacionInventario.pdf");
-        Stage stageactual = (Stage) tbl_validacionInsumos.getScene().getWindow();
+        Stage stageactual = (Stage) tbl_validacionProductosInventario.getScene().getWindow();
 
         File archivo = selector.showSaveDialog(stageactual);
 

@@ -145,7 +145,7 @@
                </font>
             </Label>
 
-            <TableView fx:id="tbl_validacionInsumos" fixedCellSize="60.0" layoutX="26.0" layoutY="65.0" prefHeight="486.0" prefWidth="530.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
+            <TableView fx:id="tbl_validacionProductosInventario" fixedCellSize="60.0" layoutX="26.0" layoutY="65.0" prefHeight="486.0" prefWidth="530.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
                <columns>
                   <TableColumn fx:id="col_codigo" prefWidth="68.0" text="Código" />
                   <TableColumn fx:id="col_productoInventario" prefWidth="171.66668701171875" text="Producto de Inventario" />

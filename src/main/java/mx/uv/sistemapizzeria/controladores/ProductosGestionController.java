@@ -1,5 +1,6 @@
 package mx.uv.sistemapizzeria.controladores;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,9 +20,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -28,6 +30,8 @@ import mx.uv.sistemapizzeria.modelo.dao.ProductoDAO;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
+
+import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 
 public class ProductosGestionController implements Initializable {
 
@@ -46,136 +50,194 @@ public class ProductosGestionController implements Initializable {
     @FXML
     private TableColumn<ProductoVentaDTO, String> col_descripcion;
     @FXML
-    private AnchorPane pnl_menuLateral;
-    @FXML
-    private ImageView img_logo;
-    @FXML
-    private Accordion ac_menu;
-    @FXML
-    private TitledPane tp_administracion;
-    @FXML
-    private Button btn_menuUsuarios;
-    @FXML
-    private TitledPane tp_inventarios;
-    @FXML
-    private Button btn_menuProductos;
-    @FXML
-    private Button btn_menuProductosInventario;
-    @FXML
-    private Button btn_menuValidacionInventarios;
-    @FXML
-    private TitledPane tp_pedidos;
-    @FXML
-    private Button btn_menuPedidos;
-    @FXML
-    private Button btn_cerrarSesion;
-    @FXML
-    private Button btn_ayudaAcercaDe;
-    @FXML
-    private AnchorPane pnl_contenido;
-    @FXML
-    private HBox hbox_busqueda;
-    @FXML
     private TextField txt_buscar;
     @FXML
-    private Button btn_nuevoProducto;
-    @FXML
-    private Button btn_editar;
-    @FXML
-    private Button btn_eliminar;
-    @FXML
-    private Button btn_buscar;
+    private ComboBox<String> cb_filtro;
+
+    private ObservableList<String> filtros = FXCollections.observableArrayList(
+            "Por código", "Por nombre", "Ver todos");
+    private String filtroBusqueda;
+    private ObservableList<ProductoVentaDTO> productosVenta;
+    ProductoDAO productoDAO = new ProductoDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        configurarColumnas();
-        cargarDatosTabla();
+        cb_filtro.setItems(filtros);
+        configurarSeleccionFiltro();
+        configurarTabla();
+        cargarInformacionProductosVenta();
+        filtroBusqueda = "";
     }
 
-    private void configurarColumnas() {
+    private void configurarSeleccionFiltro(){
+        cb_filtro.valueProperty().addListener(new ChangeListener<String>(){
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if(newValue != null){
+                    if(newValue.equals("Ver todos")){
+                        txt_buscar.setText("");
+                        filtroBusqueda = "";
+                        cargarInformacionProductosVenta();
+                    }else {
+                        filtroBusqueda = newValue;
+                    }
+                }
+            }
+        });
+    }
+
+    private void configurarTabla() {
         col_codigo.setCellValueFactory(new PropertyValueFactory<>("codigoMenu"));
-        col_fotografia.setCellValueFactory(new PropertyValueFactory<>("foto"));
         col_nombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         col_precio.setCellValueFactory(new PropertyValueFactory<>("precio"));
         col_limite.setCellValueFactory(new PropertyValueFactory<>("limite"));
         col_descripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
+        col_fotografia .setCellValueFactory(new PropertyValueFactory<>("foto"));
+
+        col_fotografia.setCellFactory(col -> new TableCell<>() {
+            private final ImageView imageView = new ImageView();
+
+            {
+                imageView.setFitWidth(50);
+                imageView.setFitHeight(50);
+                imageView.setPreserveRatio(true);
+            }
+
+            @Override
+            protected void updateItem(String imagePath, boolean empty) {
+                super.updateItem(imagePath, empty);
+
+                setGraphic(null);
+                setText(null);
+                imageView.setImage(null);
+
+                if (empty || imagePath == null || imagePath.isBlank()) {
+                    return;
+                }
+
+                try {
+                    Image image = cargarImagen(imagePath);
+
+                    if (image == null || image.isError()) {
+                        return;
+                    }
+
+                    imageView.setImage(image);
+                    imageView.setFitWidth(100);
+                    imageView.setFitHeight(100);
+                    imageView.setPreserveRatio(true);
+                    setGraphic(imageView);
+
+                } catch (Exception e) {
+                    setGraphic(null);
+                    setText(null);
+                    imageView.setImage(null);
+                }
+            }
+        });
     }
 
-    private void cargarDatosTabla() {
-        try {
-            ProductoDAO dao = new ProductoDAO();
-            // Se utiliza el método que extrae los productos con estatus = 1
-            List<ProductoVentaDTO> listaProductos = dao.mostrarTodos();
+    private Image cargarImagen(String rutaFoto) {
+        if (rutaFoto == null || rutaFoto.isBlank()) {
+            return null;
+        }
 
-            // ObservableList para actualizar la vista automáticamente
-            ObservableList<ProductoVentaDTO> productosObservables = FXCollections.observableArrayList(listaProductos);
-            tbl_productos.setItems(productosObservables);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.err.println("Error al cargar los productos");
+        rutaFoto = rutaFoto.trim().replace("\\", "/");
+
+        try {
+            if (rutaFoto.startsWith("/imagenes/") || rutaFoto.startsWith("imagenes/")) {
+                String rutaRecurso = rutaFoto.startsWith("/") ? rutaFoto : "/" + rutaFoto;
+
+                var recurso = getClass().getResourceAsStream(rutaRecurso);
+
+                if (recurso == null) {
+                    return null;
+                }
+
+                return new Image(recurso);
+            }
+
+            File archivo = new File(rutaFoto);
+
+            if (archivo.exists()) {
+                return new Image(archivo.toURI().toString());
+            }
+
+        } catch (Exception e) {
+            return null;
+        }
+
+        return null;
+    }
+
+    private void cargarInformacionProductosVenta(){
+        try {
+            productosVenta = FXCollections.observableArrayList();
+            List<ProductoVentaDTO> productosVentaBD = productoDAO.mostrarTodos();
+            productosVenta.addAll(productosVentaBD);
+            tbl_productos.setItems(productosVenta);
+        }catch(SQLException e){
+            UtilidadesFX.mostrarAlertaSimple("Error al consultar",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        }catch(NullPointerException | ClassNotFoundException | IOException n){
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar productos para venta",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
+        }
+    }
+
+    private void actualizarInformacion(){
+        if(filtroBusqueda.equals("")){
+            cargarInformacionProductosVenta();
+        }else {
+            buscarPorFiltro();
         }
     }
 
     @FXML
-    private void clicNuevoProducto(ActionEvent event) {
-        SistemaPizzeria.setMetadatos("registrar-producto",true);
-        try {
-            FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoOperaciones");
-            Parent vista = loader.load();
-            Scene escena = new Scene(vista);
-
-            Stage stage = new Stage();
-            stage.setTitle("Producto");
-            stage.setResizable(false);
-            stage.setScene(escena);
-
-            stage.centerOnScreen();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void clicBuscar(ActionEvent event) {
+        buscarPorFiltro();
     }
 
-    @FXML
-    private void clicEditar(ActionEvent event) {
-        SistemaPizzeria.setMetadatos("registrar-producto",false);
-        ProductoVentaDTO producto = tbl_productos.getSelectionModel().getSelectedItem();
-        if(producto == null){
-            UtilidadesFX.mostrarAlertaSimple("Sin Producto Inventario para editar",
-                    "No se ha seleccionado ningún producto de inventario, " +
-                            "selecciona uno para continuar",
+    private void buscarPorFiltro(){
+        String campoBuscar = txt_buscar.getText();
+        productosVenta = FXCollections.observableArrayList();
+        if(filtroBusqueda.equals("")) {
+            UtilidadesFX.mostrarAlertaSimple("Sin filtro",
+                    "Por favor selecciona un filtro para realizar la búsqueda",
                     Alert.AlertType.WARNING);
             return;
         }
         try {
-            FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoOperaciones");
-            Parent vista = loader.load();
-            ProductoOperacionesController controller = loader.getController();
-            controller.editarProductoInventario(producto);
-            Scene escena = new Scene(vista);
-
-            Stage stage = new Stage();
-            stage.setTitle("Producto");
-            stage.setResizable(false);
-            stage.setScene(escena);
-
-            stage.centerOnScreen();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (filtroBusqueda.equals("Por código")) {
+                ProductoVentaDTO producto = productoDAO.buscar(campoBuscar);
+                productosVenta.add(producto);
+            } else {
+                List<ProductoInventarioDTO> productosBD = productoDAO.buscarPorNombre(campoBuscar);
+                productosVenta.addAll(productosBD);
+            }
+            tbl_productos.setItems(productosVenta);
+        }catch(SQLException e){
+            UtilidadesFX.mostrarAlertaSimple("Error al consultar",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        }catch(NullPointerException | ClassNotFoundException | IOException n){
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar productos para venta",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void clicEliminar(ActionEvent event) {
-
-        // Obtener el producto seleccionado de la tabla
         ProductoVentaDTO productoSeleccionado = tbl_productos.getSelectionModel().getSelectedItem();
 
         if (productoSeleccionado == null) {
-            UtilidadesFX.mostrarAlertaSimple("Selección requerida", "Por favor, seleccione antes un producto de la tabla para poder eliminarlo", Alert.AlertType.WARNING);
+            UtilidadesFX.mostrarAlertaSimple("Sin Producto para eliminar",
+                    "No se ha seleccionado ningún producto, " +
+                            "selecciona uno para continuar",
+                    Alert.AlertType.WARNING);
             return;
         }
 
@@ -207,9 +269,63 @@ public class ProductosGestionController implements Initializable {
         }
     }
 
+
     @FXML
-    private void clicBuscar(ActionEvent event) {
+    private void clicNuevoProducto(ActionEvent event) {
+        SistemaPizzeria.setMetadatos("registrar-producto",true);
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoOperaciones");
+            Parent vista = loader.load();
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("Producto");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+            actualizarInformacion();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    @FXML
+    private void clicEditar(ActionEvent event) {
+        SistemaPizzeria.setMetadatos("registrar-producto",false);
+        ProductoVentaDTO producto = tbl_productos.getSelectionModel().getSelectedItem();
+        if(producto == null){
+            UtilidadesFX.mostrarAlertaSimple("Sin Producto para editar",
+                    "No se ha seleccionado ningún producto, " +
+                            "selecciona uno para continuar",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoOperaciones");
+            Parent vista = loader.load();
+            ProductoOperacionesController controller = loader.getController();
+            controller.editarProductoInventario(producto);
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("Producto");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+            actualizarInformacion();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
     //NAVEGACION MENÚ
     @FXML

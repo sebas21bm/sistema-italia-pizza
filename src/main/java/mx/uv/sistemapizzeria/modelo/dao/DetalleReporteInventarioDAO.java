@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReporteInventarioDAO {
+public class DetalleReporteInventarioDAO {
 
     public List<DetalleReporteDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<DetalleReporteDTO> lista = new ArrayList<>();

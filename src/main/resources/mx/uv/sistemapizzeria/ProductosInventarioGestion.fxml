@@ -25,7 +25,7 @@
 <AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #f3f5fa;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.ProductosInventarioGestionController">
    <children>
 
-      <AnchorPane fx:id="pnl_menuLateral" prefHeight="650.0" prefWidth="180.0" style="-fx-background-color: white;">
+      <AnchorPane prefHeight="650.0" prefWidth="180.0" style="-fx-background-color: white;">
          <children>
             <ImageView fitHeight="50.0" fitWidth="60.0" layoutX="10.0" layoutY="8.0" preserveRatio="true">
                <image>
@@ -47,7 +47,7 @@
 
             <Accordion layoutX="10.0" layoutY="70.0" prefWidth="160.0" style="-fx-background-color: #f1f3f8; -fx-border-color: transparent;">
                <panes>
-                  <TitledPane fx:id="tp_administracion" animated="false" expanded="false" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Administración">
+                  <TitledPane animated="false" expanded="false" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Administración">
                      <content>
                         <VBox prefWidth="158.0" spacing="8.0" style="-fx-background-color: #f1f3f8;">
                            <padding>
@@ -64,7 +64,7 @@
                      </content>
                   </TitledPane>
 
-                  <TitledPane fx:id="tp_inventarios" animated="false" expanded="true" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Inventarios">
+                  <TitledPane animated="false" expanded="true" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Inventarios">
                      <content>
                         <VBox prefWidth="158.0" spacing="10.0" style="-fx-background-color: #f1f3f8;">
                            <padding>
@@ -93,7 +93,7 @@
                      </content>
                   </TitledPane>
 
-                  <TitledPane fx:id="tp_pedidos" animated="false" expanded="false" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Pedidos">
+                  <TitledPane animated="false" expanded="false" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Pedidos">
                      <content>
                         <VBox prefWidth="158.0" spacing="8.0" style="-fx-background-color: #f1f3f8;">
                            <padding>
@@ -128,7 +128,7 @@
          </children>
       </AnchorPane>
 
-      <AnchorPane fx:id="pnl_contenido" layoutX="180.0" prefHeight="650.0" prefWidth="820.0" style="-fx-background-color: #f3f5fa;">
+      <AnchorPane layoutX="180.0" prefHeight="650.0" prefWidth="820.0" style="-fx-background-color: #f3f5fa;">
          <children>
             <Label layoutX="20.0" layoutY="18.0" text="Gestión de Productos Inventario" textFill="#202932">
                <font>
@@ -136,7 +136,7 @@
                </font>
             </Label>
 
-                  <HBox fx:id="hbox_busqueda" alignment="CENTER" layoutX="20.0" layoutY="70.0" prefHeight="42.0" prefWidth="520.0" spacing="15.0" style="-fx-background-color: white;">
+                  <HBox alignment="CENTER" layoutX="20.0" layoutY="70.0" prefHeight="42.0" prefWidth="520.0" spacing="15.0" style="-fx-background-color: white;">
                <padding>
                   <Insets left="14.0" right="8.0" />
                </padding>

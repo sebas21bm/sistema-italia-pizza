@@ -37,11 +37,6 @@ import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 
-/**
- * FXML Controller class
- *
- * @author macol
- */
 public class ProductosInventarioGestionController implements Initializable {
 
 
@@ -49,18 +44,6 @@ public class ProductosInventarioGestionController implements Initializable {
     private TableColumn<ProductoInventarioDTO, String> col_nombre;
     @FXML
     private TableColumn<ProductoInventarioDTO, Integer> col_existencias;
-    @FXML
-    private AnchorPane pnl_menuLateral;
-    @FXML
-    private TitledPane tp_administracion;
-    @FXML
-    private TitledPane tp_inventarios;
-    @FXML
-    private TitledPane tp_pedidos;
-    @FXML
-    private AnchorPane pnl_contenido;
-    @FXML
-    private HBox hbox_busqueda;
     @FXML
     private TextField txt_buscar;
     @FXML
@@ -76,9 +59,8 @@ public class ProductosInventarioGestionController implements Initializable {
             "Por código", "Por nombre", "Ver todos");
     private String filtroBusqueda;
     private ObservableList<ProductoInventarioDTO> productosInventario;
-
-
     ProductoInventarioDAO productoInventarioDAO = new ProductoInventarioDAO();
+
     @FXML
     private TableColumn<ProductoInventarioDTO, String> col_codigo;
 
@@ -106,14 +88,6 @@ public class ProductosInventarioGestionController implements Initializable {
                 }
             }
         });
-    }
-
-    private void actualizarInformacion(){
-        if(filtroBusqueda.equals("")){
-            cargarInformacionProductosInventario();
-        }else {
-            buscarPorFiltro();
-        }
     }
 
     private void configurarTabla(){
@@ -216,28 +190,14 @@ public class ProductosInventarioGestionController implements Initializable {
         }
     }
 
-
-    @FXML
-    private void clicNuevoProductoInventario(ActionEvent event) {
-        SistemaPizzeria.setMetadatos("registrar-producto-inventario",true);
-        try {
-            FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoInventarioOperaciones");
-            Parent vista = loader.load();
-            Scene escena = new Scene(vista);
-
-            Stage stage = new Stage();
-            stage.setTitle("Producto Inventario");
-            stage.setResizable(false);
-            stage.setScene(escena);
-
-            stage.centerOnScreen();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-            actualizarInformacion();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void actualizarInformacion(){
+        if(filtroBusqueda.equals("")){
+            cargarInformacionProductosInventario();
+        }else {
+            buscarPorFiltro();
         }
     }
+
 
     @FXML
     private void clicBuscar(ActionEvent event) {
@@ -274,38 +234,6 @@ public class ProductosInventarioGestionController implements Initializable {
     }
 
     @FXML
-    private void clicEditar(ActionEvent event) {
-        SistemaPizzeria.setMetadatos("registrar-producto-inventario",false);
-        ProductoInventarioDTO productoInventario = tbl_productoInventario.getSelectionModel().getSelectedItem();
-        if(productoInventario == null){
-            UtilidadesFX.mostrarAlertaSimple("Sin Producto Inventario para editar",
-                    "No se ha seleccionado ningún producto de inventario, " +
-                            "selecciona uno para continuar",
-                    Alert.AlertType.WARNING);
-            return;
-        }
-        try {
-            FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoInventarioOperaciones");
-            Parent vista = loader.load();
-            ProductoInventarioOperacionesController controller = loader.getController();
-            controller.mostrarProductoInventario(productoInventario);
-            Scene escena = new Scene(vista);
-
-            Stage stage = new Stage();
-            stage.setTitle("Producto Inventario");
-            stage.setResizable(false);
-            stage.setScene(escena);
-
-            stage.centerOnScreen();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-            actualizarInformacion();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
     private void clicEliminar(ActionEvent event) {
         ProductoInventarioDTO productoInventario = tbl_productoInventario.getSelectionModel().getSelectedItem();
         if(productoInventario == null){
@@ -338,6 +266,59 @@ public class ProductosInventarioGestionController implements Initializable {
         actualizarInformacion();
     }
 
+    @FXML
+    private void clicNuevoProductoInventario(ActionEvent event) {
+        SistemaPizzeria.setMetadatos("registrar-producto-inventario",true);
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoInventarioOperaciones");
+            Parent vista = loader.load();
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("Producto Inventario");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+            actualizarInformacion();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void clicEditar(ActionEvent event) {
+        SistemaPizzeria.setMetadatos("registrar-producto-inventario",false);
+        ProductoInventarioDTO productoInventario = tbl_productoInventario.getSelectionModel().getSelectedItem();
+        if(productoInventario == null){
+            UtilidadesFX.mostrarAlertaSimple("Sin Producto Inventario para editar",
+                    "No se ha seleccionado ningún producto de inventario, " +
+                            "selecciona uno para continuar",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+        try {
+            FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoInventarioOperaciones");
+            Parent vista = loader.load();
+            ProductoInventarioOperacionesController controller = loader.getController();
+            controller.mostrarProductoInventario(productoInventario);
+            Scene escena = new Scene(vista);
+
+            Stage stage = new Stage();
+            stage.setTitle("Producto Inventario");
+            stage.setResizable(false);
+            stage.setScene(escena);
+
+            stage.centerOnScreen();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+            actualizarInformacion();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     //NAVEGACION MENÚ
     @FXML
