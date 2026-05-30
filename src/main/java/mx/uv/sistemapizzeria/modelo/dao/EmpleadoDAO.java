@@ -4,6 +4,7 @@ import mx.uv.sistemapizzeria.db.ConnectionFactory;
 import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
 import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
+import mx.uv.sistemapizzeria.modelo.dto.TipoEmpleado;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
 import java.io.IOException;
@@ -13,7 +14,6 @@ import java.util.List;
 
 public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
 
-    // ── buscar(identificador: String): Empleado ────────────────────────────
     @Override
     public EmpleadoDTO buscar(String identificador) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -36,7 +36,6 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
         return null;
     }
 
-    // ── editar(empleado: Empleado): boolean ────────────────────────────────
     @Override
     public boolean editar(EmpleadoDTO empleado) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -95,24 +94,23 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
         }
     }
 
-    // ── mostrarTodos(): List<Empleado> ─────────────────────────────────────
     @Override
     public List<EmpleadoDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<EmpleadoDTO> empleados = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
 
-            String sql = "SELECT e.no_empleado, e.usuario, e.nombre, e.paterno, e.materno, " +
-                         "e.telefono, e.email, e.estatus, e.tipo_empleado, " +
-                         "d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
-                         "FROM empleado e " +
-                         "LEFT JOIN direccion d ON e.id_direccion = d.id_direccion " +
-                         "ORDER BY e.paterno, e.nombre";
+            String consulta = "SELECT e.no_empleado, e.nombre, e.paterno, e.materno, e.telefono, e.email, e.tipo_empleado, " +
+                    "e.estatus, d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad FROM empleado e " +
+                    "LEFT JOIN direccion d ON d.id_direccion = e.id_direccion";
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ResultSet rs = ps.executeQuery();
 
-            try (PreparedStatement ps = conn.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) empleados.add(mapearEmpleado(rs));
+            while (rs.next()) {
+                empleados.add(mapearEmpleado(rs));
             }
         }
         return empleados;
@@ -157,7 +155,7 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
                     ps.setString(8, empleado.getEmail());
                     ps.setBoolean(9, empleado.getEstatus());
                     ps.setString(10, empleado.getTipoEmpleado().name());
-                    ps.setInt(11, empleado.getTipoEmpleado().name().equals("Administrator") ? 1 : 2);
+                    ps.setInt(11, empleado.getTipoEmpleado().name().equals("Administrador") ? 1 : 2);
                     ps.setInt(12, idDireccion);
                     ps.executeUpdate();
                 }
@@ -170,24 +168,89 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
         }
     }
 
-    // ── Helper ─────────────────────────────────────────────────────────────
+
+    public List<EmpleadoDTO> buscarPorNombre(String nombreBusqueda)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException{
+        List<EmpleadoDTO> lista = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
+            String consulta = "SELECT e.no_empleado, e.nombre, e.paterno, e.materno, e.telefono, e.email, e.tipo_empleado, " +
+                    "e.estatus, d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad FROM empleado e " +
+                    "LEFT JOIN direccion d ON d.id_direccion = e.id_direccion WHERE e.nombre LIKE ? OR e.paterno LIKE ?" +
+                    "OR e.materno LIKE ? AND e.estatus = 1";
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setString(1, "%" + nombreBusqueda +"%");
+            ps.setString(2, "%" + nombreBusqueda +"%");
+            ps.setString(3, "%" + nombreBusqueda +"%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(mapearEmpleado(rs));
+            }
+
+        }
+        return lista;
+    }
+
+    public List<EmpleadoDTO> buscarPorTelefono(String telefono)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException{
+        List<EmpleadoDTO> lista = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
+            String consulta = "SELECT e.no_empleado, e.nombre, e.paterno, e.materno, e.telefono, e.email, e.tipo_empleado, " +
+                    "e.estatus, d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad FROM empleado e " +
+                    "LEFT JOIN direccion d ON d.id_direccion = e.id_direccion WHERE e.telefono LIKE ? AND e.estatus = 1";
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setString(1, "%" + telefono +"%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(mapearEmpleado(rs));
+            }
+
+        }
+        return lista;
+    }
+
+    public List<EmpleadoDTO> buscarPorDireccion(String direccion)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException{
+        List<EmpleadoDTO> lista = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
+            String consulta = "SELECT e.no_empleado, e.nombre, e.paterno, e.materno, e.telefono, e.email, e.tipo_empleado, " +
+                    "e.estatus, d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad FROM empleado e " +
+                    "LEFT JOIN direccion d ON d.id_direccion = e.id_direccion WHERE d.calle LIKE ? OR d.numero LIKE ?" +
+                    "OR d.codigo_postal LIKE ? OR d.ciudad LIKE ? AND e.estatus = 1";
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setString(1, "%" + direccion +"%");
+            ps.setString(2, "%" + direccion +"%");
+            ps.setString(3, "%" + direccion +"%");
+            ps.setString(4, "%" + direccion +"%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(mapearEmpleado(rs));
+            }
+
+        }
+        return lista;
+    }
+
     private EmpleadoDTO mapearEmpleado(ResultSet rs) throws SQLException {
-        EmpleadoDTO e = new EmpleadoDTO();
-        e.setNoEmpleado(rs.getString("no_empleado"));
-        e.setUsuario(rs.getString("usuario"));
-        e.setNombre(rs.getString("nombre"));
-        e.setPaterno(rs.getString("paterno"));
-        e.setMaterno(rs.getString("materno"));
-        e.setTelefono(rs.getString("telefono"));
-        e.setEmail(rs.getString("email"));
-        e.setEstatus(rs.getBoolean("estatus"));
+        EmpleadoDTO empleado = new EmpleadoDTO();
+        empleado.setNoEmpleado(rs.getString("no_empleado"));
+        empleado.setNombre(rs.getString("nombre"));
+        empleado.setPaterno(rs.getString("paterno"));
+        empleado.setMaterno(rs.getString("materno"));
+        empleado.setTelefono(rs.getString("telefono"));
+        empleado.setEmail(rs.getString("email"));
+        empleado.setEstatus(rs.getBoolean("estatus"));
 
         String tipo = rs.getString("tipo_empleado");
-        if (tipo != null) {
-            try {
-                e.setTipoEmpleado(mx.uv.sistemapizzeria.modelo.dto.TipoEmpleado.valueOf(tipo.toUpperCase()));
-            } catch (IllegalArgumentException ignored) {}
-        }
+        empleado.setTipoEmpleado(TipoEmpleado.valueOf(tipo));
 
         DireccionDTO d = new DireccionDTO();
         d.setIdDireccion(rs.getInt("id_direccion"));
@@ -195,8 +258,8 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
         d.setNumero(rs.getString("numero"));
         d.setCodigoPostal(rs.getString("codigo_postal"));
         d.setCiudad(rs.getString("ciudad"));
-        e.setDireccion(d);
+        empleado.setDireccion(d);
 
-        return e;
+        return empleado;
     }
 }

@@ -44,7 +44,4 @@ public class EmpleadoDTO extends Persona{
         this.tipoEmpleado = tipoEmpleado;
     }
 
-    public String getNombreCompleto() {
-        return this.getNombre() + " " + this.getPaterno() + " " + this.getMaterno();
-    }
 }

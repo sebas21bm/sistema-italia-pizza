@@ -28,12 +28,6 @@ public class ClienteDTO extends Persona{
         this.direcciones = direcciones;
     }
 
-    public String getNombreCompleto() {
-        return (this.getNombre() != null ? this.getNombre() : "") + " "
-                + (this.getPaterno() != null ? this.getPaterno() : "") + " "
-                + (this.getMaterno() != null ? this.getMaterno() : "");
-    }
-
     @Override
     public String toString() {
         return "[" + noCliente + "] " + getNombreCompleto();

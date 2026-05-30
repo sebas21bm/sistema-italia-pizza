@@ -63,13 +63,13 @@ public class ReporteInventarioDAO {
     }
 
     // ── editar(reporte): no aplica — los reportes son inmutables ──────────
-    @Override
+
     public boolean editar(ReporteInventarioDTO reporte) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         throw new UnsupportedOperationException("Los reportes de inventario no son editables.");
     }
 
     // ── eliminar(idInventario): boolean ───────────────────────────────────
-    @Override
+
     public boolean eliminar(Integer idInventario) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
@@ -97,7 +97,7 @@ public class ReporteInventarioDAO {
     }
 
     // ── mostrarTodos(): List<ReporteInventario> (sin detalles) ─────────────
-    @Override
+
     public List<ReporteInventarioDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<ReporteInventarioDTO> reportes = new ArrayList<>();
 
@@ -120,7 +120,7 @@ public class ReporteInventarioDAO {
     }
 
     // ── registrar(reporte): boolean — transacción completa ─────────────────
-    @Override
+
     public boolean registrar(ReporteInventarioDTO reporte) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
@@ -187,7 +187,7 @@ public class ReporteInventarioDAO {
         insumo.setNombre(rs.getString("nombre"));
         insumo.setExistencias(rs.getInt("existencias"));
         insumo.setEstatus(rs.getInt("estatus"));
-        det.setInsumo(insumo);
+        //det.setInsumo(insumo);
 
         return det;
     }

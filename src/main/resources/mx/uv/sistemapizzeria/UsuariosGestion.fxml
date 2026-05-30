@@ -18,7 +18,7 @@
                </font>
             </Label>
 
-            <HBox fx:id="hbox_busqueda" alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" prefHeight="42.0" prefWidth="300.0" spacing="10.0" style="-fx-background-color: white;">
+            <HBox fx:id="hbox_busqueda" alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" prefHeight="42.0" prefWidth="749.0" spacing="10.0" style="-fx-background-color: white;">
                <padding>
                   <Insets left="14.0" right="8.0" />
                </padding>
@@ -30,10 +30,12 @@
                   </Label>
 
                   <TextField fx:id="txt_buscar" prefHeight="40.0" prefWidth="230.0" promptText="Buscar por nombre, teléfono, dirección" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-size: 12px; -fx-prompt-text-fill: #69727c;" />
+      
+                        <Button mnemonicParsing="false" onAction="#clicBuscar" prefHeight="42.0" prefWidth="100.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Buscar" />
+                  <ComboBox fx:id="cb_filtro" prefWidth="150.0" promptText="Filtro" />
+                  <ComboBox fx:id="cb_tipo" prefWidth="150.0" promptText="Tipo" />
                </children>
             </HBox>
-
-            <Button layoutX="330.0" layoutY="72.0" mnemonicParsing="false" onAction="#clicBuscar" prefHeight="42.0" prefWidth="100.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Buscar" />
 
             <TableView fx:id="tbl_usuarios" fixedCellSize="38.0" layoutX="20.0" layoutY="130.0" prefHeight="410.0" prefWidth="760.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
                <columns>
@@ -49,76 +51,6 @@
             <Button layoutX="210.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEditar" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Editar" />
 
             <Button layoutX="350.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEliminar" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Eliminar" />
-
-            <TitledPane animated="false" expanded="false" layoutX="515.0" layoutY="78.0" prefWidth="130.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1; -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Filtro">
-               <content>
-                  <VBox alignment="CENTER" prefWidth="130.0" spacing="0.0" style="-fx-background-color: white;">
-                     <children>
-                        <VBox alignment="CENTER_LEFT" prefWidth="130.0">
-                           <children>
-                              <RadioButton selected="true" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Nombre" textFill="#202932">
-                                 <toggleGroup>
-                                    <ToggleGroup fx:id="tg_estatus" />
-                                 </toggleGroup>
-                                 <VBox.margin>
-                                    <Insets left="14.0" top="10.0" />
-                                 </VBox.margin>
-                              </RadioButton>
-
-                              <AnchorPane prefHeight="1.0" prefWidth="130.0" style="-fx-background-color: #d9dde5;">
-                                 <VBox.margin>
-                                    <Insets top="10.0" />
-                                 </VBox.margin>
-                              </AnchorPane>
-
-                              <RadioButton style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Teléfono" textFill="#202932" toggleGroup="$tg_estatus">
-                                 <VBox.margin>
-                                    <Insets bottom="10.0" left="14.0" top="10.0" />
-                                 </VBox.margin>
-                              </RadioButton>
-
-                              <AnchorPane prefHeight="1.0" prefWidth="130.0" style="-fx-background-color: #d9dde5;" />
-
-                              <RadioButton style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Dirección" textFill="#202932" toggleGroup="$tg_estatus">
-                                 <VBox.margin>
-                                    <Insets bottom="10.0" left="14.0" top="10.0" />
-                                 </VBox.margin>
-                              </RadioButton>
-                           </children>
-                        </VBox>
-                     </children>
-                  </VBox>
-               </content>
-            </TitledPane>
-
-            <TitledPane animated="false" expanded="false" layoutX="660.0" layoutY="78.0" prefWidth="120.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1; -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Tipo">
-               <content>
-                  <VBox prefHeight="105.0" prefWidth="120.0" spacing="0.0" style="-fx-background-color: white;">
-                     <children>
-                        <RadioButton prefHeight="22.0" prefWidth="100.0" selected="true" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Empleado" textFill="#202932">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="tg_tipo" />
-                           </toggleGroup>
-                           <VBox.margin>
-                              <Insets left="14.0" top="10.0" />
-                           </VBox.margin>
-                        </RadioButton>
-
-                        <AnchorPane prefHeight="1.0" prefWidth="120.0" style="-fx-background-color: #d9dde5;">
-                           <VBox.margin>
-                              <Insets top="10.0" />
-                           </VBox.margin>
-                        </AnchorPane>
-
-                        <RadioButton style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Cliente" textFill="#202932" toggleGroup="$tg_tipo">
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="14.0" top="10.0" />
-                           </VBox.margin>
-                        </RadioButton>
-                     </children>
-                  </VBox>
-               </content>
-            </TitledPane>
          </children>
       </AnchorPane>
 
@@ -151,7 +83,7 @@
                               <Insets bottom="8.0" left="12.0" right="8.0" top="8.0" />
                            </padding>
                            <children>
-                              <Button fx:id="btn_menuUsuarios" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicUsuarios" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #1265f5; -fx-font-weight: bold;" text="Usuarios">
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicUsuarios" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #1265f5; -fx-font-weight: bold;" text="Usuarios">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
@@ -180,7 +112,7 @@
                                  </font>
                               </Button>
 
-                              <Button fx:id="btn_menuValidacionInventarios" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicValidacionInventarios" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Validación inventario">
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicValidacionInventarios" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Validación inventario">
                                  <font>
                                     <Font size="12.0" />
                                  </font>
@@ -197,7 +129,7 @@
                               <Insets bottom="8.0" left="12.0" right="8.0" top="8.0" />
                            </padding>
                            <children>
-                              <Button fx:id="btn_menuPedidos" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicPedidos" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Pedidos">
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicPedidos" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Pedidos">
                                  <font>
                                     <Font size="12.0" />
                                  </font>

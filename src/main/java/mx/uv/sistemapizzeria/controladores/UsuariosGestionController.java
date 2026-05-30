@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperOffset;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,10 +28,7 @@ import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
 import mx.uv.sistemapizzeria.modelo.dao.ClienteDAO;
 import mx.uv.sistemapizzeria.modelo.dao.EmpleadoDAO;
-import mx.uv.sistemapizzeria.modelo.dto.ClienteDTO;
-import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
-import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
-import mx.uv.sistemapizzeria.modelo.dto.Persona;
+import mx.uv.sistemapizzeria.modelo.dto.*;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
@@ -40,9 +39,7 @@ public class UsuariosGestionController implements Initializable {
     @FXML private AnchorPane pnl_menuLateral;
     @FXML private ImageView img_logo;
     @FXML private Accordion ac_menu;
-    @FXML private TitledPane tp_administracion;
     @FXML private TitledPane tp_inventarios;
-    @FXML private TitledPane tp_pedidos;
     @FXML private AnchorPane pnl_contenido;
     @FXML private HBox hbox_busqueda;
     @FXML private TextField txt_buscar;
@@ -57,39 +54,38 @@ public class UsuariosGestionController implements Initializable {
     private TableColumn<Persona, String> col_email;
     @FXML
     private TableColumn<Persona, Boolean> col_estatus;
+    @FXML
+    private ComboBox<String> cb_filtro;
+    @FXML
+    private ComboBox<String> cb_tipo;
 
-
-    //TODO cambiar esto porque no serán radio buttons, sino unas combobbox
-
-    // Filtros de búsqueda (campo por el que buscar)
-    @FXML private TitledPane tp_filtroEstatus;
-    @FXML private ToggleGroup tg_estatus;
-    @FXML private RadioButton rb_nombre;
-    @FXML private RadioButton rb_telefono;
-    @FXML private RadioButton rb_direccion;
-
-    // Filtros de tipo (Empleado / Cliente)
-    @FXML private TitledPane tp_filtroTipo;
-    @FXML private ToggleGroup tg_tipo;
-    @FXML private RadioButton rb_tipoEmpleado;
-    @FXML private RadioButton rb_tipoCliente;
 
     private final EmpleadoDAO empleadoDAO = new EmpleadoDAO();
     private final ClienteDAO  clienteDAO  = new ClienteDAO();
 
     private ObservableList<Persona> usuarios;
-    // ObservableList para combobox filtro 1
-    // ObservalList para comobvox filtro 2
-
+    private ObservableList<String> filtros = FXCollections.observableArrayList(
+            "Por nombre", "Por telefono", "Por direccion", "Ver todos");
+    private ObservableList<String> tipos = FXCollections.observableArrayList(
+            "Empleado", "Cliente");
+    private String filtroBusqueda;
+    private String filtroTipo = "Cliente";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        cb_filtro.setItems(filtros);
+        cb_tipo.setItems(tipos);
+        cb_tipo.setValue(tipos.get(0));
         configurarColumnas();
+        configurarSeleccionTipo();
+        configurarSeleccionFiltro();
         cargarTodosEmpleados();
+        filtroBusqueda = "";
+        filtroTipo = "Empleado";
     }
 
     private void configurarColumnas() {
-        col_nombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        col_nombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
         col_telefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         col_email.setCellValueFactory(new PropertyValueFactory<>("email"));
         col_estatus.setCellValueFactory(new PropertyValueFactory<>("estatus"));
@@ -122,13 +118,120 @@ public class UsuariosGestionController implements Initializable {
                     MSJ_ERROR_CARGA_DATOS,
                     Alert.AlertType.ERROR);
         }
-
-
-
     }
+
+    private void cargarTodosClientes() {
+        try {
+            usuarios = FXCollections.observableArrayList();
+            List<ClienteDTO> clienteAlmacenadosBD = clienteDAO.mostrarTodos();
+            usuarios.addAll(clienteAlmacenadosBD);
+            tbl_usuarios.setItems(usuarios);
+        } catch (SQLException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al consultar",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        } catch(NullPointerException | ClassNotFoundException | IOException n){
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar productos del inventario",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
+        }
+    }
+
+    private void configurarSeleccionTipo() {
+        cb_tipo.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (newValue == null) {
+                    return;
+                }
+                if (newValue.equals("Empleado")) {
+                    txt_buscar.setText("");
+                    filtroTipo = "Empleado";
+                    cargarTodosEmpleados();
+                } else if (newValue.equals("Cliente")) {
+                    txt_buscar.setText("");
+                    filtroTipo = "Cliente";
+                    cargarTodosClientes();
+                }
+            }
+        });
+    }
+
+    private void configurarSeleccionFiltro(){
+        cb_filtro.valueProperty().addListener(new ChangeListener<String>(){
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if(newValue != null){
+                    if(newValue.equals("Ver todos")){
+                        txt_buscar.setText("");
+                        filtroBusqueda = "";
+                        actualizarInformacion();
+                    }else {
+                        filtroBusqueda = newValue;
+                    }
+                }
+            }
+        });
+    }
+
+    private void actualizarInformacion() {
+        if (filtroTipo.equals("Empleado")) {
+            cargarTodosEmpleados();
+        } else if (filtroTipo.equals("Cliente")) {
+            cargarTodosClientes();
+        }
+    }
+
 
     @FXML
     private void clicBuscar(ActionEvent actionEvent) {
+        String campoBusqueda = txt_buscar.getText();
+        usuarios = FXCollections.observableArrayList();
+
+        if (filtroBusqueda.equals("") ) {
+            UtilidadesFX.mostrarAlertaSimple("Sin filtro",
+                    "Por favor selecciona un filtro para realizar la búsqueda",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+        try {
+            usuarios.addAll(buscarPorFiltro(campoBusqueda));
+            tbl_usuarios.setItems(usuarios);
+        } catch (SQLException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al consultar",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        } catch (NullPointerException | ClassNotFoundException | IOException n) {
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar productos del inventario",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
+        }
+
+    }
+
+    private List<? extends Persona> buscarPorFiltro(String campoBusqueda)
+            throws SQLException, ClassNotFoundException, IOException, NullPointerException {
+        if (filtroTipo.equals("Empleado")) {
+            if (filtroBusqueda.equals("Por nombre")) {
+                return empleadoDAO.buscarPorNombre(campoBusqueda);
+
+            } else if (filtroBusqueda.equals("Por telefono")) {
+                return empleadoDAO.buscarPorTelefono(campoBusqueda);
+
+            } else {
+                return empleadoDAO.buscarPorDireccion(campoBusqueda);
+            }
+        } else {
+            if (filtroBusqueda.equals("Por nombre")) {
+                return clienteDAO.buscarPorNombre(campoBusqueda);
+
+            } else if (filtroBusqueda.equals("Por telefono")) {
+                return clienteDAO.buscarPorTelefono(campoBusqueda);
+
+            } else {
+                return clienteDAO.buscarPorDireccion(campoBusqueda);
+            }
+        }
     }
     /*
     // ── Búsqueda: botón buscar (igual que PedidosGestionController) ───────────
@@ -212,13 +315,6 @@ public class UsuariosGestionController implements Initializable {
 
      */
 
-
-    @FXML
-    private void clicFiltroTipo(ActionEvent event) {
-        txt_buscar.clear();
-        cargarTodosEmpleados();
-    }
-
     @FXML
     private void clicNuevoUsuario(ActionEvent event) {
         try {
@@ -234,7 +330,7 @@ public class UsuariosGestionController implements Initializable {
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-            cargarTodosEmpleados(); // refrescar al volver
+            actualizarInformacion();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -260,7 +356,7 @@ public class UsuariosGestionController implements Initializable {
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-            cargarTodosEmpleados();
+            actualizarInformacion();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -316,6 +412,7 @@ public class UsuariosGestionController implements Initializable {
                 }
             }
         });
+        actualizarInformacion();
     }
 
 

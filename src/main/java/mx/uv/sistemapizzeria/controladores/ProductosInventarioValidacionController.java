@@ -75,7 +75,7 @@ public class ProductosInventarioValidacionController implements Initializable {
         col_diferencia.setCellValueFactory(new PropertyValueFactory<>("diferencia"));
         col_justificacion.setCellValueFactory(new PropertyValueFactory<>("justificacion"));
 
-        col_conteoFisicoReal;
+        //col_conteoFisicoReal;
 
         col_justificacion.setCellFactory(col -> new TableCell<ReporteInventarioDTO, String>() {
             private final TextArea txt_justificacion= new TextArea();
@@ -90,11 +90,13 @@ public class ProductosInventarioValidacionController implements Initializable {
     }
 
     private void cargarInformacionDetalleProductosInventario(){
-        try {
+
+        /*try {
             detallesReporte = FXCollections.observableArrayList();
-            List<DetalleReporteDTO> detallesReporteBD = reporteInventarioDAO.mostrarTodos();
-            detallesReporte.addAll(detallesReporteBD);
+            //List<DetalleReporteDTO> detallesReporteBD = reporteInventarioDAO.mostrarTodos();
+            //detallesReporte.addAll(detallesReporteBD);
             tbl_validacionInsumos.setItems(detallesReporte);
+
         }catch(SQLException e){
             UtilidadesFX.mostrarAlertaSimple("Error al consultar",
                     e.getMessage(),
@@ -104,6 +106,8 @@ public class ProductosInventarioValidacionController implements Initializable {
                     MSJ_ERROR_CARGA_DATOS,
                     Alert.AlertType.ERROR);
         }
+        */
+
     }
 
     @FXML
