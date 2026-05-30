@@ -243,6 +243,17 @@ public class ProductosInventarioGestionController implements Initializable {
                     Alert.AlertType.WARNING);
             return;
         }
+
+        boolean confirmado = UtilidadesFX.mostrarAlertaConfirmacion(
+                "Confirmar eliminación",
+                "¿Estás seguro de que deseas eliminar: " + productoInventario.getNombre() + "?",
+                "El producto de inventario será dado de baja del sistema.");
+
+
+        if (!confirmado) {
+            return;
+        }
+
         try {
             if (productoInventarioDAO.eliminar(productoInventario.getCodigo())){
                 UtilidadesFX.mostrarAlertaSimple("Eliminación exitosa",
