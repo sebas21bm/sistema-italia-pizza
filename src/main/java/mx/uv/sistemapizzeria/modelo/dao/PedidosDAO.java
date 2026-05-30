@@ -12,11 +12,13 @@ import java.util.List;
 
 public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
 
-    // Columnas reales de vista_lista_pedidos (CONSULTAS.sql):
-    // nombre, paterno, materno, telefono, no_cliente, id_pedido, fecha, total_pagar, estatus
+    // Columnas de vista_lista_pedidos (CONSULTAS.sql):
+    // nombre, paterno, materno, telefono, no_cliente, id_pedido, fecha, total_pagar, estatus,
+    // calle, numero, codigo_postal, ciudad
     private static final String COLS_VISTA =
             "nombre, paterno, materno, telefono, " +
-                    "no_cliente, id_pedido, fecha, total_pagar, estatus";
+                    "no_cliente, id_pedido, fecha, total_pagar, estatus, " +
+                    "calle, numero, codigo_postal, ciudad";
 
     // ── buscar(id_pedido): PedidoDTO con detalles ──────────────────────────
     @Override
@@ -36,7 +38,10 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                 }
             }
 
-            if (pedido != null) cargarDetalles(conn, pedido);
+            if (pedido != null) {
+                cargarDetalles(conn, pedido);
+                cargarDireccion(conn, pedido);
+            }
         }
         return pedido;
     }
@@ -133,7 +138,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                 st.execute("DELETE FROM temp_detalles_pedido");
             }
 
-            // 1. Llenar tabla temporal con cada ítem del pedido
+            // 1. Llenar tabla temporal con cada ítem del pedido (codigo_menu, cantidad)
             for (DetallePedidoDTO det : pedido.getDetalles()) {
                 try (CallableStatement cs = conn.prepareCall(
                         "{CALL registrar_detalle_pedido(?, ?)}")) {
@@ -154,6 +159,14 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                 cs.setInt(3, pedido.getNoCliente());
                 cs.setInt(4, pedido.getDireccion().getIdDireccion());
                 cs.execute();
+            }
+
+            // 3. Recuperar el idPedido generado para que el ticket lo muestre
+            try (Statement st = conn.createStatement();
+                 ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()")) {
+                if (rs.next()) {
+                    pedido.setIdPedido(rs.getInt(1));
+                }
             }
 
             return true;
@@ -229,6 +242,13 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         c.setTelefono(rs.getString("telefono"));
         p.setCliente(c);
 
+        DireccionDTO dir = new DireccionDTO();
+        dir.setCalle(rs.getString("calle"));
+        dir.setNumero(rs.getString("numero"));
+        dir.setCodigoPostal(rs.getString("codigo_postal"));
+        dir.setCiudad(rs.getString("ciudad"));
+        p.setDireccion(dir);
+
         return p;
     }
 
@@ -256,6 +276,27 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                     det.setProductoVenta(pv);
 
                     pedido.agregarDetalle(det);
+                }
+            }
+        }
+    }
+
+    private void cargarDireccion(Connection conn, PedidoDTO pedido) throws SQLException {
+        String sql = "SELECT d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
+                "FROM pedido p " +
+                "JOIN direccion d ON p.id_direccion = d.id_direccion " +
+                "WHERE p.id_pedido = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pedido.getIdPedido());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    DireccionDTO dir = new DireccionDTO();
+                    dir.setIdDireccion(rs.getInt("id_direccion"));
+                    dir.setCalle(rs.getString("calle"));
+                    dir.setNumero(rs.getString("numero"));
+                    dir.setCodigoPostal(rs.getString("codigo_postal"));
+                    dir.setCiudad(rs.getString("ciudad"));
+                    pedido.setDireccion(dir);
                 }
             }
         }

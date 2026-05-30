@@ -1,191 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="570.0" prefWidth="610.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoEdicionController">
+<AnchorPane prefHeight="620.0" prefWidth="860.0" style="-fx-background-color: #f7f8fc;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoEdicionController">
+
    <children>
 
-      <Label layoutX="17.0" layoutY="14.0" text="Formulario" textFill="#6f7882">
-         <font>
-            <Font size="12.0" />
-         </font>
-      </Label>
+      <!-- ══ ENCABEZADO ══ -->
+      <HBox alignment="CENTER_LEFT" layoutX="0.0" layoutY="0.0" prefHeight="60.0" prefWidth="860.0" spacing="10.0" style="-fx-background-color: white;                  -fx-border-color: #e2e6ed;                  -fx-border-width: 0 0 1 0;                  -fx-padding: 0 24 0 24;">
+         <children>
+            <VBox spacing="1.0">
+               <children>
+                  <Label text="Formulario" textFill="#8892a0">
+                     <font><Font size="11.0" /></font>
+                  </Label>
+                  <Label fx:id="lbl_titulo" text="Editar pedido #—" textFill="#1a2535">
+                     <font><Font name="System Bold" size="20.0" /></font>
+                  </Label>
+               </children>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="btn_cancelar" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="34.0" prefWidth="90.0" style="-fx-background-color: white;                        -fx-border-color: #1265f5; -fx-border-width: 2;                        -fx-border-radius: 6; -fx-background-radius: 6;                        -fx-text-fill: #1265f5;                        -fx-font-size: 12px; -fx-font-weight: bold;" text="Cancelar" />
+            <Button fx:id="btn_guardar" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: #1265f5;                        -fx-border-radius: 6; -fx-background-radius: 6;                        -fx-text-fill: white;                        -fx-font-size: 12px; -fx-font-weight: bold;" text="Guardar cambios" />
+         </children>
+      </HBox>
 
-      <Label layoutX="17.0" layoutY="33.0" text="Editar Pedido #P-001" textFill="#202932">
-         <font>
-            <Font name="System Bold" size="22.0" />
-         </font>
-      </Label>
-
-      <Button fx:id="btn_cerrar" layoutX="580.0" layoutY="12.0" mnemonicParsing="false" onAction="#clicCerrar" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932; -fx-font-size: 20px; -fx-font-weight: bold;" text="×" />
-
-      <TableView fx:id="tbl_cliente" layoutX="37.0" layoutY="85.0" prefHeight="62.0" prefWidth="530.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
-         <columns>
-            <TableColumn fx:id="col_nombre" prefWidth="91.0" text="Nombre" />
-            <TableColumn fx:id="col_numeroTelefono" prefWidth="106.0" text="Teléfono" />
-            <TableColumn fx:id="col_calle" prefWidth="70.0" text="Calle" />
-            <TableColumn fx:id="col_numeroCalle" prefWidth="86.0" text="Número" />
-            <TableColumn fx:id="col_codigoPostal" prefWidth="82.0" text="C.P." />
-            <TableColumn fx:id="col_ciudad" prefWidth="93.0" text="Ciudad" />
-         </columns>
-      </TableView>
-
-      <HBox layoutX="28.0" layoutY="190.0" prefHeight="285.0" prefWidth="560.0" spacing="11.0">
+      <!-- ══ CONTENIDO PRINCIPAL ══ -->
+      <VBox layoutX="16.0" layoutY="72.0" prefHeight="536.0" prefWidth="828.0" spacing="12.0">
          <children>
 
-            <VBox prefHeight="250.0" prefWidth="174.0" spacing="7.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
+            <!-- Bloque info del cliente (solo lectura) -->
+            <VBox spacing="6.0" style="-fx-background-color: white;                      -fx-border-color: #e2e6ed; -fx-border-width: 1;                      -fx-border-radius: 8; -fx-background-radius: 8;                      -fx-padding: 12 16 12 16;">
                <children>
-                  <ImageView fitHeight="75.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
-
-                  <Label text="Agregados al pedido: 2" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
+                  <Label text="Cliente del pedido" textFill="#1a2535">
+                     <font><Font name="System Bold" size="12.0" /></font>
                   </Label>
-
-                  <Label text="Pizza Hawaiana" textFill="#202932">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-
-                  <Label text="Código: 666" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
-                  </Label>
-
-                  <Label text="Precio: $115.00" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
-                  </Label>
-
-                  <Label text="Límite por cliente: 20" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
-                  </Label>
-
-                  <HBox spacing="10.0">
-                     <children>
-                        <Button fx:id="btn_disminuirUno" mnemonicParsing="false" onAction="#clicDisminuirUno" prefHeight="22.0" prefWidth="68.0" style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" text="Disminuir" />
-                        <Button fx:id="btn_agregarUno" mnemonicParsing="false" onAction="#clicAgregarUno" prefHeight="22.0" prefWidth="67.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" text="Agregar" />
-                     </children>
-                  </HBox>
+                  <TableView fx:id="tbl_cliente" prefHeight="65.0" prefWidth="794.0" fixedCellSize="32.0" style="-fx-background-color: white;                               -fx-border-color: #e2e6ed; -fx-border-width: 1;                               -fx-table-cell-border-color: #e2e6ed;                               -fx-selection-bar: #f0f4ff;                               -fx-selection-bar-non-focused: #f0f4ff;">
+                     <columns>
+                        <TableColumn fx:id="col_nombre" prefWidth="170.0" text="Nombre" />
+                        <TableColumn fx:id="col_numeroTelefono" prefWidth="110.0" text="Teléfono" />
+                        <TableColumn fx:id="col_calle" prefWidth="130.0" text="Calle" />
+                        <TableColumn fx:id="col_numeroCalle" prefWidth="80.0" text="Número" />
+                        <TableColumn fx:id="col_codigoPostal" prefWidth="80.0" text="C.P." />
+                        <TableColumn fx:id="col_ciudad" prefWidth="206.0" text="Ciudad" />
+                     </columns>
+                  </TableView>
                </children>
             </VBox>
 
-            <VBox prefHeight="250.0" prefWidth="174.0" spacing="7.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
+            <!-- Bloque catálogo de productos -->
+            <VBox spacing="8.0" style="-fx-background-color: white;                      -fx-border-color: #e2e6ed; -fx-border-width: 1;                      -fx-border-radius: 8; -fx-background-radius: 8;                      -fx-padding: 12 16 12 16;" VBox.vgrow="ALWAYS">
                <children>
-                  <ImageView fitHeight="75.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
 
-                  <Label text="Agregados al pedido: 2" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
+                  <Label text="Productos del pedido" textFill="#1a2535">
+                     <font><Font name="System Bold" size="12.0" /></font>
                   </Label>
 
-                  <Label text="Pizza Hawaiana" textFill="#202932">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-
-                  <Label text="Código: 666" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
-                  </Label>
-
-                  <Label text="Precio: $115.00" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
-                  </Label>
-
-                  <Label text="Límite por cliente: 20" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
-                  </Label>
-
-                  <HBox spacing="10.0">
+                  <!-- Search bar + botón buscar -->
+                  <HBox alignment="CENTER_LEFT" spacing="8.0">
                      <children>
-                        <Button fx:id="btn_disminuirDos" mnemonicParsing="false" onAction="#clicDisminuirDos" prefHeight="22.0" prefWidth="68.0" style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" text="Disminuir" />
-                        <Button fx:id="btn_agregarDos" mnemonicParsing="false" onAction="#clicAgregarDos" prefHeight="22.0" prefWidth="67.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" text="Agregar" />
+                        <TextField fx:id="txt_busquedaProducto" prefHeight="34.0" promptText="Buscar producto por nombre…" style="-fx-background-color: #f3f4f9;                                   -fx-border-color: #d9dde5; -fx-border-width: 1;                                   -fx-border-radius: 6; -fx-background-radius: 6;                                   -fx-font-size: 12px; -fx-padding: 0 10 0 10;" HBox.hgrow="ALWAYS" />
+                        <!-- Botón buscar: solo ícono, cargado desde Java para evitar rutas con espacios -->
+                        <Button fx:id="btn_buscarProducto" mnemonicParsing="false" onAction="#clicBuscarProducto" prefHeight="34.0" prefWidth="34.0" style="-fx-background-color: #1265f5;                                -fx-background-radius: 6;                                -fx-padding: 0;" textFill="WHITE" />
                      </children>
                   </HBox>
-               </children>
-            </VBox>
 
-            <VBox prefHeight="250.0" prefWidth="174.0" spacing="7.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-               <children>
-                  <ImageView fitHeight="75.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
+                  <!-- FlowPane dinámico — el controlador genera las tarjetas -->
+                  <ScrollPane fx:id="scroll_productos" fitToWidth="true" style="-fx-background-color: transparent;                                -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
+                     <content>
+                        <FlowPane fx:id="flow_productos" hgap="12.0" prefWrapLength="796.0" style="-fx-background-color: transparent;                                  -fx-padding: 4 0 4 0;" vgap="12.0" />
+                     </content>
+                  </ScrollPane>
 
-                  <Label text="Agregados al pedido: 5" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
-                  </Label>
-
-                  <Label text="Coca-cola" textFill="#202932">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-
-                  <Label text="Código: 666" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
-                  </Label>
-
-                  <Label text="Precio: $115.00" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
-                  </Label>
-
-                  <Label text="Límite por cliente: 20" textFill="#202932">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
-                  </Label>
-
-                  <HBox spacing="10.0">
+                  <!-- Total -->
+                  <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-border-color: #e2e6ed; -fx-border-width: 1 0 0 0;                          -fx-padding: 8 0 0 0;">
                      <children>
-                        <Button fx:id="btn_disminuirTres" mnemonicParsing="false" onAction="#clicDisminuirTres" prefHeight="22.0" prefWidth="68.0" style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" text="Disminuir" />
-                        <Button fx:id="btn_agregarTres" mnemonicParsing="false" onAction="#clicAgregarTres" prefHeight="22.0" prefWidth="67.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" text="Agregar" />
+                        <Label text="Total estimado:" textFill="#6f7882">
+                           <font><Font size="13.0" /></font>
+                        </Label>
+                        <Label fx:id="lbl_total" text="0.00" textFill="#1265f5">
+                           <font><Font name="System Bold" size="18.0" /></font>
+                        </Label>
                      </children>
                   </HBox>
+
                </children>
             </VBox>
 
          </children>
-      </HBox>
-
-      <Button fx:id="btn_cancelar" layoutX="406.0" layoutY="510.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="32.0" prefWidth="79.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 12px; -fx-font-weight: bold;" text="Cancelar" />
-
-      <Button fx:id="btn_guardar" layoutX="492.0" layoutY="510.0" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="32.0" prefWidth="78.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" text="Guardar" />
+      </VBox>
 
    </children>
 </AnchorPane>
