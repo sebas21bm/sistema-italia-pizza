@@ -204,6 +204,7 @@ public class ProductoDAO implements Operaciones<String, ProductoVentaDTO> {
         }
     }
 
+    // ── Eliminar un producto de venta ─────────────────────────────────────────────────────────────
     public void eliminarProductoVenta(String codigoMenu) throws SQLException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
@@ -214,6 +215,49 @@ public class ProductoDAO implements Operaciones<String, ProductoVentaDTO> {
                 ps.executeUpdate();
             }
         } catch (IOException | ClassNotFoundException ex) {
+            throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+        }
+    }
+
+    // ── Editar un producto de venta ───────────────────────────
+    public void editarProductoCompleto(ProductoVentaDTO producto, List<ProductoCompuestoPorDTO> receta) throws SQLException {
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+
+            // Construir la tabla temporal solo para esta conexión y nada más
+            String sqlCrearTemp = "CREATE TEMPORARY TABLE IF NOT EXISTS temp_receta(" +
+                    "codigo VARCHAR(5) NOT NULL, " +
+                    "cantidad DOUBLE NOT NULL)";
+            try (PreparedStatement psCrear = conn.prepareStatement(sqlCrearTemp)) {
+                psCrear.executeUpdate();
+            }
+
+            try (PreparedStatement psLimpiar = conn.prepareStatement("DELETE FROM temp_receta")) {
+                psLimpiar.executeUpdate();
+            }
+
+            // Llenar la tabla temporal
+            String sqlReceta = "{CALL registrar_receta(?, ?)}";
+            try (PreparedStatement psReceta = conn.prepareCall(sqlReceta)) {
+                for (ProductoCompuestoPorDTO item : receta) {
+                    psReceta.setString(1, item.getCodigoInsumo());
+                    psReceta.setDouble(2, item.getCantidad());
+                    psReceta.executeUpdate();
+                }
+            }
+
+            // Llamar al procedimiento maestro para que absorba los datos temporales
+            String sqlPrincipal = "{CALL editar_producto_venta(?, ?, ?, ?, ?, ?)}";
+            try (PreparedStatement ps = conn.prepareCall(sqlPrincipal)) {
+                ps.setString(1, producto.getCodigoMenu());
+                ps.setString(2, producto.getNombre());
+                ps.setDouble(3, producto.getPrecio());
+                ps.setInt(4, producto.getLimite());
+                ps.setString(5, producto.getDescripcion());
+                ps.setString(6, producto.getFoto());
+                ps.executeUpdate();
+            }
+        } catch (java.io.IOException | ClassNotFoundException ex) {
             throw new SQLException(Constantes.MSJ_SIN_CONEXION);
         }
     }
