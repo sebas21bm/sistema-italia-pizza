@@ -4,6 +4,7 @@
  */
 package mx.uv.sistemapizzeria.controladores;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -49,8 +50,6 @@ public class ProductosInventarioGestionController implements Initializable {
     @FXML
     private TableColumn col_existencias;
     @FXML
-    private TableColumn col_estatus;
-    @FXML
     private AnchorPane pnl_menuLateral;
     @FXML
     private TitledPane tp_administracion;
@@ -81,7 +80,7 @@ public class ProductosInventarioGestionController implements Initializable {
 
     ProductoInventarioDAO productoInventarioDAO = new ProductoInventarioDAO();
     @FXML
-    private TableColumn<?, ?> col_codigo;
+    private TableColumn col_codigo;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -89,6 +88,7 @@ public class ProductosInventarioGestionController implements Initializable {
         configurarTabla();
         cargarInformacionProductosInventario();
         configurarSeleccionFiltro();
+        filtroBusqueda = "";
     }
 
     private void configurarSeleccionFiltro(){
@@ -98,6 +98,7 @@ public class ProductosInventarioGestionController implements Initializable {
                 if(newValue != null){
                     if(newValue.equals("Ver todos")){
                         txt_buscar.setText("");
+                        filtroBusqueda = "";
                         cargarInformacionProductosInventario();
                     }else {
                         filtroBusqueda = newValue;
@@ -107,46 +108,96 @@ public class ProductosInventarioGestionController implements Initializable {
         });
     }
 
+    private void actualizarInformacion(){
+        if(filtroBusqueda.equals("")){
+            cargarInformacionProductosInventario();
+        }else {
+            buscarPorFiltro();
+        }
+    }
+
     private void configurarTabla(){
         col_codigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
         col_nombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         col_existencias.setCellValueFactory(new PropertyValueFactory<>("existencias"));
         col_fechaCaducidad.setCellValueFactory(new PropertyValueFactory<>("fechaCaducidad"));
-        col_estatus.setCellValueFactory(new PropertyValueFactory<>("estatus"));
         col_fotografia.setCellValueFactory(new PropertyValueFactory<>("foto"));
+
         col_fotografia.setCellFactory(col -> new TableCell<ProductoInventarioDTO, String>() {
             private final ImageView imageView = new ImageView();
+
+            {
+                imageView.setFitWidth(50);
+                imageView.setFitHeight(50);
+                imageView.setPreserveRatio(true);
+            }
 
             @Override
             protected void updateItem(String imagePath, boolean empty) {
                 super.updateItem(imagePath, empty);
 
+                setGraphic(null);
+                setText(null);
+                imageView.setImage(null);
+
                 if (empty || imagePath == null || imagePath.isBlank()) {
-                    setGraphic(null);
-                    setText(null);
                     return;
                 }
 
                 try {
-                    String ruta = imagePath.startsWith("/") ? imagePath : "/" + imagePath;
+                    Image image = cargarImagen(imagePath);
 
-                    Image image = new Image(getClass().getResourceAsStream(ruta));
+                    if (image == null || image.isError()) {
+                        return;
+                    }
+
                     imageView.setImage(image);
-                    imageView.setFitWidth(50);
-                    imageView.setFitHeight(50);
+                    imageView.setFitWidth(100);
+                    imageView.setFitHeight(100);
                     imageView.setPreserveRatio(true);
-
                     setGraphic(imageView);
-                    setText(null);
+
                 } catch (Exception e) {
                     setGraphic(null);
                     setText(null);
+                    imageView.setImage(null);
                 }
             }
         });
     }
 
+    private Image cargarImagen(String rutaFoto) {
+        if (rutaFoto == null || rutaFoto.isBlank()) {
+            return null;
+        }
 
+        rutaFoto = rutaFoto.trim().replace("\\", "/");
+
+        try {
+            if (rutaFoto.startsWith("/imagenes/") || rutaFoto.startsWith("imagenes/")) {
+                String rutaRecurso = rutaFoto.startsWith("/") ? rutaFoto : "/" + rutaFoto;
+
+                var recurso = getClass().getResourceAsStream(rutaRecurso);
+
+                if (recurso == null) {
+                    return null;
+                }
+
+                return new Image(recurso);
+            }
+
+            File archivo = new File(rutaFoto);
+
+            if (archivo.exists()) {
+                return new Image(archivo.toURI().toString());
+            }
+
+        } catch (Exception e) {
+            return null;
+        }
+
+        return null;
+    }
 
     private void cargarInformacionProductosInventario(){
         try {
@@ -182,16 +233,21 @@ public class ProductosInventarioGestionController implements Initializable {
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-        } catch (IOException e) {
+            actualizarInformacion();
+            } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @FXML
     private void clicBuscar(ActionEvent event) {
+        buscarPorFiltro();
+    }
+
+    private void buscarPorFiltro(){
         String campoBuscar = txt_buscar.getText();
         productosInventario = FXCollections.observableArrayList();
-        if(filtroBusqueda == null) {
+        if(filtroBusqueda.equals("")) {
             UtilidadesFX.mostrarAlertaSimple("Sin filtro",
                     "Por favor selecciona un filtro para realizar la búsqueda",
                     Alert.AlertType.WARNING);
@@ -215,7 +271,6 @@ public class ProductosInventarioGestionController implements Initializable {
                     MSJ_ERROR_CARGA_DATOS,
                     Alert.AlertType.ERROR);
         }
-
     }
 
     @FXML
@@ -233,7 +288,7 @@ public class ProductosInventarioGestionController implements Initializable {
             FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoInventarioOperaciones");
             Parent vista = loader.load();
             ProductoInventarioOperacionesController controller = loader.getController();
-            controller.editarProductoInventario(productoInventario);
+            controller.mostrarProductoInventario(productoInventario);
             Scene escena = new Scene(vista);
 
             Stage stage = new Stage();
@@ -244,6 +299,7 @@ public class ProductosInventarioGestionController implements Initializable {
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
+            actualizarInformacion();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -251,7 +307,35 @@ public class ProductosInventarioGestionController implements Initializable {
 
     @FXML
     private void clicEliminar(ActionEvent event) {
-        //TODO Implementación Eliminación
+        ProductoInventarioDTO productoInventario = tbl_productoInventario.getSelectionModel().getSelectedItem();
+        if(productoInventario == null){
+            UtilidadesFX.mostrarAlertaSimple("Sin Producto Inventario para eliminar",
+                    "No se ha seleccionado ningún producto de inventario, " +
+                            "selecciona uno para continuar",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+        try {
+            if (productoInventarioDAO.eliminar(productoInventario.getCodigo())){
+                UtilidadesFX.mostrarAlertaSimple("Eliminación exitosa",
+                        "Se ha eliminado el producto de inventario correctamente",
+                        Alert.AlertType.INFORMATION);
+            } else {
+                UtilidadesFX.mostrarAlertaSimple("Falló la edición",
+                        "La eliminación del producto de inventario no pudo realizarse," +
+                                "intente de nuevo",
+                        Alert.AlertType.WARNING);
+            }
+        }catch(SQLException e){
+            UtilidadesFX.mostrarAlertaSimple("Error al eliminar",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        }catch(NullPointerException | ClassNotFoundException | IOException n){
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar producto inventario a eliminar",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
+        }
+        actualizarInformacion();
     }
 
 

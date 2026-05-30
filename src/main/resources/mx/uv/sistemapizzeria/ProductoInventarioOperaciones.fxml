@@ -57,20 +57,13 @@
          </font>
       </Label>
 
-      <AnchorPane layoutX="116.0" layoutY="428.0" prefHeight="95.0" prefWidth="105.0" style="-fx-background-color: #dfe3e8;">
-         <children>
-            <ImageView fitHeight="95.0" fitWidth="105.0" preserveRatio="true" visible="false" />
-         </children>
-      </AnchorPane>
-
-      <Button layoutX="254.0" layoutY="441.0" mnemonicParsing="false" onAction="#clicSubirFoto" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 13px; -fx-font-weight: bold;" text="Subir Foto" />
-
-      <Button fx:id="btn_borrarFoto" layoutX="294.0" layoutY="493.0" mnemonicParsing="false" onAction="#clicBorrarFoto" prefHeight="25.0" prefWidth="60.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #0a2878; -fx-font-size: 13px;" text="Borrar" />
+      <Button layoutX="254.0" layoutY="457.0" mnemonicParsing="false" onAction="#clicSubirFoto" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 13px; -fx-font-weight: bold;" text="Subir Foto" />
 
       <Button layoutX="202.0" layoutY="548.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="42.0" prefWidth="140.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 15px; -fx-font-weight: bold;" text="Cancelar" />
 
       <Button layoutX="361.0" layoutY="548.0" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="42.0" prefWidth="140.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;" text="Guardar" />
       <DatePicker fx:id="dp_fechaCaducidad" layoutX="14.0" layoutY="367.0" prefHeight="40.0" prefWidth="487.0" />
+      <ImageView fx:id="img_foto" fitHeight="120.0" fitWidth="140.0" layoutX="67.0" layoutY="415.0" pickOnBounds="true" preserveRatio="true" />
 
    </children>
 </AnchorPane>
