@@ -215,8 +215,8 @@ public class ProductosGestionController implements Initializable {
                 ProductoVentaDTO producto = productoDAO.buscar(campoBuscar);
                 productosVenta.add(producto);
             } else {
-                List<ProductoInventarioDTO> productosBD = productoDAO.buscarPorNombre(campoBuscar);
-                productosVenta.addAll(productosBD);
+                //List<ProductoInventarioDTO> productosBD = productoDAO.buscarPorNombre(campoBuscar);
+                //productosVenta.addAll(productosBD);
             }
             tbl_productos.setItems(productosVenta);
         }catch(SQLException e){

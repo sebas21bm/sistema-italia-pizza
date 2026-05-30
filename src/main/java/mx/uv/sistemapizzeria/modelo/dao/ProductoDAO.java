@@ -205,7 +205,7 @@ public class ProductoDAO implements Operaciones<String, ProductoVentaDTO> {
     }
 
     // ── Eliminar un producto de venta ─────────────────────────────────────────────────────────────
-    public boolean eliminarProductoVenta(String codigoMenu) throws NullPointerException, IOException, SQLException, ClassNotFoundException
+    public boolean eliminarProductoVenta(String codigoMenu) throws NullPointerException, IOException, SQLException, ClassNotFoundException{
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
