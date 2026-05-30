@@ -123,7 +123,7 @@ public class ProductosInventarioGestionController implements Initializable {
         col_fechaCaducidad.setCellValueFactory(new PropertyValueFactory<>("fechaCaducidad"));
         col_fotografia.setCellValueFactory(new PropertyValueFactory<>("foto"));
 
-        col_fotografia.setCellFactory(col -> new TableCell<ProductoInventarioDTO, String>() {
+        col_fotografia.setCellFactory(col -> new TableCell<>() {
             private final ImageView imageView = new ImageView();
 
             {
@@ -202,8 +202,8 @@ public class ProductosInventarioGestionController implements Initializable {
     private void cargarInformacionProductosInventario(){
         try {
             productosInventario = FXCollections.observableArrayList();
-            List<ProductoInventarioDTO> itemsAlmacenadosBD = productoInventarioDAO.mostrarTodos();
-            productosInventario.addAll(itemsAlmacenadosBD);
+            List<ProductoInventarioDTO> productosInventarioBD = productoInventarioDAO.mostrarTodos();
+            productosInventario.addAll(productosInventarioBD);
             tbl_productoInventario.setItems(productosInventario);
         }catch(SQLException e){
             UtilidadesFX.mostrarAlertaSimple("Error al consultar",

@@ -18,9 +18,9 @@ public class ProductoInventarioDTO {
     private LocalDate fechaCaducidad;
     private String foto;            // ruta/path VARCHAR(255)
 
-    public ProductoInventarioDTO() {}
+    public ProductoInventarioDTO() {
 
-    // ── Getters y Setters ──────────────────────────────────────────────────
+    }
 
     public String getCodigo() {
         return codigo;

@@ -9,10 +9,20 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReporteInventarioDAO implements Operaciones<Integer, ReporteInventarioDTO> {
+public class ReporteInventarioDAO {
 
-    // ── buscar(idInventario): ReporteInventario con detalles ───────────────
-    @Override
+
+    /*
+    CALL registrar_detalle_reporte(
+    'I0000', (codigo)
+    5, (diferencia)
+    'Se encontraron 5 unidades adicionales');  (justificacion)
+     */
+
+    /*
+    CALL registrar_reporte();
+     */
+
     public ReporteInventarioDTO buscar(Integer idInventario) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         ReporteInventarioDTO reporte = null;
 
@@ -140,14 +150,14 @@ public class ReporteInventarioDAO implements Operaciones<Integer, ReporteInventa
 
                     for (DetalleReporteDTO det : reporte.getDetalles()) {
                         psDet.setInt(1, idGenerado);
-                        psDet.setString(2, det.getCodigoInsumo());
+                        psDet.setString(2, det.getCodigo());
                         psDet.setDouble(3, det.getDiferencia());
                         psDet.setString(4, det.getJustificacion());
                         psDet.addBatch();
 
                         if (det.hayDiferencia()) {
                             psAjuste.setDouble(1, det.getDiferencia());
-                            psAjuste.setString(2, det.getCodigoInsumo());
+                            psAjuste.setString(2, det.getCodigo());
                             psAjuste.addBatch();
                         }
                     }
@@ -168,7 +178,7 @@ public class ReporteInventarioDAO implements Operaciones<Integer, ReporteInventa
     private DetalleReporteDTO mapearDetalle(ResultSet rs) throws SQLException {
         DetalleReporteDTO det = new DetalleReporteDTO();
         det.setIdInventario(rs.getInt("id_inventario"));
-        det.setCodigoInsumo(rs.getString("codigo"));
+        det.setCodigo(rs.getString("codigo"));
         det.setDiferencia(rs.getDouble("diferencia"));
         det.setJustificacion(rs.getString("justificacion"));
 

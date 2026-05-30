@@ -3,15 +3,14 @@ package mx.uv.sistemapizzeria.modelo.dto;
 public class DetalleReporteDTO {
 
     private int idInventario;
-    private String codigoInsumo;
+    private String codigo;
+    private String descripcionProductoInventario;
+    private Integer conteoFisico;
     private double diferencia;
     private String justificacion;
 
-    private ProductoInventarioDTO insumo;
-
-    public DetalleReporteDTO() {}
-
-    // ── Getters y Setters ──────────────────────────────────────────────────
+    public DetalleReporteDTO() {
+    }
 
     public int getIdInventario() {
         return idInventario;
@@ -21,14 +20,30 @@ public class DetalleReporteDTO {
         this.idInventario = idInventario;
     }
 
-    public String getCodigoInsumo() {
-        return codigoInsumo;
+    public String getCodigo() {
+        return codigo;
     }
 
-    public void setCodigoInsumo(String codigoInsumo) {
-        this.codigoInsumo = codigoInsumo;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
+    public String getDescripcionProductoInventario() {
+        return descripcionProductoInventario;
+    }
+
+    public void setDescripcionProductoInventario(String descripcionProductoInventario) {
+        this.descripcionProductoInventario = descripcionProductoInventario;
+    }
+
+        public Integer getConteoFisico() {
+        return conteoFisico;
+    }
+
+    public void setConteoFisico(Integer conteoFisico) {
+        this.conteoFisico = conteoFisico;
+    }
+    
     public double getDiferencia() {
         return diferencia;
     }
@@ -45,23 +60,12 @@ public class DetalleReporteDTO {
         this.justificacion = justificacion;
     }
 
-    public ProductoInventarioDTO getInsumo() {
-        return insumo;
-    }
-
-    public void setInsumo(ProductoInventarioDTO insumo) {
-        this.insumo = insumo;
-        if (insumo != null) {
-            this.codigoInsumo = insumo.getCodigo();
-        }
-    }
-
     public boolean hayDiferencia() {
         return diferencia != 0;
     }
 
     @Override
     public String toString() {
-        return codigoInsumo + " | diff: " + diferencia;
+        return codigo + " | diff: " + diferencia;
     }
 }

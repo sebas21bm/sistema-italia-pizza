@@ -6,26 +6,35 @@ package mx.uv.sistemapizzeria.controladores;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import javafx.beans.property.Property;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
+import mx.uv.sistemapizzeria.modelo.dao.ReporteInventarioDAO;
+import mx.uv.sistemapizzeria.modelo.dto.DetalleReporteDTO;
+import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
+import mx.uv.sistemapizzeria.modelo.dto.ReporteInventarioDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
+
+import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 
 /**
  * FXML Controller class
@@ -35,80 +44,76 @@ import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 public class ProductosInventarioValidacionController implements Initializable {
 
     @FXML
-    private AnchorPane pnl_menuLateral;
+    private TableView<DetalleReporteDTO> tbl_validacionInsumos;
     @FXML
-    private ImageView img_logo;
+    private TableColumn col_codigo;
     @FXML
-    private Accordion ac_menu;
+    private TableColumn col_existencias;
     @FXML
-    private TitledPane tp_administracion;
+    private TableColumn col_conteoFisicoReal;
     @FXML
-    private Button btn_menuUsuarios;
+    private TableColumn col_diferencia;
     @FXML
-    private TitledPane tp_inventarios;
+    private TableColumn col_productoInventario;
     @FXML
-    private Button btn_menuProductos;
-    @FXML
-    private Button btn_menuInsumos;
-    @FXML
-    private Button btn_menuValidacionInventarios;
-    @FXML
-    private TitledPane tp_pedidos;
-    @FXML
-    private Button btn_menuPedidos;
-    @FXML
-    private Button btn_cerrarSesion;
-    @FXML
-    private Button btn_ayudaAcercaDe;
-    @FXML
-    private AnchorPane pnl_contenido;
-    @FXML
-    private HBox hbox_busqueda;
-    @FXML
-    private TextField txt_buscar;
-    @FXML
-    private Button btn_buscar;
-    @FXML
-    private Button btn_generarReportePdf;
-    @FXML
-    private TableView<?> tbl_validacionInsumos;
-    @FXML
-    private TableColumn<?, ?> col_codigo;
-    @FXML
-    private TableColumn<?, ?> col_insumo;
-    @FXML
-    private TableColumn<?, ?> col_existencias;
-    @FXML
-    private TableColumn<?, ?> col_conteoFisicoReal;
-    @FXML
-    private TableColumn<?, ?> col_diferencia;
-    @FXML
-    private Button btn_guardarValidacion;
+    private TableColumn col_justificacion;
 
-    /**
-     * Initializes the controller class.
-     */
+    private ObservableList<DetalleReporteDTO> detallesReporte;
+    private ReporteInventarioDAO reporteInventarioDAO = new ReporteInventarioDAO();
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-
-
-    @FXML
-    private void clicInsumos(ActionEvent event) {
+        configurarTabla();
+        cargarInformacionDetalleProductosInventario();
     }
 
+    private void configurarTabla(){
+        col_codigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
+        col_productoInventario.setCellValueFactory(new PropertyValueFactory<>("descripcionProductoInventario"));
+        col_existencias.setCellValueFactory(new PropertyValueFactory<>("existencias"));
+        col_conteoFisicoReal.setCellValueFactory(new PropertyValueFactory<>("conteoFisico"));
+        col_diferencia.setCellValueFactory(new PropertyValueFactory<>("diferencia"));
+        col_justificacion.setCellValueFactory(new PropertyValueFactory<>("justificacion"));
 
-    @FXML
-    private void clicBuscar(ActionEvent event) {
+        col_conteoFisicoReal;
+
+        col_justificacion.setCellFactory(col -> new TableCell<ReporteInventarioDTO, String>() {
+            private final TextArea txt_justificacion= new TextArea();
+
+            @Override
+            protected void updateItem(String justificacion, boolean empty){
+                super.updateItem(justificacion, empty);
+
+
+            }
+        });
+    }
+
+    private void cargarInformacionDetalleProductosInventario(){
+        try {
+            detallesReporte = FXCollections.observableArrayList();
+            List<DetalleReporteDTO> detallesReporteBD = reporteInventarioDAO.mostrarTodos();
+            detallesReporte.addAll(detallesReporteBD);
+            tbl_validacionInsumos.setItems(detallesReporte);
+        }catch(SQLException e){
+            UtilidadesFX.mostrarAlertaSimple("Error al consultar",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        }catch(NullPointerException | ClassNotFoundException | IOException n){
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar productos al inventario",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
     private void clicGenerarReportePdf(ActionEvent event) {
+
     }
 
     @FXML
     private void clicGuardarValidacion(ActionEvent event) {
+
     }
 
 

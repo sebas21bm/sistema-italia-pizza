@@ -16,12 +16,10 @@ public class ReporteInventarioDTO {
     private int idInventario;
     private LocalDateTime fecha;
 
-    // Líneas del reporte
     private List<DetalleReporteDTO> detalles = new ArrayList<>();
 
     public ReporteInventarioDTO() {}
 
-    // ── Getters y Setters ──────────────────────────────────────────────────
 
     public int getIdInventario() {
         return idInventario;
