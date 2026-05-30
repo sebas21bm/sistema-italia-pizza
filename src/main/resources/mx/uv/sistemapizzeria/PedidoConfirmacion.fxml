@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="620.0" prefWidth="600.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #dee2e6; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoConfirmacionController">
+<AnchorPane prefHeight="620.0" prefWidth="600.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #dee2e6; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoConfirmacionController">
    <effect>
       <DropShadow color="#00000040" offsetX="0.0" offsetY="8.0" radius="24.0" />
    </effect>
