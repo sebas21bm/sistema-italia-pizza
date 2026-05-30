@@ -1,138 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<?import org.kordamp.ikonli.javafx.*?>
 
-<AnchorPane prefHeight="570.0" prefWidth="610.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoCreacionController">
+<!--
+    PedidoCreacion.fxml — rediseñado
+    Layout: dos columnas (izq: clientes | der: productos scrollables)
+    El panel de productos usa un ScrollPane + FlowPane dinámico:
+      - El controlador crea las tarjetas en código, NO hardcoded en FXML.
+      - Así se muestran TODOS los productos sin límite de tarjetas.
+    Search bar de productos filtra al presionar el botón de búsqueda.
+-->
+
+<AnchorPane prefHeight="620.0" prefWidth="860.0" style="-fx-background-color: #f7f8fc;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoCreacionController">
+
    <children>
 
-      <Label layoutX="17.0" layoutY="14.0" text="Formulario" textFill="#6f7882">
-         <font><Font size="12.0" /></font>
-      </Label>
-
-      <Label layoutX="17.0" layoutY="33.0" text="Realizar pedido" textFill="#202932">
-         <font><Font name="System Bold" size="22.0" /></font>
-      </Label>
-
-      <Label layoutX="32.0" layoutY="80.0" text="Búsqueda:" textFill="#202932">
-         <font><Font size="11.0" /></font>
-      </Label>
-
-      <TextField fx:id="txt_busqueda" layoutX="94.0" layoutY="72.0" prefHeight="29.0" prefWidth="282.0"
-                 style="-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #202932; -fx-border-radius: 18; -fx-border-width: 1.5; -fx-font-size: 12px;" />
-
-      <VBox layoutX="31.0" layoutY="110.0" prefHeight="125.0" prefWidth="542.0" spacing="15.0">
+      <!-- ══════════════════════════════════════════════════════
+           ENCABEZADO
+      ══════════════════════════════════════════════════════ -->
+      <HBox alignment="CENTER_LEFT" layoutX="0.0" layoutY="0.0" prefHeight="60.0" prefWidth="860.0" spacing="10.0" style="-fx-background-color: white;                  -fx-border-color: #e2e6ed;                  -fx-border-width: 0 0 1 0;                  -fx-padding: 0 24 0 24;">
          <children>
-            <TableView fx:id="tbl_clientes" prefHeight="94.0" prefWidth="542.0"
-                       style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
-               <columns>
-                  <TableColumn fx:id="col_nombre"   prefWidth="270.0" text="Nombre" />
-                  <TableColumn fx:id="col_telefono" prefWidth="100.0" text="Teléfono" />
-                  <TableColumn fx:id="col_email"    prefWidth="170.0" text="Email" />
-               </columns>
-            </TableView>
-
-            <ComboBox fx:id="cmb_cliente" prefHeight="36.0" prefWidth="542.0" promptText="Direcciones"
-                      style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #d9dde5; -fx-border-width: 1; -fx-font-size: 11px;" />
-         </children>
-      </VBox>
-
-      <!-- ── Tarjetas de productos con fx:id en cada label ── -->
-      <HBox layoutX="18.0" layoutY="255.0" prefHeight="250.0" prefWidth="570.0" spacing="11.0">
-         <children>
-
-            <!-- TARJETA 1 -->
-            <VBox prefHeight="250.0" prefWidth="181.0" spacing="7.0"
-                  style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
-               <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+            <VBox spacing="1.0">
                <children>
-                  <ImageView fx:id="img_uno" fitHeight="75.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label fx:id="lbl_cantUno"    text="Agregados al pedido: 0" textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_nombreUno"  text="—"                      textFill="#202932"><font><Font name="System Bold" size="18.0" /></font></Label>
-                  <Label fx:id="lbl_precioUno"  text="Precio: —"              textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_limiteUno"  text="Límite por cliente: —"  textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <HBox spacing="10.0">
-                     <children>
-                        <Button fx:id="btn_disminuirUno" mnemonicParsing="false" onAction="#clicDisminuirUno"
-                                prefHeight="20.0" prefWidth="68.0" text="Disminuir"
-                                style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" />
-                        <Button fx:id="btn_agregarUno"   mnemonicParsing="false" onAction="#clicAgregarUno"
-                                prefHeight="20.0" prefWidth="67.0" text="Agregar"
-                                style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" />
-                     </children>
-                  </HBox>
+                  <Label text="Formulario" textFill="#8892a0">
+                     <font><Font size="11.0" /></font>
+                  </Label>
+                  <Label text="Realizar pedido" textFill="#1a2535">
+                     <font><Font name="System Bold" size="20.0" /></font>
+                  </Label>
                </children>
             </VBox>
-
-            <!-- TARJETA 2 -->
-            <VBox prefHeight="250.0" prefWidth="181.0" spacing="7.0"
-                  style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
-               <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
-               <children>
-                  <ImageView fx:id="img_dos" fitHeight="75.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label fx:id="lbl_cantDos"    text="Agregados al pedido: 0" textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_nombreDos"  text="—"                      textFill="#202932"><font><Font name="System Bold" size="18.0" /></font></Label>
-                  <Label fx:id="lbl_precioDos"  text="Precio: —"              textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_limiteDos"  text="Límite por cliente: —"  textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <HBox spacing="10.0">
-                     <children>
-                        <Button fx:id="btn_disminuirDos" mnemonicParsing="false" onAction="#clicDisminuirDos"
-                                prefHeight="20.0" prefWidth="68.0" text="Disminuir"
-                                style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" />
-                        <Button fx:id="btn_agregarDos"   mnemonicParsing="false" onAction="#clicAgregarDos"
-                                prefHeight="20.0" prefWidth="67.0" text="Agregar"
-                                style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-
-            <!-- TARJETA 3 -->
-            <VBox prefHeight="250.0" prefWidth="181.0" spacing="7.0"
-                  style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
-               <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
-               <children>
-                  <ImageView fx:id="img_tres" fitHeight="75.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label fx:id="lbl_cantTres"    text="Agregados al pedido: 0" textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_nombreTres"  text="—"                      textFill="#202932"><font><Font name="System Bold" size="18.0" /></font></Label>
-                  <Label fx:id="lbl_precioTres"  text="Precio: —"              textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <Label fx:id="lbl_limiteTres"  text="Límite por cliente: —"  textFill="#202932"><font><Font size="11.0" /></font></Label>
-                  <HBox spacing="10.0">
-                     <children>
-                        <Button fx:id="btn_disminuirTres" mnemonicParsing="false" onAction="#clicDisminuirTres"
-                                prefHeight="20.0" prefWidth="68.0" text="Disminuir"
-                                style="-fx-background-color: #ff7a1a; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;" />
-                        <Button fx:id="btn_agregarTres"   mnemonicParsing="false" onAction="#clicAgregarTres"
-                                prefHeight="20.0" prefWidth="67.0" text="Agregar"
-                                style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 11px; -fx-font-weight: bold;" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="btn_cancelar" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="34.0" prefWidth="90.0" style="-fx-background-color: white; -fx-border-color: #1265f5; -fx-border-width: 2; -fx-background-radius: 6; -fx-text-fill: #1265f5; -fx-font-size: 12px; -fx-font-weight: bold;" text="Cancelar" />
+            <Button fx:id="btn_guardar" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="34.0" prefWidth="126.0" style="-fx-background-color: #1265f5; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" text="Guardar pedido" />
          </children>
       </HBox>
 
-      <Button fx:id="btn_cancelar" layoutX="418.0" layoutY="529.0" mnemonicParsing="false" onAction="#clicCancelar"
-              prefHeight="32.0" prefWidth="79.0" text="Cancelar"
-              style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 12px; -fx-font-weight: bold;" />
-
-      <Button fx:id="btn_guardar" layoutX="507.0" layoutY="529.0" mnemonicParsing="false" onAction="#clicGuardar"
-              prefHeight="32.0" prefWidth="81.0" text="Guardar"
-              style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" />
-
-      <HBox fx:id="AQUI" layoutX="392.0" layoutY="71.0" prefHeight="32.0" prefWidth="181.0" spacing="15.0">
+      <!-- ══════════════════════════════════════════════════════
+           CONTENIDO PRINCIPAL — dos columnas
+      ══════════════════════════════════════════════════════ -->
+      <HBox layoutX="16.0" layoutY="72.0" prefHeight="536.0" prefWidth="828.0" spacing="16.0">
          <children>
-            <Button fx:id="btn_buscar" mnemonicParsing="false" onAction="#clicBuscar"
-                    prefHeight="32.0" prefWidth="38.0"
-                    style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" />
-            <Button mnemonicParsing="false" onAction="#clicNuevoCliente"
-                    prefHeight="32.0" prefWidth="109.0" text="Nuevo Cliente"
-                    style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;" />
+
+            <!-- ── COLUMNA IZQUIERDA: Selección de cliente ── -->
+            <VBox prefHeight="536.0" prefWidth="672.0" spacing="10.0" style="-fx-background-color: white;                      -fx-border-color: #e2e6ed; -fx-border-width: 1;                      -fx-border-radius: 8; -fx-background-radius: 8;                      -fx-padding: 16;">
+               <children>
+
+                  <Label text="1. Seleccionar cliente" textFill="#1a2535">
+                     <font><Font name="System Bold" size="13.0" /></font>
+                  </Label>
+
+                  <!-- Búsqueda de cliente -->
+                  <HBox alignment="CENTER_LEFT" spacing="8.0">
+                     <children>
+                        <TextField fx:id="txt_busqueda" prefHeight="32.0" promptText="Buscar por nombre, teléfono o email…" style="-fx-background-color: #f3f4f9;                                   -fx-border-color: #d9dde5; -fx-border-width: 1;                                   -fx-border-radius: 6; -fx-background-radius: 6;                                   -fx-font-size: 12px; -fx-padding: 0 10 0 10;" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btn_buscar" mnemonicParsing="false" onAction="#clicBuscar" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: #1265f5;                                -fx-background-radius: 6;                                -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="🔍" />
+                     </children>
+                  </HBox>
+
+                  <!-- Tabla de clientes -->
+                  <TableView fx:id="tbl_clientes" prefHeight="220.0" style="-fx-background-color: white;                               -fx-border-color: #e2e6ed; -fx-border-width: 1;                               -fx-table-cell-border-color: #e2e6ed;                               -fx-selection-bar: #ddeaff;                               -fx-selection-bar-non-focused: #ddeaff;" VBox.vgrow="NEVER">
+                     <columns>
+                        <TableColumn fx:id="col_nombre" prefWidth="214.0" text="Nombre" />
+                        <TableColumn fx:id="col_telefono" prefWidth="101.0" text="Teléfono" />
+                        <TableColumn fx:id="col_email" prefWidth="173.0" text="Email" />
+                     </columns>
+                  </TableView>
+
+                  <!-- ComboBox dirección -->
+                  <Label text="Dirección de entrega:" textFill="#6f7882">
+                     <font><Font size="11.0" /></font>
+                  </Label>
+                  <ComboBox fx:id="cmb_cliente" prefHeight="34.0" prefWidth="999.0" promptText="Selecciona una dirección…" style="-fx-background-color: #f3f4f9;                              -fx-border-color: #d9dde5; -fx-border-width: 1;                              -fx-background-radius: 6; -fx-border-radius: 6;                              -fx-font-size: 11px;" />
+
+                  <Region VBox.vgrow="ALWAYS" />
+
+                  <!-- Botón nuevo cliente -->
+                  <Button mnemonicParsing="false" onAction="#clicNuevoCliente" prefHeight="34.0" prefWidth="999.0" style="-fx-background-color: #f0f4ff;                            -fx-border-color: #1265f5; -fx-border-width: 1.5;                            -fx-border-radius: 6; -fx-background-radius: 6;                            -fx-text-fill: #1265f5;                            -fx-font-size: 12px; -fx-font-weight: bold;" text="+ Registrar nuevo cliente" />
+
+               </children>
+            </VBox>
+
+            <!-- ── COLUMNA DERECHA: Catálogo de productos ── -->
+            <VBox prefHeight="536.0" prefWidth="392.0" spacing="10.0" style="-fx-background-color: white;                      -fx-border-color: #e2e6ed; -fx-border-width: 1;                      -fx-border-radius: 8; -fx-background-radius: 8;                      -fx-padding: 16;" HBox.hgrow="ALWAYS">
+               <children>
+
+                  <Label text="2. Agregar productos" textFill="#1a2535">
+                     <font><Font name="System Bold" size="13.0" /></font>
+                  </Label>
+
+                  <!-- Search bar de productos -->
+                  <HBox alignment="CENTER_LEFT" spacing="8.0">
+                     <children>
+                        <TextField fx:id="txt_busquedaProducto" prefHeight="32.0" promptText="Buscar producto por nombre…" style="-fx-background-color: #f3f4f9;                               -fx-border-color: #d9dde5; -fx-border-width: 1;                               -fx-border-radius: 6; -fx-background-radius: 6;                               -fx-font-size: 12px; -fx-padding: 0 10 0 10;" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btn_buscarProducto" mnemonicParsing="false" onAction="#clicBuscarProducto" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: #1265f5;                                -fx-background-radius: 6;                                -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="🔍" />
+                     </children>
+                  </HBox>
+
+                  <!-- ScrollPane con FlowPane dinámico — el controlador agrega las tarjetas aquí -->
+                  <ScrollPane fx:id="scroll_productos" fitToWidth="true" style="-fx-background-color: transparent;                                -fx-border-color: transparent;                                -fx-padding: 0;" VBox.vgrow="ALWAYS">
+                     <content>
+                        <FlowPane fx:id="flow_productos" hgap="12.0" prefWrapLength="440.0" style="-fx-background-color: transparent;                                  -fx-padding: 4 0 4 0;" vgap="12.0" />
+                     </content>
+                  </ScrollPane>
+
+                  <!-- Total acumulado -->
+                  <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-border-color: #e2e6ed; -fx-border-width: 1 0 0 0;                          -fx-padding: 10 0 0 0;">
+                     <children>
+                        <Label text="Total estimado:" textFill="#6f7882">
+                           <font><Font size="13.0" /></font>
+                        </Label>
+                        <Label fx:id="lbl_total" text="0.00" textFill="#1265f5">
+                           <font><Font name="System Bold" size="18.0" /></font>
+                        </Label>
+                     </children>
+                  </HBox>
+
+               </children>
+            </VBox>
+
          </children>
       </HBox>
 
