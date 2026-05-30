@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReporteInventarioDAO {
+public class ReporteInventarioDAO implements Operaciones<Integer, ReporteInventarioDTO> {
 
 
     /*
@@ -23,6 +23,7 @@ public class ReporteInventarioDAO {
     CALL registrar_reporte();
      */
 
+    @Override
     public ReporteInventarioDTO buscar(Integer idInventario) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         ReporteInventarioDTO reporte = null;
 
@@ -47,10 +48,10 @@ public class ReporteInventarioDAO {
 
             // Detalles
             String sqlDet = "SELECT dr.id_inventario, dr.codigo, dr.diferencia, dr.justificacion, " +
-                            "pi.nombre, pi.existencias, pi.estatus " +
-                            "FROM detalle_reporte dr " +
-                            "JOIN producto_inventario pi ON dr.codigo = pi.codigo " +
-                            "WHERE dr.id_inventario = ?";
+                    "pi.nombre, pi.existencias, pi.estatus " +
+                    "FROM detalle_reporte dr " +
+                    "JOIN producto_inventario pi ON dr.codigo = pi.codigo " +
+                    "WHERE dr.id_inventario = ?";
 
             try (PreparedStatement ps = conn.prepareStatement(sqlDet)) {
                 ps.setInt(1, idInventario);
@@ -142,7 +143,7 @@ public class ReporteInventarioDAO {
 
                 // 2. Insertar detalles y ajustar existencias en producto_inventario
                 String sqlDet = "INSERT INTO detalle_reporte (id_inventario, codigo, diferencia, justificacion) " +
-                                "VALUES (?, ?, ?, ?)";
+                        "VALUES (?, ?, ?, ?)";
                 String sqlAjuste = "UPDATE producto_inventario SET existencias = existencias + ? WHERE codigo = ?";
 
                 try (PreparedStatement psDet    = conn.prepareStatement(sqlDet);

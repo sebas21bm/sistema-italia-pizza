@@ -46,9 +46,9 @@ public class ProductosInventarioGestionController implements Initializable {
 
 
     @FXML
-    private TableColumn col_nombre;
+    private TableColumn<ProductoInventarioDTO, String> col_nombre;
     @FXML
-    private TableColumn col_existencias;
+    private TableColumn<ProductoInventarioDTO, Integer> col_existencias;
     @FXML
     private AnchorPane pnl_menuLateral;
     @FXML
@@ -66,7 +66,7 @@ public class ProductosInventarioGestionController implements Initializable {
     @FXML
     private TableColumn<ProductoInventarioDTO,String> col_fotografia;
     @FXML
-    private TableColumn col_fechaCaducidad;
+    private TableColumn<ProductoInventarioDTO, String> col_fechaCaducidad;
     @FXML
     private TableView<ProductoInventarioDTO> tbl_productoInventario;
     @FXML
@@ -80,7 +80,7 @@ public class ProductosInventarioGestionController implements Initializable {
 
     ProductoInventarioDAO productoInventarioDAO = new ProductoInventarioDAO();
     @FXML
-    private TableColumn col_codigo;
+    private TableColumn<ProductoInventarioDTO, String> col_codigo;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -234,7 +234,7 @@ public class ProductosInventarioGestionController implements Initializable {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
             actualizarInformacion();
-            } catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -281,7 +281,7 @@ public class ProductosInventarioGestionController implements Initializable {
             UtilidadesFX.mostrarAlertaSimple("Sin Producto Inventario para editar",
                     "No se ha seleccionado ningún producto de inventario, " +
                             "selecciona uno para continuar",
-                            Alert.AlertType.WARNING);
+                    Alert.AlertType.WARNING);
             return;
         }
         try {

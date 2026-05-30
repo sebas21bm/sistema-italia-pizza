@@ -1,139 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="541.0" prefWidth="443.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoTicketController">
-   <children>
+<VBox prefWidth="443.0" style="-fx-background-color: white;"
+      xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="mx.uv.sistemapizzeria.controladores.PedidoTicketController">
+   <padding><Insets top="24" right="28" bottom="24" left="28"/></padding>
 
-      <Label alignment="CENTER" layoutX="96.0" layoutY="60.0" prefHeight="40.0" prefWidth="251.0" text="Ticket de Pedido" textFill="#202932">
-         <font>
-            <Font name="System Bold" size="29.0" />
-         </font>
-      </Label>
+   <!-- Título -->
+   <Label text="Ticket de Pedido" textFill="#202932" alignment="CENTER" maxWidth="Infinity">
+      <font><Font name="System Bold" size="26.0"/></font>
+      <VBox.margin><Insets bottom="6"/></VBox.margin>
+   </Label>
 
-      <Label alignment="CENTER" layoutX="121.0" layoutY="109.0" prefHeight="21.0" prefWidth="73.0" text="Pedido #" textFill="#202932">
-         <font>
-            <Font size="13.0" />
-         </font>
-      </Label>
+   <!-- Folio + Estado -->
+   <HBox alignment="CENTER" spacing="8">
+      <VBox.margin><Insets bottom="16"/></VBox.margin>
+      <Label text="Pedido #" textFill="#5a6070"><font><Font size="13.0"/></font></Label>
+      <Label fx:id="lbl_numeroPedido" text="—" textFill="#202932"><font><Font name="System Bold" size="13.0"/></font></Label>
+      <Label text=" · " textFill="#9aa0ac"><font><Font size="13.0"/></font></Label>
+      <Label fx:id="lbl_estadoPedido" text="—" textFill="#1265f5"><font><Font name="System Bold" size="13.0"/></font></Label>
+   </HBox>
 
-      <Label fx:id="lbl_numeroPedido" alignment="CENTER" layoutX="185.0" layoutY="109.0" prefHeight="21.0" prefWidth="39.0" text="0023" textFill="#202932">
-         <font>
-            <Font size="13.0" />
-         </font>
-      </Label>
+   <!-- Panel de datos -->
+   <VBox style="-fx-background-color: #f8f9fc; -fx-border-color: #e2e6ed; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;">
+      <VBox.margin><Insets bottom="16"/></VBox.margin>
+      <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
 
-      <Label fx:id="lbl_estadoPedido" alignment="CENTER" layoutX="229.0" layoutY="109.0" prefHeight="21.0" prefWidth="73.0" text="Estado" textFill="#202932">
-         <font>
-            <Font size="13.0" />
-         </font>
-      </Label>
+      <GridPane hgap="8" vgap="10">
+         <columnConstraints>
+            <ColumnConstraints minWidth="100" prefWidth="115"/>
+            <ColumnConstraints minWidth="100" prefWidth="240"/>
+         </columnConstraints>
 
-      <AnchorPane layoutX="70.0" layoutY="153.0" prefHeight="125.0" prefWidth="316.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
-         <children>
-            <AnchorPane layoutY="25.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
-            <AnchorPane layoutY="50.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
-            <AnchorPane layoutY="75.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
-            <AnchorPane layoutY="100.0" prefHeight="1.0" prefWidth="316.0" style="-fx-background-color: #d9dde5;" />
+         <!-- Fecha -->
+         <Label text="Fecha y hora:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="0"><font><Font name="System Bold" size="11.0"/></font></Label>
+         <Label fx:id="lbl_fechaHora" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="0"><font><Font size="11.0"/></font></Label>
 
-            <Label layoutX="9.0" layoutY="6.0" text="Fecha y Hora:" textFill="#202932">
-               <font>
-                  <Font name="System Bold" size="11.0" />
-               </font>
-            </Label>
+         <!-- Atiende -->
+         <Label text="Atiende:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="1"><font><Font name="System Bold" size="11.0"/></font></Label>
+         <Label fx:id="lbl_empleado" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="1"><font><Font size="11.0"/></font></Label>
 
-            <Label fx:id="lbl_fechaHora" layoutX="136.0" layoutY="6.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
-               <font>
-                  <Font size="11.0" />
-               </font>
-            </Label>
+         <!-- Cliente -->
+         <Label text="Cliente:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="2"><font><Font name="System Bold" size="11.0"/></font></Label>
+         <Label fx:id="lbl_cliente" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="2"><font><Font size="11.0"/></font></Label>
 
-            <Label layoutX="9.0" layoutY="31.0" text="Atiende:" textFill="#202932">
-               <font>
-                  <Font name="System Bold" size="11.0" />
-               </font>
-            </Label>
+         <!-- Dirección -->
+         <Label text="Dirección:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="3"><font><Font name="System Bold" size="11.0"/></font></Label>
+         <Label fx:id="lbl_direccion" text="" textFill="#3a4250" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3"><font><Font size="11.0"/></font></Label>
 
-            <Label fx:id="lbl_empleado" layoutX="136.0" layoutY="31.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
-               <font>
-                  <Font size="11.0" />
-               </font>
-            </Label>
+         <!-- Teléfono -->
+         <Label text="Teléfono:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="4"><font><Font name="System Bold" size="11.0"/></font></Label>
+         <Label fx:id="lbl_telefono" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="4"><font><Font size="11.0"/></font></Label>
+      </GridPane>
+   </VBox>
 
-            <Label layoutX="9.0" layoutY="56.0" text="Cliente:" textFill="#202932">
-               <font>
-                  <Font name="System Bold" size="11.0" />
-               </font>
-            </Label>
+   <!-- Encabezado tabla -->
+   <Label text="Productos" textFill="#202932">
+      <font><Font name="System Bold" size="12.0"/></font>
+      <VBox.margin><Insets bottom="6"/></VBox.margin>
+   </Label>
 
-            <Label fx:id="lbl_cliente" layoutX="136.0" layoutY="56.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
-               <font>
-                  <Font size="11.0" />
-               </font>
-            </Label>
+   <!-- Tabla de productos -->
+   <TableView fx:id="tbl_productosTicket" prefHeight="180.0" maxWidth="Infinity"
+              style="-fx-border-color: #d5dae2; -fx-border-width: 1;">
+      <VBox.margin><Insets bottom="16"/></VBox.margin>
+      <columns>
+         <TableColumn fx:id="col_cantidad"       prefWidth="65.0"  text="Cantidad"/>
+         <TableColumn fx:id="col_descripcion"    prefWidth="150.0" text="Descripción"/>
+         <TableColumn fx:id="col_precioUnitario" prefWidth="90.0"  text="P. Unitario"/>
+         <TableColumn fx:id="col_subtotal"       prefWidth="80.0"  text="Subtotal"/>
+      </columns>
+   </TableView>
 
-            <Label layoutX="9.0" layoutY="81.0" text="Dirección:" textFill="#202932">
-               <font>
-                  <Font name="System Bold" size="11.0" />
-               </font>
-            </Label>
+   <!-- Total -->
+   <HBox alignment="CENTER_RIGHT">
+      <VBox.margin><Insets bottom="20"/></VBox.margin>
+      <VBox alignment="CENTER_RIGHT"
+            style="-fx-background-color: #f3f4f9; -fx-border-color: #e2e6ed; -fx-border-width: 1; -fx-border-radius: 4; -fx-background-radius: 4;">
+         <padding><Insets top="8" right="16" bottom="8" left="16"/></padding>
+         <Label text="Total a pagar" textFill="#5a6070"><font><Font size="11.0"/></font></Label>
+         <Label fx:id="lbl_totalPagar" text="0.00" textFill="#202932" alignment="CENTER_RIGHT">
+            <font><Font name="System Bold" size="17.0"/></font>
+         </Label>
+      </VBox>
+   </HBox>
 
-            <Label fx:id="lbl_direccion" layoutX="136.0" layoutY="81.0" prefHeight="14.0" prefWidth="170.0" text="" textFill="#202932">
-               <font>
-                  <Font size="11.0" />
-               </font>
-            </Label>
+   <!-- Botón Aceptar -->
+   <Button text="Aceptar" onAction="#clicAceptar" maxWidth="Infinity" prefHeight="40.0"
+           style="-fx-background-color: #1265f5; -fx-background-radius: 6; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"/>
 
-            <Label layoutX="9.0" layoutY="106.0" text="Teléfono:" textFill="#202932">
-               <font>
-                  <Font name="System Bold" size="11.0" />
-               </font>
-            </Label>
-
-            <Label fx:id="lbl_telefono" layoutX="136.0" layoutY="106.0" prefHeight="14.0" prefWidth="160.0" text="" textFill="#202932">
-               <font>
-                  <Font size="11.0" />
-               </font>
-            </Label>
-         </children>
-      </AnchorPane>
-
-      <Separator layoutX="70.0" layoutY="284.0" prefHeight="16.0" prefWidth="316.0" />
-
-      <TableView fx:id="tbl_productosTicket" layoutX="70.0" layoutY="306.0" prefHeight="89.0" prefWidth="317.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2;">
-         <columns>
-            <TableColumn fx:id="col_cantidad" prefWidth="63.0" text="Cantidad" />
-            <TableColumn fx:id="col_descripcion" prefWidth="99.0" text="Descripción" />
-            <TableColumn fx:id="col_precioUnitario" prefWidth="87.0" text="P. Unitario" />
-            <TableColumn fx:id="col_subtotal" prefWidth="66.0" text="Subtotal" />
-         </columns>
-      </TableView>
-
-      <Separator layoutX="298.0" layoutY="397.0" prefHeight="16.0" prefWidth="89.0" />
-
-      <AnchorPane layoutX="298.0" layoutY="409.0" prefHeight="38.0" prefWidth="89.0" style="-fx-background-color: #f3f4f9;">
-         <children>
-            <Label alignment="CENTER" layoutX="8.0" layoutY="6.0" prefHeight="14.0" prefWidth="73.0" text="Total a pagar:" textFill="#202932">
-               <font>
-                  <Font name="System Bold" size="11.0" />
-               </font>
-            </Label>
-
-            <Label fx:id="lbl_totalPagar" alignment="CENTER" layoutX="8.0" layoutY="21.0" prefHeight="14.0" prefWidth="73.0" text="" textFill="#202932">
-               <font>
-                  <Font name="System Bold" size="11.0" />
-               </font>
-            </Label>
-         </children>
-      </AnchorPane>
-
-      <Button layoutX="214.0" layoutY="469.0" mnemonicParsing="false" onAction="#clicAceptar" prefHeight="38.0" prefWidth="173.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="Aceptar" />
-
-   </children>
-</AnchorPane>
+</VBox>
