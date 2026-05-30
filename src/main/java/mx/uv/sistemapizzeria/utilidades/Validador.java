@@ -330,7 +330,7 @@ public class Validador {
      * Convierte una lista de errores en un único mensaje formateado,
      * listo para mostrarse en un {@code Alert} de JavaFX.
      *
-     * @param errores lista devuelta por cualquier método {@code validar*}
+     * @param errores lista devuelta por cualquier metodo {@code validar*}
      * @return cadena con los errores numerados, o cadena vacía si no hay errores
      */
     public static String formatearErrores(List<String> errores) {

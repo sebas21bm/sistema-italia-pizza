@@ -2,9 +2,12 @@ package mx.uv.sistemapizzeria.controladores;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperOffset;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -25,7 +29,10 @@ import mx.uv.sistemapizzeria.modelo.dao.EmpleadoDAO;
 import mx.uv.sistemapizzeria.modelo.dto.ClienteDTO;
 import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
 import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
+import mx.uv.sistemapizzeria.modelo.dto.Persona;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
+
+import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 
 public class UsuariosGestionController implements Initializable {
 
@@ -40,14 +47,19 @@ public class UsuariosGestionController implements Initializable {
     @FXML private HBox hbox_busqueda;
     @FXML private TextField txt_buscar;
 
-    // TableView tipada como Object para manejar EmpleadoDTO y ClienteDTO
-    @FXML private TableView<Object> tbl_usuarios;
-    @FXML private TableColumn<Object, String> col_nombre;
-    @FXML private TableColumn<Object, String> col_telefono;
-    @FXML private TableColumn<Object, String> col_email;
-    @FXML private TableColumn<Object, String> col_direccion;
-    @FXML private TableColumn<Object, String> col_estatus;
-    @FXML private TableColumn<Object, String> col_tipo;
+    @FXML
+    private TableView<Persona> tbl_usuarios;
+    @FXML
+    private TableColumn<Persona, String> col_nombre;
+    @FXML
+    private TableColumn<Persona, String> col_telefono;
+    @FXML
+    private TableColumn<Persona, String> col_email;
+    @FXML
+    private TableColumn<Persona, Boolean> col_estatus;
+
+
+    //TODO cambiar esto porque no serán radio buttons, sino unas combobbox
 
     // Filtros de búsqueda (campo por el que buscar)
     @FXML private TitledPane tp_filtroEstatus;
@@ -62,120 +74,66 @@ public class UsuariosGestionController implements Initializable {
     @FXML private RadioButton rb_tipoEmpleado;
     @FXML private RadioButton rb_tipoCliente;
 
-    // Botones
-    @FXML private Button btn_nuevoUsuario;
-    @FXML private Button btn_editar;
-    @FXML private Button btn_eliminar;
-    @FXML private Button btn_buscar;
-    @FXML private Button btn_menuUsuarios;
-    @FXML private Button btn_menuProductos;
-    @FXML private Button btn_menuInsumos;
-    @FXML private Button btn_menuValidacionInventarios;
-    @FXML private Button btn_menuPedidos;
-    @FXML private Button btn_cerrarSesion;
-    @FXML private Button btn_ayudaAcercaDe;
-
-    // ── DAOs ──────────────────────────────────────────────────────────────────
     private final EmpleadoDAO empleadoDAO = new EmpleadoDAO();
     private final ClienteDAO  clienteDAO  = new ClienteDAO();
 
-    // ── Lista observable directa (igual que PedidosGestionController) ─────────
-    private final ObservableList<Object> listaTabla = FXCollections.observableArrayList();
+    private ObservableList<Persona> usuarios;
+    // ObservableList para combobox filtro 1
+    // ObservalList para comobvox filtro 2
 
-    // ── Inicialización ────────────────────────────────────────────────────────
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         configurarColumnas();
-        tbl_usuarios.setItems(listaTabla);
-
-        // Carga inicial: todos los empleados (rb_tipoEmpleado viene seleccionado por defecto)
-        cargarTodos();
+        cargarTodosEmpleados();
     }
 
-    // ── Configuración de columnas ─────────────────────────────────────────────
-    // Misma técnica que PedidosGestionController: lambda con lógica según tipo
     private void configurarColumnas() {
+        col_nombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        col_telefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
+        col_email.setCellValueFactory(new PropertyValueFactory<>("email"));
+        col_estatus.setCellValueFactory(new PropertyValueFactory<>("estatus"));
+        col_estatus.setCellFactory(col -> new TableCell<Persona, Boolean>() {
 
-        col_nombre.setCellValueFactory(data -> {
-            Object obj = data.getValue();
-            String valor = "";
-            if (obj instanceof EmpleadoDTO e) {
-                valor = e.getNombreCompleto();
-            } else if (obj instanceof ClienteDTO c) {
-                valor = c.getNombreCompleto();
+            @Override
+            protected void updateItem(Boolean estatus, boolean empty) {
+                super.updateItem(estatus, empty);
+                if (empty || estatus == null) {
+                    setText(null);
+                } else {
+                    setText((estatus) ? "Activo" : "Inactivo");
+                }
             }
-            return new javafx.beans.property.SimpleStringProperty(valor);
-        });
-
-        col_telefono.setCellValueFactory(data -> {
-            Object obj = data.getValue();
-            String valor = "";
-            if (obj instanceof EmpleadoDTO e) valor = e.getTelefono() != null ? e.getTelefono() : "-";
-            else if (obj instanceof ClienteDTO c) valor = c.getTelefono() != null ? c.getTelefono() : "-";
-            return new javafx.beans.property.SimpleStringProperty(valor);
-        });
-
-        col_email.setCellValueFactory(data -> {
-            Object obj = data.getValue();
-            String valor = "";
-            if (obj instanceof EmpleadoDTO e) valor = e.getEmail() != null ? e.getEmail() : "-";
-            else if (obj instanceof ClienteDTO c) valor = c.getEmail() != null ? c.getEmail() : "-";
-            return new javafx.beans.property.SimpleStringProperty(valor);
-        });
-
-        col_direccion.setCellValueFactory(data -> {
-            Object obj = data.getValue();
-            String valor = "-";
-            DireccionDTO dir = null;
-            if (obj instanceof EmpleadoDTO e) dir = e.getDireccion();
-            else if (obj instanceof ClienteDTO c) dir = c.getDireccion();
-
-            if (dir != null) {
-                valor = dir.getCalle() + " " + dir.getNumero()
-                        + ", " + dir.getCiudad();
-            }
-            return new javafx.beans.property.SimpleStringProperty(valor);
-        });
-
-        col_estatus.setCellValueFactory(data -> {
-            Object obj = data.getValue();
-            String valor = "-";
-            if (obj instanceof EmpleadoDTO e) valor = e.isEstatus() ? "Activo" : "Inactivo";
-            else if (obj instanceof ClienteDTO c) valor = "1".equals(c.getEstatus()) ? "Activo" : "Inactivo";
-            return new javafx.beans.property.SimpleStringProperty(valor);
-        });
-
-        col_tipo.setCellValueFactory(data -> {
-            Object obj = data.getValue();
-            String valor = "-";
-            if (obj instanceof EmpleadoDTO e)
-                valor = e.getTipoEmpleado() != null ? e.getTipoEmpleado().toString() : "-";
-            else if (obj instanceof ClienteDTO)
-                valor = "Cliente";
-            return new javafx.beans.property.SimpleStringProperty(valor);
         });
     }
 
-    // ── Carga todos según el tipo seleccionado ────────────────────────────────
-    private void cargarTodos() {
+    private void cargarTodosEmpleados() {
         try {
-            if (esEmpleado()) {
-                List<EmpleadoDTO> todos = empleadoDAO.mostrarTodos();
-                listaTabla.setAll(todos != null ? todos : new ArrayList<>());
-            } else {
-                List<ClienteDTO> todos = clienteDAO.mostrarTodos();
-                listaTabla.setAll(todos != null ? todos : new ArrayList<>());
-            }
-        } catch (Exception e) {
-            UtilidadesFX.mostrarAlertaSimple(
-                    "Error", "No se pudieron cargar los usuarios:\n" + e.getMessage(),
+            usuarios = FXCollections.observableArrayList();
+            List<EmpleadoDTO> empleadoAlmacenadosBD = empleadoDAO.mostrarTodos();
+            usuarios.addAll(empleadoAlmacenadosBD);
+            tbl_usuarios.setItems(usuarios);
+        } catch (SQLException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al consultar",
+                    e.getMessage(),
                     Alert.AlertType.ERROR);
-            e.printStackTrace();
+        } catch(NullPointerException | ClassNotFoundException | IOException n){
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar productos del inventario",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
         }
+
+
+
     }
 
+    @FXML
+    private void clicBuscar(ActionEvent actionEvent) {
+    }
+    /*
     // ── Búsqueda: botón buscar (igual que PedidosGestionController) ───────────
     @FXML
+
     private void clicBuscar(ActionEvent event) {
         try {
             String termino = txt_buscar.getText() == null
@@ -212,6 +170,9 @@ public class UsuariosGestionController implements Initializable {
         }
     }
 
+     */
+
+    /*
     // ── Verifica si el objeto coincide con el término según el radio seleccionado
     private boolean coincideConTermino(Object obj, String termino) {
         if (rb_nombre != null && rb_nombre.isSelected()) {
@@ -238,7 +199,7 @@ public class UsuariosGestionController implements Initializable {
                 return dirCompleta.contains(termino);
             }
         } else {
-            // Sin radio seleccionado: buscar en todo
+            // Sin radio seleccionado: buscar all
             if (obj instanceof EmpleadoDTO e)
                 return e.getNombreCompleto().toLowerCase().contains(termino)
                         || (e.getTelefono() != null && e.getTelefono().contains(termino));
@@ -249,14 +210,15 @@ public class UsuariosGestionController implements Initializable {
         return false;
     }
 
-    // ── Al cambiar el filtro de tipo: recargar la tabla ───────────────────────
+     */
+
+
     @FXML
     private void clicFiltroTipo(ActionEvent event) {
         txt_buscar.clear();
-        cargarTodos();
+        cargarTodosEmpleados();
     }
 
-    // ── Nuevo usuario ─────────────────────────────────────────────────────────
     @FXML
     private void clicNuevoUsuario(ActionEvent event) {
         try {
@@ -272,13 +234,12 @@ public class UsuariosGestionController implements Initializable {
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-            cargarTodos(); // refrescar al volver
+            cargarTodosEmpleados(); // refrescar al volver
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // ── Editar ────────────────────────────────────────────────────────────────
     @FXML
     private void clicEditar(ActionEvent event) {
         Object seleccionado = tbl_usuarios.getSelectionModel().getSelectedItem();
@@ -299,7 +260,7 @@ public class UsuariosGestionController implements Initializable {
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-            cargarTodos();
+            cargarTodosEmpleados();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -341,7 +302,7 @@ public class UsuariosGestionController implements Initializable {
                         UtilidadesFX.mostrarAlertaSimple("Baja exitosa",
                                 nombreMostrar + " fue dado de baja correctamente.",
                                 Alert.AlertType.INFORMATION);
-                        cargarTodos();
+                        cargarTodosEmpleados();
                     } else {
                         UtilidadesFX.mostrarAlertaSimple("Sin cambios",
                                 "No se encontró el registro o ya estaba inactivo.",
@@ -357,47 +318,67 @@ public class UsuariosGestionController implements Initializable {
         });
     }
 
-    // ── Helper: saber qué tipo está seleccionado ──────────────────────────────
-    private boolean esEmpleado() {
-        return rb_tipoEmpleado == null || rb_tipoEmpleado.isSelected();
-    }
 
-    // ── Navegación (idéntica al original) ─────────────────────────────────────
+    // NAVEGACIÓN
     @FXML
     private void clicUsuarios(ActionEvent event) {
-        try { SistemaPizzeria.setRoot("UsuariosGestion", "Usuarios"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("UsuariosGestion", "Usuarios");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicProductos(ActionEvent event) {
-        try { SistemaPizzeria.setRoot("ProductosGestion", "Productos"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("ProductosGestion", "Productos");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicProductosInventario(ActionEvent event) {
-        try { SistemaPizzeria.setRoot("ProductosInventarioGestion", "Productos de Inventario"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("ProductosInventarioGestion", "Productos de Inventario");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicPedidos(ActionEvent event) {
-        try { SistemaPizzeria.setRoot("PedidosGestion", "Pedidos"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("PedidosGestion", "Pedidos");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicValidacionInventarios(ActionEvent event) {
-        try { SistemaPizzeria.setRoot("ProductosInventarioValidacion", "Validación de Inventario"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("ProductosInventarioValidacion", "Validación de Inventario");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void clicCerrarSesion(ActionEvent event) {
         SistemaPizzeria.setMetadatos("empleado", null);
-        try { SistemaPizzeria.setRoot("InicioSesion", "Sistema Pizzeria - Login"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("InicioSesion", "Sistema Pizzeria - Login");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

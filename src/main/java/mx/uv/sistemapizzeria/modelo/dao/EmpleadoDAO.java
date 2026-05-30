@@ -67,7 +67,7 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
                     ps.setString(3, empleado.getMaterno());
                     ps.setString(4, empleado.getTelefono());
                     ps.setString(5, empleado.getEmail());
-                    ps.setBoolean(6, empleado.isEstatus());
+                    ps.setBoolean(6, empleado.getEstatus());
                     ps.setString(7, empleado.getTipoEmpleado().name());
                     ps.setString(8, empleado.getNoEmpleado());
                     ps.executeUpdate();
@@ -155,7 +155,7 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
                     ps.setString(6, empleado.getMaterno());
                     ps.setString(7, empleado.getTelefono());
                     ps.setString(8, empleado.getEmail());
-                    ps.setBoolean(9, empleado.isEstatus());
+                    ps.setBoolean(9, empleado.getEstatus());
                     ps.setString(10, empleado.getTipoEmpleado().name());
                     ps.setInt(11, empleado.getTipoEmpleado().name().equals("Administrator") ? 1 : 2);
                     ps.setInt(12, idDireccion);

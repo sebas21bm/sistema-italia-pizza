@@ -152,7 +152,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                 cs.setString(2, pedido.getEstatus() != null
                         ? pedido.getEstatus() : "En proceso");
                 cs.setInt(3, pedido.getNoCliente());
-                cs.setInt(4, pedido.getIdDireccion());
+                cs.setInt(4, pedido.getDireccion().getIdDireccion());
                 cs.execute();
             }
 

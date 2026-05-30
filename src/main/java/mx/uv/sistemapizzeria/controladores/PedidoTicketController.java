@@ -76,6 +76,7 @@ public class PedidoTicketController implements Initializable {
     }
 
     private void poblarEncabezado(PedidoDTO pedido) {
+        /* TODO lo mismo que en todos los de direccion, se tiene que cambiar la implementacion
         if (lbl_fechaHora != null) {
             lbl_fechaHora.setText(pedido.getFecha() != null ? pedido.getFecha().format(FMT) : "-");
         }
@@ -104,6 +105,8 @@ public class PedidoTicketController implements Initializable {
                     ? pedido.getCliente().getTelefono() : "-";
             lbl_telefono.setText(tel);
         }
+
+         */
     }
 
     private void poblarTabla(PedidoDTO pedido) {
