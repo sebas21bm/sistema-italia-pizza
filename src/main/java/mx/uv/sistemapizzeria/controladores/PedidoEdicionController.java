@@ -215,7 +215,7 @@ public class PedidoEdicionController implements Initializable {
     // ── Construye una tarjeta de producto dinámicamente ───────────────────────
     private VBox crearTarjeta(ProductoVentaDTO p, int idx) {
         VBox card = new VBox(6);
-        card.setPrefWidth(190);
+        card.setPrefWidth(180);
         card.setPadding(new Insets(12));
         card.setStyle("-fx-background-color: white;" +
                 "-fx-border-color: #e2e6ed; -fx-border-width: 1;" +
@@ -223,7 +223,7 @@ public class PedidoEdicionController implements Initializable {
 
         // Imagen del producto
         ImageView imgView = new ImageView();
-        imgView.setFitWidth(166);
+        imgView.setFitWidth(150);
         imgView.setFitHeight(80);
         imgView.setPreserveRatio(true);
         if (p.getFoto() != null && !p.getFoto().isEmpty()) {
