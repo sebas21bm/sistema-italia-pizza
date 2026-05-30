@@ -36,12 +36,12 @@ public class UsuarioTipoController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
     }    
 
     @FXML
     private void clicEmpleado(ActionEvent event) {
         try {
+            // TODO falta agregar metadatos para que se cargue con la operacion de registrar en empleado
             FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioEmpleadoOperaciones");
             Parent raiz = loader.load();
             Scene escena = new Scene(raiz);
@@ -72,6 +72,7 @@ public class UsuarioTipoController implements Initializable {
     @FXML
     private void clicCliente(ActionEvent event) {
         try {
+            // TODO falta agregar metadatos para que se cargue con la operacion de registrar en cliente
             FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioClienteOperaciones");
             Parent raiz = loader.load();
             Scene escena = new Scene(raiz);

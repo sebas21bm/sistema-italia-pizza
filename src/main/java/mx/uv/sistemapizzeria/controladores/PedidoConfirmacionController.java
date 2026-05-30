@@ -71,6 +71,8 @@ public class PedidoConfirmacionController implements Initializable {
         }
 
         if (lblDireccion != null) {
+            /*
+            TODO cambiar la implementacion por la cuestión de direcciones
             String dir = "-";
             if (pedido.getCliente() != null && pedido.getCliente().getDireccion() != null) {
                 var d = pedido.getCliente().getDireccion();
@@ -80,6 +82,8 @@ public class PedidoConfirmacionController implements Initializable {
                         + (d.getCodigoPostal()  != null ? d.getCodigoPostal() : "");
             }
             lblDireccion.setText(dir);
+
+             */
         }
 
         if (lblTelefono != null) {

@@ -13,15 +13,14 @@ public class PedidoDTO {
 
     // FK + objeto anidado del cliente
     private int noCliente;
-    private int idDireccion;  // dirección de entrega del pedido
+    private DireccionDTO direccion;
     private ClienteDTO cliente;
 
-    // Líneas del pedido
     private List<DetallePedidoDTO> detalles = new ArrayList<>();
+
 
     public PedidoDTO() {}
 
-    // ── Getters y Setters ──────────────────────────────────────────────────
 
     public int getIdPedido() {
         return idPedido;
@@ -63,12 +62,12 @@ public class PedidoDTO {
         this.noCliente = noCliente;
     }
 
-    public int getIdDireccion() {
-        return idDireccion;
+    public DireccionDTO getDireccion() {
+        return direccion;
     }
 
-    public void setIdDireccion(int idDireccion) {
-        this.idDireccion = idDireccion;
+    public void setDireccion(DireccionDTO direccion) {
+        this.direccion = direccion;
     }
 
     public ClienteDTO getCliente() {
@@ -77,13 +76,6 @@ public class PedidoDTO {
 
     public void setCliente(ClienteDTO cliente) {
         this.cliente = cliente;
-        if (cliente != null) {
-            this.noCliente = cliente.getNoCliente();
-            // Fijar dirección automáticamente si el cliente la tiene cargada
-            if (cliente.getDireccion() != null) {
-                this.idDireccion = cliente.getDireccion().getIdDireccion();
-            }
-        }
     }
 
     public List<DetallePedidoDTO> getDetalles() {

@@ -65,18 +65,19 @@ public class PedidoEdicionController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        configurarColumnas();
+        //configurarColumnas(); TODO una vez cambiada la implementacion de configurar tabla, ya se puede descomentar
         cargarProductos();
 
         // El pedido se carga desde setPedido(), llamado externamente antes de mostrar la ventana
     }
 
-    /** Método llamado por PedidosGestionController para inyectar el pedido a editar */
+    /** Metodo llamado por PedidosGestionController para inyectar el pedido a editar */
     public void setPedido(PedidoDTO pedido) {
         this.pedidoActual = pedido;
         cargarDatosPedido();
     }
-
+/*
+    TODO cambiar la implementacion porque la direccion va con el pedido ahora, no se obtiene del cliente
     private void configurarColumnas() {
         col_nombre.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getNombreCompleto()));
@@ -100,7 +101,7 @@ public class PedidoEdicionController implements Initializable {
             return new SimpleStringProperty(d != null && d.getCiudad() != null ? d.getCiudad() : "");
         });
     }
-
+*/
     private void cargarProductos() {
         try {
             productos = productoDAO.mostrarTodos();

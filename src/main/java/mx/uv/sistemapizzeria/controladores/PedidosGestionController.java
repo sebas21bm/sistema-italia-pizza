@@ -171,7 +171,7 @@ public class PedidosGestionController implements Initializable {
                     ? "" : txt_buscar.getText().trim().toLowerCase();
 
             if (termino.isEmpty()) {
-                // Sin texto: mostrar todo lo que devolvió el filtro de estatus
+                // Sin texto: mostrar lo que devolvió el filtro de estatus
                 listaTabla.setAll(porEstatus != null ? porEstatus : new ArrayList<>());
             } else {
                 // Con texto: filtrar la lista resultante manualmente

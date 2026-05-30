@@ -99,10 +99,14 @@ public class PedidoCreacionController implements Initializable {
                 .addListener((obs, old, nuevo) -> {
                     clienteSeleccionado = nuevo;
                     cmb_cliente.getItems().clear();
+                    /*
+                    TODO se va a cambiar a que muestre toda la List<DireccionesDTO> del cliente seleccionado, no es solo uno
                     if (nuevo != null && nuevo.getDireccion() != null) {
                         cmb_cliente.getItems().add(nuevo.getDireccion());
                         cmb_cliente.getSelectionModel().selectFirst();
                     }
+
+                     */
                 });
 
         cargarClientes();
@@ -266,12 +270,13 @@ public class PedidoCreacionController implements Initializable {
         pedido.setCliente(clienteSeleccionado);
         pedido.setNoCliente(clienteSeleccionado.getNoCliente());
 
+        /*
         DireccionDTO dirSeleccionada = cmb_cliente.getValue();
         if (dirSeleccionada == null && clienteSeleccionado.getDireccion() != null) {
             dirSeleccionada = clienteSeleccionado.getDireccion();
         }
         if (dirSeleccionada != null) {
-            pedido.setIdDireccion(dirSeleccionada.getIdDireccion());
+            pedido.setDireccion(dirSeleccionada.getIdDireccion());
             clienteSeleccionado.setDireccion(dirSeleccionada);
         } else {
             UtilidadesFX.mostrarAlertaSimple("Dirección requerida",
@@ -280,6 +285,8 @@ public class PedidoCreacionController implements Initializable {
                     javafx.scene.control.Alert.AlertType.WARNING);
             return;
         }
+        
+         */
 
         double total = 0;
         for (int i = 0; i < 3; i++) {

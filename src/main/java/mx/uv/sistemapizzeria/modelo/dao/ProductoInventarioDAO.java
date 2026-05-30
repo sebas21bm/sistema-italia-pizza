@@ -23,10 +23,10 @@ public class ProductoInventarioDAO implements Operaciones<String, ProductoInvent
             PreparedStatement sentencia = conn.prepareStatement(consulta);
             sentencia.setString(1, insumo.getCodigo());
             sentencia.setString(2, insumo.getNombre());
-            sentencia.setInt(3, insumo.getEstatus());
+            sentencia.setInt(3, 1);
             sentencia.setInt(4, insumo.getExistencias());
-            sentencia.setDate(5, insumo.getFechaCaducidad() != null
-                    ? Date.valueOf(insumo.getFechaCaducidad()) : null);
+            LocalDate fecha = insumo.getFechaCaducidad();
+            sentencia.setDate(5, Date.valueOf(fecha));
             sentencia.setString(6, insumo.getFoto());
             return (sentencia.executeUpdate() != 0);
         }
@@ -57,8 +57,7 @@ public class ProductoInventarioDAO implements Operaciones<String, ProductoInvent
             if (conn == null){
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
-            String consulta = "UPDATE estatus = 0 "
-                    + "FROM producto_inventario WHERE codigo = ?";
+            String consulta = "CALL eliminar_producto_inventario(?);";
             PreparedStatement sentencia = conn.prepareStatement(consulta);
             sentencia.setString(1, codigo);
             return (sentencia.executeUpdate() != 0);
@@ -72,7 +71,7 @@ public class ProductoInventarioDAO implements Operaciones<String, ProductoInvent
             if (conn == null){
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION + "MOSTRAR");
             }
-            String consulta = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto FROM producto_inventario";
+            String consulta = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto FROM producto_inventario WHERE estatus = 1";
             PreparedStatement sentencia = conn.prepareStatement(consulta);
             ResultSet resultado = sentencia.executeQuery();
             while (resultado.next()) {
@@ -98,7 +97,7 @@ public class ProductoInventarioDAO implements Operaciones<String, ProductoInvent
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
             String consulta = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto "
-                    + "FROM producto_inventario WHERE codigo = ?";
+                    + "FROM producto_inventario WHERE codigo = ? AND estatus = 1";
             PreparedStatement sentencia = conn.prepareStatement(consulta);
             sentencia.setString(1, codigo);
             ResultSet resultado = sentencia.executeQuery();
@@ -123,7 +122,7 @@ public class ProductoInventarioDAO implements Operaciones<String, ProductoInvent
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
             String consulta = "SELECT codigo, nombre, estatus, existencias, fecha_caducidad, foto "
-                        + "FROM producto_inventario WHERE nombre LIKE ?";
+                        + "FROM producto_inventario WHERE nombre LIKE ? AND estatus = 1";
             PreparedStatement sentencia = conn.prepareStatement(consulta);
             sentencia.setString(1, "%" + nombre + "%");
             ResultSet resultado = sentencia.executeQuery();
