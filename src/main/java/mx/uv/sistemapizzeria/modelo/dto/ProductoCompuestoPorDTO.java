@@ -10,17 +10,14 @@ package mx.uv.sistemapizzeria.modelo.dto;
  */
 public class ProductoCompuestoPorDTO {
 
-    private String codigoInsumo;      // FK → producto_insumo.codigo
-    private String codigoMenu;        // FK → producto_venta.codigo_menu
+    private String codigoInsumo;
+    private String codigoMenu;
     private double cantidad;
 
-    // Objetos anidados (consejo de Sebas)
     private ProductoInventarioDTO insumo;
     private ProductoVentaDTO productoVenta;
 
     public ProductoCompuestoPorDTO() {}
-
-    // ── Getters y Setters ──────────────────────────────────────────────────
 
     public String getCodigoInsumo() {
         return codigoInsumo;

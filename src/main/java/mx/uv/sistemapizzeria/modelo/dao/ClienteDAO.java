@@ -260,7 +260,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
             ps.setString(3, "%" + nombreBusqueda +"%");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                lista.add(mapearEmpleado(rs));
+                //lista.add(mapearClientes(rs));
             }
 
         }

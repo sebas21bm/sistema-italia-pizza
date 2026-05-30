@@ -3,6 +3,8 @@ package mx.uv.sistemapizzeria.controladores;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,15 +25,24 @@ import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 public class PedidoConfirmacionController implements Initializable {
 
-    @FXML private Label  lblSubtitulo;
-    @FXML private Label  lblFechaHora;
-    @FXML private Label  lblAtiende;
-    @FXML private Label  lblCliente;
-    @FXML private Label  lblDireccion;
-    @FXML private Label  lblTelefono;
-    @FXML private Label  lblTotal;
-    @FXML private Button btnAtras;
-    @FXML private Button btnConfirmar;
+    @FXML
+    private Label  lblSubtitulo;
+    @FXML
+    private Label  lblFechaHora;
+    @FXML
+    private Label  lblAtiende;
+    @FXML
+    private Label  lblCliente;
+    @FXML
+    private Label  lblDireccion;
+    @FXML
+    private Label  lblTelefono;
+    @FXML
+    private Label  lblTotal;
+    @FXML
+    private Button btnAtras;
+    @FXML
+    private Button btnConfirmar;
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -71,7 +82,6 @@ public class PedidoConfirmacionController implements Initializable {
             lblCliente.setText(nombre);
         }
 
-        // La dirección viene del pedido, no del cliente
         if (lblDireccion != null) {
             DireccionDTO d = pedido.getDireccion();
             if (d != null) {
@@ -119,13 +129,10 @@ public class PedidoConfirmacionController implements Initializable {
         if (pedido == null) return;
         try {
             pedidosDAO.registrar(pedido);
-
             cerrarEstaVentana();
-
-            if (stageCreacion != null && stageCreacion.isShowing())
-                stageCreacion.close();
-
-            abrirTicket(pedido);
+            Platform.runLater(() -> {
+                abrirTicket(pedido);
+            });
 
         } catch (Exception e) {
             UtilidadesFX.mostrarAlertaSimple("Error al confirmar",
@@ -138,24 +145,15 @@ public class PedidoConfirmacionController implements Initializable {
     private void abrirTicket(PedidoDTO pedidoConfirmado) {
         try {
             FXMLLoader loader = UtilidadesFX.cargarFXML("PedidoTicket");
-
-            if (loader.getLocation() == null) {
-                UtilidadesFX.mostrarAlertaSimple("Error",
-                        "No se encontró PedidoTicket.fxml en el classpath.",
-                        Alert.AlertType.ERROR);
-                return;
-            }
-
             Parent vista = loader.load();
-
             PedidoTicketController ticketCtrl = loader.getController();
             ticketCtrl.setPedido(pedidoConfirmado);
 
             Stage stage = new Stage();
-            if (stageCreacion != null) stage.initOwner(stageCreacion);
-            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Ticket de pedido");
             stage.setResizable(false);
+
             stage.setScene(new Scene(vista));
             stage.centerOnScreen();
             stage.showAndWait();

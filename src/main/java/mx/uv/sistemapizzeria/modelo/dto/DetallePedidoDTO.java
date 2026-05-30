@@ -11,8 +11,6 @@ public class DetallePedidoDTO {
 
     public DetallePedidoDTO() {}
 
-    // ── Getters y Setters ──────────────────────────────────────────────────
-
     public int getIdPedido() {
         return idPedido;
     }

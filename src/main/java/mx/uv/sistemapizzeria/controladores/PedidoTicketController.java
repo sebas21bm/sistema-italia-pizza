@@ -10,86 +10,91 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import mx.uv.sistemapizzeria.modelo.dto.ClienteDTO;
-import mx.uv.sistemapizzeria.modelo.dto.DetallePedidoDTO;
-import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
-import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
-import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
-import mx.uv.sistemapizzeria.modelo.dto.Sesion;
+import mx.uv.sistemapizzeria.modelo.dto.*;
 
 public class PedidoTicketController implements Initializable {
 
-    @FXML private Label lbl_fechaHora;
-    @FXML private Label lbl_empleado;
-    @FXML private Label lbl_cliente;
-    @FXML private Label lbl_direccion;
-    @FXML private Label lbl_telefono;
+    @FXML
+    private Label lbl_fechaHora;
+    @FXML
+    private Label lbl_empleado;
+    @FXML
+    private Label lbl_cliente;
+    @FXML
+    private Label lbl_direccion;
+    @FXML
+    private Label lbl_telefono;
 
-    @FXML private TableView<DetallePedidoDTO>           tbl_productosTicket;
-    @FXML private TableColumn<DetallePedidoDTO, String> col_cantidad;
-    @FXML private TableColumn<DetallePedidoDTO, String> col_descripcion;
-    @FXML private TableColumn<DetallePedidoDTO, String> col_precioUnitario;
-    @FXML private TableColumn<DetallePedidoDTO, String> col_subtotal;
+    @FXML
+    private TableView<DetallePedidoDTO> tbl_productosTicket;
+    @FXML
+    private TableColumn<DetallePedidoDTO, Integer> col_cantidad;
+    @FXML
+    private TableColumn<DetallePedidoDTO, ProductoVentaDTO> col_descripcion;
+    @FXML
+    private TableColumn<DetallePedidoDTO, Double> col_subtotal;
 
-    @FXML private Label lbl_totalPagar;
-    @FXML private Label lbl_numeroPedido;
-    @FXML private Label lbl_estadoPedido;
+
+    @FXML
+    private Label lbl_totalPagar;
+    @FXML
+    private Label lbl_numeroPedido;
+    @FXML
+    private Label lbl_estadoPedido;
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    // Flag para saber si las columnas ya fueron configuradas
     private boolean columnasConfiguradas = false;
+    private PedidoDTO pedido;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // initialize() siempre corre ANTES de que setPedido() sea llamado
-        // porque loader.load() → initialize(), y luego el código externo llama setPedido()
         configurarColumnas();
     }
 
-    /**
-     * Inyecta el pedido. Llamar DESPUÉS de loader.load() y ANTES de stage.show().
-     * initialize() ya habrá corrido, así que las columnas están listas.
-     */
-    public void setPedido(PedidoDTO pedido) {
-        if (pedido == null) return;
+    public void setPedido(PedidoDTO pedidoConfirmado) {
+        if (pedidoConfirmado == null) {
+            return;
+        }
+        this.pedido = pedidoConfirmado;
 
-        // Garantía defensiva: si por algún motivo initialize() no configuró las columnas
-        if (!columnasConfiguradas) configurarColumnas();
+        if (!columnasConfiguradas) {
+            configurarColumnas();
+        }
 
-        poblarEncabezado(pedido);
-        poblarTabla(pedido);
-        poblarTotales(pedido);
+        poblarEncabezado();
+        poblarTabla();
+        poblarTotales();
+
     }
 
     private void configurarColumnas() {
-        col_cantidad.setCellValueFactory(data ->
-                new SimpleStringProperty(String.valueOf(data.getValue().getCantidad())));
+        col_cantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+        col_descripcion.setCellValueFactory(new PropertyValueFactory<>("productoVenta"));
+        col_descripcion.setCellFactory(col ->
+                new TableCell<DetallePedidoDTO, ProductoVentaDTO>() {
 
-        col_descripcion.setCellValueFactory(data -> {
-            DetallePedidoDTO det = data.getValue();
-            String nombre = "-";
-            if (det.getProductoVenta() != null && det.getProductoVenta().getNombre() != null) {
-                nombre = det.getProductoVenta().getNombre();
-            } else if (det.getCodigoMenu() != null) {
-                nombre = det.getCodigoMenu();
-            }
-            return new SimpleStringProperty(nombre);
-        });
-
-        col_precioUnitario.setCellValueFactory(data ->
-                new SimpleStringProperty("$" + String.format("%.2f", data.getValue().getCosto())));
-
-        col_subtotal.setCellValueFactory(data ->
-                new SimpleStringProperty("$" + String.format("%.2f", data.getValue().getSubtotal())));
-
+                    @Override
+                    protected void updateItem(ProductoVentaDTO productoVentaDTO, boolean empty) {
+                        super.updateItem(productoVentaDTO, empty);
+                        if (empty || productoVentaDTO == null) {
+                            setText(null);
+                        } else {
+                            setText(productoVentaDTO.getDescripcion());
+                        }
+                    }
+                });
+        col_subtotal.setCellValueFactory(new PropertyValueFactory<>("costo"));
         columnasConfiguradas = true;
     }
 
-    private void poblarEncabezado(PedidoDTO pedido) {
+    private void poblarEncabezado() {
+
         if (lbl_fechaHora != null)
             lbl_fechaHora.setText(pedido.getFecha() != null ? pedido.getFecha().format(FMT) : "-");
 
@@ -104,11 +109,8 @@ public class PedidoTicketController implements Initializable {
         }
 
         if (lbl_direccion != null) {
-            // 1. Intentar la dirección directa del pedido
             DireccionDTO d = pedido.getDireccion();
 
-            // 2. Si el pedido no la trae (p.ej. cargado desde vista_lista_pedidos),
-            //    tomar la primera dirección del cliente
             if (d == null && pedido.getCliente() != null) {
                 ClienteDTO cliente = pedido.getCliente();
                 if (cliente.getDirecciones() != null && !cliente.getDirecciones().isEmpty()) {
@@ -134,19 +136,19 @@ public class PedidoTicketController implements Initializable {
         }
     }
 
-    private void poblarTabla(PedidoDTO pedido) {
+    private void poblarTabla() {
         ObservableList<DetallePedidoDTO> detalles = FXCollections.observableArrayList();
         if (pedido.getDetalles() != null) detalles.addAll(pedido.getDetalles());
         tbl_productosTicket.setItems(detalles);
     }
 
-    private void poblarTotales(PedidoDTO pedido) {
+    private void poblarTotales() {
         if (lbl_totalPagar != null)
             lbl_totalPagar.setText("$" + String.format("%.2f", pedido.getTotalPagar()));
 
         if (lbl_numeroPedido != null) {
             String folio = pedido.getIdPedido() > 0 ? String.valueOf(pedido.getIdPedido()) : "—";
-            lbl_numeroPedido.setText("Pedido #" + folio);
+            lbl_numeroPedido.setText(folio);
         }
 
         if (lbl_estadoPedido != null)

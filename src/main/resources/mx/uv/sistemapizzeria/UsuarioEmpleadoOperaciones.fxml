@@ -16,7 +16,7 @@
 
 <AnchorPane prefHeight="597.0" prefWidth="474.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.UsuarioEmpleadoOperacionesController">
    <children>
-      <ScrollPane layoutX="-3.0" layoutY="-2.0" prefHeight="667.0" prefWidth="475.0">
+      <ScrollPane layoutX="-3.0" layoutY="-2.0" prefHeight="1357.0" prefWidth="475.0">
          <content>
                   <AnchorPane layoutX="-4.0" prefHeight="1114.0" prefWidth="463.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
                      <children>

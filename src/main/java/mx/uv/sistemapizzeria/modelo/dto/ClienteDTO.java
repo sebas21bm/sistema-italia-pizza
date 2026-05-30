@@ -10,8 +10,6 @@ public class ClienteDTO extends Persona{
 
     public ClienteDTO() {}
 
-    // ── Getters y Setters ──────────────────────────────────────────────────
-
     public int getNoCliente() {
         return noCliente;
     }

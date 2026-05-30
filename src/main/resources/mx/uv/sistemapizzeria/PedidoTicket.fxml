@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -12,93 +17,187 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefWidth="443.0" style="-fx-background-color: white;"
-      xmlns="http://javafx.com/javafx/8"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="mx.uv.sistemapizzeria.controladores.PedidoTicketController">
-   <padding><Insets top="24" right="28" bottom="24" left="28"/></padding>
+<VBox prefWidth="443.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoTicketController">
+    <padding><Insets bottom="24" left="28" right="28" top="24" /></padding>
+    <children>
 
-   <!-- Título -->
-   <Label text="Ticket de Pedido" textFill="#202932" alignment="CENTER" maxWidth="Infinity">
-      <font><Font name="System Bold" size="26.0"/></font>
-      <VBox.margin><Insets bottom="6"/></VBox.margin>
-   </Label>
+        <!-- Título -->
+        <Label alignment="CENTER" maxWidth="Infinity" text="Ticket de Pedido" textFill="#202932">
+            <font>
+                <Font name="System Bold" size="26.0" />
+            </font>
+            <VBox.margin>
+                <Insets bottom="6" />
+            </VBox.margin>
+        </Label>
 
-   <!-- Folio + Estado -->
-   <HBox alignment="CENTER" spacing="8">
-      <VBox.margin><Insets bottom="16"/></VBox.margin>
-      <Label text="Pedido #" textFill="#5a6070"><font><Font size="13.0"/></font></Label>
-      <Label fx:id="lbl_numeroPedido" text="—" textFill="#202932"><font><Font name="System Bold" size="13.0"/></font></Label>
-      <Label text=" · " textFill="#9aa0ac"><font><Font size="13.0"/></font></Label>
-      <Label fx:id="lbl_estadoPedido" text="—" textFill="#1265f5"><font><Font name="System Bold" size="13.0"/></font></Label>
-   </HBox>
+        <!-- Folio + Estado -->
+        <HBox alignment="CENTER" spacing="8">
+            <VBox.margin>
+                <Insets bottom="16" />
+            </VBox.margin>
+            <children>
+                <Label text="Pedido #" textFill="#5a6070">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
+                </Label>
+                <Label fx:id="lbl_numeroPedido" text="—" textFill="#202932">
+                    <font>
+                        <Font name="System Bold" size="13.0" />
+                    </font>
+                </Label>
+                <Label text=" · " textFill="#9aa0ac">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
+                </Label>
+                <Label fx:id="lbl_estadoPedido" text="—" textFill="#1265f5">
+                    <font>
+                        <Font name="System Bold" size="13.0" />
+                    </font>
+                </Label>
+            </children>
+        </HBox>
 
-   <!-- Panel de datos -->
-   <VBox style="-fx-background-color: #f8f9fc; -fx-border-color: #e2e6ed; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;">
-      <VBox.margin><Insets bottom="16"/></VBox.margin>
-      <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+        <!-- Panel de datos -->
+        <VBox style="-fx-background-color: #f8f9fc; -fx-border-color: #e2e6ed; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;">
+            <VBox.margin>
+                <Insets bottom="16" />
+            </VBox.margin>
+            <padding>
+                <Insets bottom="12" left="14" right="14" top="12" />
+            </padding>
+            <children>
 
-      <GridPane hgap="8" vgap="10">
-         <columnConstraints>
-            <ColumnConstraints minWidth="100" prefWidth="115"/>
-            <ColumnConstraints minWidth="100" prefWidth="240"/>
-         </columnConstraints>
+                <GridPane hgap="8" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="100" prefWidth="115" />
+                        <ColumnConstraints minWidth="100" prefWidth="240" />
+                    </columnConstraints>
+                    <children>
 
-         <!-- Fecha -->
-         <Label text="Fecha y hora:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="0"><font><Font name="System Bold" size="11.0"/></font></Label>
-         <Label fx:id="lbl_fechaHora" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="0"><font><Font size="11.0"/></font></Label>
+                        <!-- Fecha -->
+                        <Label text="Fecha y hora:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <font>
+                                <Font name="System Bold" size="11.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lbl_fechaHora" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <font>
+                                <Font size="11.0" />
+                            </font>
+                        </Label>
 
-         <!-- Atiende -->
-         <Label text="Atiende:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="1"><font><Font name="System Bold" size="11.0"/></font></Label>
-         <Label fx:id="lbl_empleado" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="1"><font><Font size="11.0"/></font></Label>
+                        <!-- Atiende -->
+                        <Label text="Atiende:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <font>
+                                <Font name="System Bold" size="11.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lbl_empleado" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <font>
+                                <Font size="11.0" />
+                            </font>
+                        </Label>
 
-         <!-- Cliente -->
-         <Label text="Cliente:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="2"><font><Font name="System Bold" size="11.0"/></font></Label>
-         <Label fx:id="lbl_cliente" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="2"><font><Font size="11.0"/></font></Label>
+                        <!-- Cliente -->
+                        <Label text="Cliente:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                            <font>
+                                <Font name="System Bold" size="11.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lbl_cliente" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <font>
+                                <Font size="11.0" />
+                            </font>
+                        </Label>
 
-         <!-- Dirección -->
-         <Label text="Dirección:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="3"><font><Font name="System Bold" size="11.0"/></font></Label>
-         <Label fx:id="lbl_direccion" text="" textFill="#3a4250" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3"><font><Font size="11.0"/></font></Label>
+                        <!-- Dirección -->
+                        <Label text="Dirección:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                            <font>
+                                <Font name="System Bold" size="11.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lbl_direccion" text="" textFill="#3a4250" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                            <font>
+                                <Font size="11.0" />
+                            </font>
+                        </Label>
 
-         <!-- Teléfono -->
-         <Label text="Teléfono:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="4"><font><Font name="System Bold" size="11.0"/></font></Label>
-         <Label fx:id="lbl_telefono" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="4"><font><Font size="11.0"/></font></Label>
-      </GridPane>
-   </VBox>
+                        <!-- Teléfono -->
+                        <Label text="Teléfono:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="4">
+                            <font>
+                                <Font name="System Bold" size="11.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lbl_telefono" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                            <font>
+                                <Font size="11.0" />
+                            </font>
+                        </Label>
+                    </children>
+                    <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                    </rowConstraints>
+                </GridPane>
+            </children>
+        </VBox>
 
-   <!-- Encabezado tabla -->
-   <Label text="Productos" textFill="#202932">
-      <font><Font name="System Bold" size="12.0"/></font>
-      <VBox.margin><Insets bottom="6"/></VBox.margin>
-   </Label>
+        <!-- Encabezado tabla -->
+        <Label text="Productos" textFill="#202932">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+            <VBox.margin>
+                <Insets bottom="6" />
+            </VBox.margin>
+        </Label>
 
-   <!-- Tabla de productos -->
-   <TableView fx:id="tbl_productosTicket" prefHeight="180.0" maxWidth="Infinity"
-              style="-fx-border-color: #d5dae2; -fx-border-width: 1;">
-      <VBox.margin><Insets bottom="16"/></VBox.margin>
-      <columns>
-         <TableColumn fx:id="col_cantidad"       prefWidth="65.0"  text="Cantidad"/>
-         <TableColumn fx:id="col_descripcion"    prefWidth="150.0" text="Descripción"/>
-         <TableColumn fx:id="col_precioUnitario" prefWidth="90.0"  text="P. Unitario"/>
-         <TableColumn fx:id="col_subtotal"       prefWidth="80.0"  text="Subtotal"/>
-      </columns>
-   </TableView>
+        <!-- Tabla de productos -->
+        <TableView fx:id="tbl_productosTicket" maxWidth="Infinity" prefHeight="180.0" style="-fx-border-color: #d5dae2; -fx-border-width: 1;">
+            <VBox.margin>
+                <Insets bottom="16" />
+            </VBox.margin>
+            <columns>
+                <TableColumn fx:id="col_cantidad" prefWidth="86.0" text="Cantidad" />
+                <TableColumn fx:id="col_descripcion" prefWidth="192.0" text="Descripción" />
+                <TableColumn fx:id="col_subtotal" prefWidth="107.0" text="Subtotal" />
+            </columns>
+        </TableView>
 
-   <!-- Total -->
-   <HBox alignment="CENTER_RIGHT">
-      <VBox.margin><Insets bottom="20"/></VBox.margin>
-      <VBox alignment="CENTER_RIGHT"
-            style="-fx-background-color: #f3f4f9; -fx-border-color: #e2e6ed; -fx-border-width: 1; -fx-border-radius: 4; -fx-background-radius: 4;">
-         <padding><Insets top="8" right="16" bottom="8" left="16"/></padding>
-         <Label text="Total a pagar" textFill="#5a6070"><font><Font size="11.0"/></font></Label>
-         <Label fx:id="lbl_totalPagar" text="0.00" textFill="#202932" alignment="CENTER_RIGHT">
-            <font><Font name="System Bold" size="17.0"/></font>
-         </Label>
-      </VBox>
-   </HBox>
+        <!-- Total -->
+        <HBox alignment="CENTER_RIGHT">
+            <VBox.margin>
+                <Insets bottom="20" />
+            </VBox.margin>
+            <children>
+                <VBox alignment="CENTER_RIGHT" style="-fx-background-color: #f3f4f9; -fx-border-color: #e2e6ed; -fx-border-width: 1; -fx-border-radius: 4; -fx-background-radius: 4;">
+                    <padding>
+                        <Insets bottom="8" left="16" right="16" top="8" />
+                    </padding>
+                    <children>
+                        <Label text="Total a pagar" textFill="#5a6070">
+                            <font>
+                                <Font size="11.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lbl_totalPagar" alignment="CENTER_RIGHT" text="0.00" textFill="#202932">
+                            <font>
+                                <Font name="System Bold" size="17.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
 
-   <!-- Botón Aceptar -->
-   <Button text="Aceptar" onAction="#clicAceptar" maxWidth="Infinity" prefHeight="40.0"
-           style="-fx-background-color: #1265f5; -fx-background-radius: 6; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+        <!-- Botón Aceptar -->
+        <Button maxWidth="Infinity" onAction="#clicAceptar" prefHeight="40.0" style="-fx-background-color: #1265f5; -fx-background-radius: 6; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="Aceptar" />
+    </children>
 
 </VBox>
