@@ -130,9 +130,10 @@
 
       <AnchorPane layoutX="180.0" prefHeight="650.0" prefWidth="820.0" style="-fx-background-color: #f3f5fa;">
          <children>
-            <HBox alignment="CENTER_RIGHT" layoutX="305.0" layoutY="568.0" prefHeight="58.0" prefWidth="481.0" spacing="20.0">
+            <HBox alignment="CENTER_RIGHT" layoutX="76.0" layoutY="568.0" prefHeight="58.0" prefWidth="710.0" spacing="20.0">
                <children>
       
+                  <Button mnemonicParsing="false" onAction="#clicCalcularDiferencia" prefHeight="42.0" prefWidth="210.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 13px; -fx-font-weight: bold;" text="Calcular diferencia" />
                   <Button mnemonicParsing="false" onAction="#clicGenerarReportePdf" prefHeight="42.0" prefWidth="210.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 13px; -fx-font-weight: bold;" text="Generar Reporte en PDF" />
       
                   <Button mnemonicParsing="false" onAction="#clicGuardarValidacion" prefHeight="40.0" prefWidth="220.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="Guardar Validación" />
@@ -144,14 +145,13 @@
                </font>
             </Label>
 
-            <TableView fx:id="tbl_validacionInsumos" fixedCellSize="60.0" layoutX="26.0" layoutY="65.0" prefHeight="486.0" prefWidth="760.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
+            <TableView fx:id="tbl_validacionProductosInventario" fixedCellSize="60.0" layoutX="26.0" layoutY="65.0" prefHeight="486.0" prefWidth="530.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
                <columns>
                   <TableColumn fx:id="col_codigo" prefWidth="68.0" text="Código" />
-                  <TableColumn fx:id="col_productoInventario" prefWidth="225.0" text="Producto de Inventario" />
-                  <TableColumn fx:id="col_existencias" prefWidth="85.0" text="Existencias" />
-                  <TableColumn fx:id="col_conteoFisicoReal" prefWidth="101.0" text="Conteo físico" />
+                  <TableColumn fx:id="col_productoInventario" prefWidth="171.66668701171875" text="Producto de Inventario" />
+                  <TableColumn fx:id="col_existencias" prefWidth="83.0" text="Existencias" />
+                  <TableColumn fx:id="col_conteoFisicoReal" prefWidth="113.0" text="Conteo físico" />
                   <TableColumn fx:id="col_diferencia" prefWidth="89.0" text="Diferencia" />
-                  <TableColumn fx:id="col_justificacion" prefWidth="187.0" text="Justificación" />
                </columns>
             </TableView>
          </children>

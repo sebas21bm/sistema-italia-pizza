@@ -18,8 +18,9 @@ public class ReporteInventarioDTO {
 
     private List<DetalleReporteDTO> detalles = new ArrayList<>();
 
-    public ReporteInventarioDTO() {}
+    public ReporteInventarioDTO() {
 
+    }
 
     public int getIdInventario() {
         return idInventario;

@@ -12,12 +12,15 @@ import java.util.List;
 
 public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
 
-    // Columnas reales de vista_lista_pedidos (CONSULTAS.sql):
-    // nombre, paterno, materno, telefono, no_cliente, id_pedido, fecha, total_pagar, estatus
+    // Columnas de vista_lista_pedidos (CONSULTAS.sql):
+    // nombre, paterno, materno, telefono, no_cliente, id_pedido, fecha, total_pagar, estatus,
+    // calle, numero, codigo_postal, ciudad
     private static final String COLS_VISTA =
             "nombre, paterno, materno, telefono, " +
-                    "no_cliente, id_pedido, fecha, total_pagar, estatus";
+                    "no_cliente, id_pedido, fecha, total_pagar, estatus, " +
+                    "calle, numero, codigo_postal, ciudad";
 
+    // ── buscar(id_pedido): PedidoDTO con detalles ──────────────────────────
     @Override
     public PedidoDTO buscar(Integer idPedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         PedidoDTO pedido = null;
@@ -35,11 +38,15 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                 }
             }
 
-            if (pedido != null) cargarDetalles(conn, pedido);
+            if (pedido != null) {
+                cargarDetalles(conn, pedido);
+                cargarDireccion(conn, pedido);
+            }
         }
         return pedido;
     }
 
+    // ── editar(pedido): boolean ────────────────────────────────────────────
     @Override
     public boolean editar(PedidoDTO pedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -76,6 +83,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         }
     }
 
+    // ── eliminar(id_pedido): cancela el pedido ─────────────────────────────
     @Override
     public boolean eliminar(Integer idPedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -89,6 +97,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         }
     }
 
+    // ── mostrarTodos(): usa vista_lista_pedidos ────────────────────────────
     @Override
     public List<PedidoDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<PedidoDTO> pedidos = new ArrayList<>();
@@ -107,14 +116,17 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         return pedidos;
     }
 
+    // ── registrar(pedido): llama al stored procedure de CONSULTAS.sql ──────
+    // IMPORTANTE: La tabla temporal temp_detalles_pedido es de sesión MySQL.
+    // Cada conexión JDBC es una sesión nueva → hay que crearla explícitamente.
+    // NO se usa setAutoCommit(false) porque registrar_pedido ya maneja
+    // su propio START TRANSACTION / COMMIT / ROLLBACK internamente.
     @Override
     public boolean registrar(PedidoDTO pedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
-            if (conn == null) {
-                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-            }
-
+            // 0. Crear la tabla temporal en esta sesión JDBC y limpiarla
             try (Statement st = conn.createStatement()) {
                 st.execute(
                         "CREATE TEMPORARY TABLE IF NOT EXISTS temp_detalles_pedido (" +
@@ -126,6 +138,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                 st.execute("DELETE FROM temp_detalles_pedido");
             }
 
+            // 1. Llenar tabla temporal con cada ítem del pedido (codigo_menu, cantidad)
             for (DetallePedidoDTO det : pedido.getDetalles()) {
                 try (CallableStatement cs = conn.prepareCall(
                         "{CALL registrar_detalle_pedido(?, ?)}")) {
@@ -135,6 +148,9 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                 }
             }
 
+            // 2. Stored procedure que hace toda la transacción:
+            //    INSERT pedido → INSERT detalles → validar stock → descontar insumos → COMMIT
+            //    4 parámetros: fecha, estatus, no_cliente, id_direccion
             try (CallableStatement cs = conn.prepareCall(
                     "{CALL registrar_pedido(?, ?, ?, ?)}")) {
                 cs.setTimestamp(1, Timestamp.valueOf(pedido.getFecha()));
@@ -145,14 +161,11 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                 cs.execute();
             }
 
-            // Recuperar el último ID generado
-            String consulta = "SELECT id_pedido FROM pedido ORDER BY id_pedido DESC LIMIT 1";
-
-            try (PreparedStatement ps = conn.prepareStatement(consulta);
-                 ResultSet rs = ps.executeQuery()) {
-
+            // 3. Recuperar el idPedido generado para que el ticket lo muestre
+            try (Statement st = conn.createStatement();
+                 ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()")) {
                 if (rs.next()) {
-                    pedido.setIdPedido(rs.getInt("id_pedido"));
+                    pedido.setIdPedido(rs.getInt(1));
                 }
             }
 
@@ -160,6 +173,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         }
     }
 
+    // ── buscarPorEstatus(): para los filtros de la tabla ───────────────────
     public List<PedidoDTO> buscarPorEstatus(String estatus) throws Exception {
         List<PedidoDTO> pedidos = new ArrayList<>();
 
@@ -179,6 +193,7 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         return pedidos;
     }
 
+    // ── buscarPorCliente(): para la barra de búsqueda ─────────────────────
     public List<PedidoDTO> buscarPorCliente(String termino) throws Exception {
         List<PedidoDTO> pedidos = new ArrayList<>();
 
@@ -202,6 +217,14 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         return pedidos;
     }
 
+    // ── Helpers privados ───────────────────────────────────────────────────
+
+    /**
+     * Mapea una fila de vista_lista_pedidos a PedidoDTO.
+     * Columnas reales de la vista (CONSULTAS.sql):
+     * nombre, paterno, materno, telefono,
+     * no_cliente, id_pedido, fecha, total_pagar, estatus
+     */
     private PedidoDTO mapearDesdeVista(ResultSet rs) throws SQLException {
         PedidoDTO p = new PedidoDTO();
         p.setIdPedido(rs.getInt("id_pedido"));
@@ -218,6 +241,13 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         c.setMaterno(rs.getString("materno"));
         c.setTelefono(rs.getString("telefono"));
         p.setCliente(c);
+
+        DireccionDTO dir = new DireccionDTO();
+        dir.setCalle(rs.getString("calle"));
+        dir.setNumero(rs.getString("numero"));
+        dir.setCodigoPostal(rs.getString("codigo_postal"));
+        dir.setCiudad(rs.getString("ciudad"));
+        p.setDireccion(dir);
 
         return p;
     }
@@ -246,6 +276,27 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                     det.setProductoVenta(pv);
 
                     pedido.agregarDetalle(det);
+                }
+            }
+        }
+    }
+
+    private void cargarDireccion(Connection conn, PedidoDTO pedido) throws SQLException {
+        String sql = "SELECT d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
+                "FROM pedido p " +
+                "JOIN direccion d ON p.id_direccion = d.id_direccion " +
+                "WHERE p.id_pedido = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, pedido.getIdPedido());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    DireccionDTO dir = new DireccionDTO();
+                    dir.setIdDireccion(rs.getInt("id_direccion"));
+                    dir.setCalle(rs.getString("calle"));
+                    dir.setNumero(rs.getString("numero"));
+                    dir.setCodigoPostal(rs.getString("codigo_postal"));
+                    dir.setCiudad(rs.getString("ciudad"));
+                    pedido.setDireccion(dir);
                 }
             }
         }

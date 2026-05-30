@@ -256,15 +256,19 @@ public class PedidosGestionController implements Initializable {
         }
 
         try {
-            // Cargar el pedido completo (con detalles) desde la BD
+            // Cargar el pedido completo (con detalles y dirección) desde la BD
             PedidoDTO pedidoCompleto = dao.buscar(seleccionado.getIdPedido());
+
+            // Si buscar() falla o retorna null, usamos el seleccionado.
+            // El seleccionado ya tiene dirección porque mostrarTodos() ahora la carga.
+            PedidoDTO pedidoAEditar = (pedidoCompleto != null) ? pedidoCompleto : seleccionado;
 
             FXMLLoader loader = UtilidadesFX.cargarFXML("PedidoEdicion");
             Parent vista = loader.load();
 
             // Inyectar el pedido en el controller de edición
             PedidoEdicionController controller = loader.getController();
-            controller.setPedido(pedidoCompleto != null ? pedidoCompleto : seleccionado);
+            controller.setPedido(pedidoAEditar);
 
             Stage stage = new Stage();
             stage.setTitle("Editar Pedido #" + seleccionado.getIdPedido());
@@ -355,7 +359,19 @@ public class PedidosGestionController implements Initializable {
         if (archivo == null) return;
 
         try {
-            ExportadorPDF.exportar(pedidos, archivo.getAbsolutePath());
+            // La listaTabla solo contiene datos de la vista (sin detalles de productos).
+            // Cargamos el pedido completo —con detalles— para cada registro antes de exportar.
+            List<PedidoDTO> pedidosCompletos = new ArrayList<>();
+            for (PedidoDTO p : pedidos) {
+                try {
+                    PedidoDTO completo = dao.buscar(p.getIdPedido());
+                    pedidosCompletos.add(completo != null ? completo : p);
+                } catch (Exception ignored) {
+                    pedidosCompletos.add(p); // Si falla uno, incluye el parcial
+                }
+            }
+
+            ExportadorPDF.exportar(pedidosCompletos, archivo.getAbsolutePath());
             UtilidadesFX.mostrarAlertaSimple("Exportación exitosa",
                     "Reporte guardado en:\n" + archivo.getAbsolutePath(),
                     Alert.AlertType.INFORMATION);

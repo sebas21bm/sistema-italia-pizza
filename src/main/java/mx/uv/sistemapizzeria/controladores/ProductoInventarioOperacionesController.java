@@ -40,8 +40,6 @@ public class ProductoInventarioOperacionesController implements Initializable {
     @FXML
     private TextField txt_existencias;
     @FXML
-    private Button btn_borrarFoto;
-    @FXML
     private DatePicker dp_fechaCaducidad;
 
     private Boolean registro;
