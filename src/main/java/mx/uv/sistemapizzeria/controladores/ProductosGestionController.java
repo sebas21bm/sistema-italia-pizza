@@ -25,6 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import jdk.jshell.execution.Util;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoDAO;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
@@ -241,32 +242,40 @@ public class ProductosGestionController implements Initializable {
             return;
         }
 
-        Alert alertaConfirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        alertaConfirmacion.setTitle("Confirmar eliminación");
-        alertaConfirmacion.setHeaderText("¿Estás seguro de que deseas eliminar: " + productoSeleccionado.getNombre() + "?");
-        alertaConfirmacion.setContentText("El producto será dado de baja del sistema.");
 
-        // Mostrar ventana emergente de confirmación
-        Optional<ButtonType> resultado = alertaConfirmacion.showAndWait();
+        boolean confirmado = UtilidadesFX.mostrarAlertaConfirmacion(
+                "Confirmar eliminación",
+                "¿Estás seguro de que deseas eliminar: " + productoSeleccionado.getNombre() + "?",
+                "El producto será dado de baja del sistema.");
 
-        // Si el usuario acepto eliminar el producto entonces sucede la eliminación
-        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            try {
-                ProductoDAO producto = new ProductoDAO();
-                producto.eliminarProductoVenta(productoSeleccionado.getCodigoMenu());
 
-                UtilidadesFX.mostrarAlertaSimple("Éxito", "El producto fue eliminado correctamente", Alert.AlertType.CONFIRMATION);
-
-                // Refrescar la tabla se simula con este método:
-                //cargarDatosTabla();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                UtilidadesFX.mostrarAlertaSimple("No se puede eliminar", ex.getMessage(), Alert.AlertType.WARNING);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                UtilidadesFX.mostrarAlertaSimple("Error Inesperado", "Ha ocurrido un fallo en el sistema al intentar eliminar el producto.", Alert.AlertType.ERROR);
-            }
+        if (!confirmado) {
+            return;
         }
+
+        try {
+
+
+            if (productoDAO.eliminarProductoVenta(productoSeleccionado.getCodigoMenu())){
+                UtilidadesFX.mostrarAlertaSimple("Eliminación exitosa",
+                        "Se ha eliminado el producto correctamente",
+                        Alert.AlertType.INFORMATION);
+            } else {
+                UtilidadesFX.mostrarAlertaSimple("Falló la edición",
+                        "La eliminación del producto no pudo realizarse," +
+                                "intente de nuevo",
+                        Alert.AlertType.WARNING);
+            }
+        }catch(SQLException e){
+            UtilidadesFX.mostrarAlertaSimple("Error al eliminar",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        }catch(NullPointerException | ClassNotFoundException | IOException n){
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar producto a eliminar",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
+        }
+        actualizarInformacion();
     }
 
 

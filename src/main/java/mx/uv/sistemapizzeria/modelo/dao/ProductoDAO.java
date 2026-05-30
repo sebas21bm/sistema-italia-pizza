@@ -205,7 +205,7 @@ public class ProductoDAO implements Operaciones<String, ProductoVentaDTO> {
     }
 
     // ── Eliminar un producto de venta ─────────────────────────────────────────────────────────────
-    public void eliminarProductoVenta(String codigoMenu) throws SQLException {
+    public boolean eliminarProductoVenta(String codigoMenu) throws NullPointerException, IOException, SQLException, ClassNotFoundException
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
@@ -213,6 +213,7 @@ public class ProductoDAO implements Operaciones<String, ProductoVentaDTO> {
             try (PreparedStatement ps = conn.prepareCall(sql)) {
                 ps.setString(1, codigoMenu);
                 ps.executeUpdate();
+                return(ps.executeUpdate() != 0);
             }
         } catch (IOException | ClassNotFoundException ex) {
             throw new SQLException(Constantes.MSJ_SIN_CONEXION);
