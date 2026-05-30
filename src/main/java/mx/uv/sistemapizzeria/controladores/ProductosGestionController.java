@@ -214,8 +214,8 @@ public class ProductosGestionController implements Initializable {
                 ProductoVentaDTO producto = productoDAO.buscar(campoBuscar);
                 productosVenta.add(producto);
             } else {
-                List<ProductoInventarioDTO> productosBD = productoDAO.buscarPorNombre(campoBuscar);
-                productosVenta.addAll(productosBD);
+                //List<ProductoInventarioDTO> productosBD = productoDAO.buscarPorNombre(campoBuscar);
+                //productosVenta.addAll(productosBD);
             }
             tbl_productos.setItems(productosVenta);
         }catch(SQLException e){
@@ -258,7 +258,7 @@ public class ProductosGestionController implements Initializable {
                 UtilidadesFX.mostrarAlertaSimple("Éxito", "El producto fue eliminado correctamente", Alert.AlertType.CONFIRMATION);
 
                 // Refrescar la tabla se simula con este método:
-                cargarDatosTabla();
+                //cargarDatosTabla();
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 UtilidadesFX.mostrarAlertaSimple("No se puede eliminar", ex.getMessage(), Alert.AlertType.WARNING);
