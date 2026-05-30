@@ -10,7 +10,7 @@ public class CargadorEscenas {
         }
 
         switch (tipoEmpleado) {
-            case Administrator:
+            case Administrador:
                 return "MenuAdministrador";
             case Cajero:
                 return "MenuCajero";

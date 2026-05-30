@@ -11,7 +11,6 @@ public class PedidoDTO {
     private double totalPagar;
     private String estatus;
 
-    // FK + objeto anidado del cliente
     private int noCliente;
     private DireccionDTO direccion;
     private ClienteDTO cliente;
@@ -20,7 +19,6 @@ public class PedidoDTO {
 
 
     public PedidoDTO() {}
-
 
     public int getIdPedido() {
         return idPedido;
@@ -86,7 +84,6 @@ public class PedidoDTO {
         this.detalles = detalles;
     }
 
-    /** Agrega un detalle a la lista del pedido */
     public void agregarDetalle(DetallePedidoDTO detalle) {
         this.detalles.add(detalle);
     }

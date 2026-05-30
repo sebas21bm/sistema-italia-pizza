@@ -48,7 +48,7 @@ public class AutenticacionDAO {
             int idRol = rs.getInt("id_rol");
             switch (idRol) {
                 case 1:
-                    empleadoLogin.setTipoEmpleado(TipoEmpleado.Administrator);
+                    empleadoLogin.setTipoEmpleado(TipoEmpleado.Administrador);
                     break;
                 case 2:
                     empleadoLogin.setTipoEmpleado(TipoEmpleado.Cajero);

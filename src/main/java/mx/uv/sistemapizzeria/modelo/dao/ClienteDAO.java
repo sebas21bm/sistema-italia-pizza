@@ -3,6 +3,7 @@ package mx.uv.sistemapizzeria.modelo.dao;
 import mx.uv.sistemapizzeria.db.ConnectionFactory;
 import mx.uv.sistemapizzeria.modelo.dto.ClienteDTO;
 import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
+import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
@@ -238,5 +239,41 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
         }
 
         return new ArrayList<>(mapaClientes.values());
+    }
+
+    public List<ClienteDTO> buscarPorNombre(String nombreBusqueda)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException{
+        List<ClienteDTO> lista = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
+            String consulta = "SELECT e.no_cliente, e.nombre, e.paterno, e.materno, e.telefono, e.email, e.estatus, " +
+                    "d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad FROM empleado e " +
+                    "LEFT JOIN direccion d ON d.id_direccion = e.id_direccion " +
+                    "JOIN cliente_direcciones cd ON c.no_cliente = cd.no_cliente " +
+                    "WHERE e.nombre LIKE ? OR e.paterno LIKE ?" +
+                    "OR e.materno LIKE ? AND e.estatus = 1";
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setString(1, "%" + nombreBusqueda +"%");
+            ps.setString(2, "%" + nombreBusqueda +"%");
+            ps.setString(3, "%" + nombreBusqueda +"%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                //lista.add(mapearClientes(rs));
+            }
+
+        }
+        return lista;
+    }
+
+    public List<ClienteDTO> buscarPorTelefono(String campoBusqueda) {
+        // TODO implementacion
+        return null;
+    }
+
+    public List<ClienteDTO> buscarPorDireccion(String campoBusqueda) {
+        // TODO implementacion
+        return null;
     }
 }

@@ -10,8 +10,6 @@ public class ClienteDTO extends Persona{
 
     public ClienteDTO() {}
 
-    // ── Getters y Setters ──────────────────────────────────────────────────
-
     public int getNoCliente() {
         return noCliente;
     }
@@ -26,12 +24,6 @@ public class ClienteDTO extends Persona{
 
     public void setDirecciones(List<DireccionDTO> direcciones) {
         this.direcciones = direcciones;
-    }
-
-    public String getNombreCompleto() {
-        return (this.getNombre() != null ? this.getNombre() : "") + " "
-                + (this.getPaterno() != null ? this.getPaterno() : "") + " "
-                + (this.getMaterno() != null ? this.getMaterno() : "");
     }
 
     @Override

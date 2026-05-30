@@ -45,19 +45,35 @@ public class UsuarioTipoController implements Initializable {
             FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioEmpleadoOperaciones");
             Parent raiz = loader.load();
             Scene escena = new Scene(raiz);
+            /*
+            Stage stageConf = new Stage();
+            stageConf.initOwner(stageCreacion);
+            stageConf.initModality(Modality.WINDOW_MODAL);
+            stageConf.setTitle("Confirmar pedido");
+            stageConf.setResizable(false);
+            stageConf.setScene(new Scene(vista));
+            stageConf.centerOnScreen();
+
+            stageCreacion.hide();
+            stageConf.showAndWait();
+             */
 
             Stage escenarioModal = new Stage();
+            Stage  escenarioActual = (Stage) lb_titulo.getScene().getWindow();
+
+
+            escenarioModal.initOwner(escenarioActual);
+            escenarioModal.initModality(Modality.APPLICATION_MODAL);
+
             escenarioModal.setTitle("Registrar empleado");
             escenarioModal.setResizable(false);
             escenarioModal.setScene(escena);
 
-            Stage  escenarioActual = (Stage) lb_titulo.getScene().getWindow();
-
             escenarioModal.centerOnScreen();
-            escenarioModal.initModality(Modality.APPLICATION_MODAL);
+            escenarioActual.hide();
             escenarioModal.showAndWait();
 
-            escenarioActual.close();
+
 
         } catch (IOException e) {
             UtilidadesFX.mostrarAlertaSimple(
