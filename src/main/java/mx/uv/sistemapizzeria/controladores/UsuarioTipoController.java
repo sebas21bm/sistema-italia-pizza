@@ -36,73 +36,25 @@ public class UsuarioTipoController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-    }    
+    }
 
     @FXML
     private void clicEmpleado(ActionEvent event) {
         try {
-            // TODO falta agregar metadatos para que se cargue con la operacion de registrar en empleado
+            SistemaPizzeria.setMetadatos("registrar-empleado", true);
+
             FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioEmpleadoOperaciones");
             Parent raiz = loader.load();
-            Scene escena = new Scene(raiz);
-            /*
-            Stage stageConf = new Stage();
-            stageConf.initOwner(stageCreacion);
-            stageConf.initModality(Modality.WINDOW_MODAL);
-            stageConf.setTitle("Confirmar pedido");
-            stageConf.setResizable(false);
-            stageConf.setScene(new Scene(vista));
-            stageConf.centerOnScreen();
 
-            stageCreacion.hide();
-            stageConf.showAndWait();
-             */
+            Stage escenarioActual = (Stage) lb_titulo.getScene().getWindow();
 
             Stage escenarioModal = new Stage();
-            Stage  escenarioActual = (Stage) lb_titulo.getScene().getWindow();
-
-
-            escenarioModal.initOwner(escenarioActual);
             escenarioModal.initModality(Modality.APPLICATION_MODAL);
-
-            escenarioModal.setTitle("Registrar empleado");
+            escenarioModal.setTitle("Registrar Empleado");
             escenarioModal.setResizable(false);
-            escenarioModal.setScene(escena);
-
+            escenarioModal.setScene(new Scene(raiz));
             escenarioModal.centerOnScreen();
-            escenarioActual.hide();
-            escenarioModal.showAndWait();
-
-
-
-        } catch (IOException e) {
-            UtilidadesFX.mostrarAlertaSimple(
-                    "Error del Sistema",
-                    "No se pudo cargar la interfaz de operaciones del empleado.",
-                    Alert.AlertType.ERROR
-            );
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void clicCliente(ActionEvent event) {
-        try {
-            // TODO falta agregar metadatos para que se cargue con la operacion de registrar en cliente
-            FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioClienteOperaciones");
-            Parent raiz = loader.load();
-            Scene escena = new Scene(raiz);
-
-            Stage escenarioModal = new Stage();
-            escenarioModal.setTitle("Registrar cliente");
-            escenarioModal.setResizable(false);
-            escenarioModal.setScene(escena);
-
-            Stage  escenarioActual = (Stage) lb_titulo.getScene().getWindow();
-
-            escenarioModal.centerOnScreen();
-            escenarioModal.initModality(Modality.APPLICATION_MODAL);
-            escenarioModal.showAndWait();
+            escenarioModal.show();
 
             escenarioActual.close();
 
@@ -117,9 +69,39 @@ public class UsuarioTipoController implements Initializable {
     }
 
     @FXML
+    private void clicCliente(ActionEvent event) {
+        try {
+            SistemaPizzeria.setMetadatos("registrar-cliente", true);
+
+            FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioClienteOperaciones");
+            Parent raiz = loader.load();
+
+            Stage escenarioActual = (Stage) lb_titulo.getScene().getWindow();
+
+            Stage escenarioModal = new Stage();
+            escenarioModal.initModality(Modality.APPLICATION_MODAL);
+            escenarioModal.setTitle("Registrar Cliente");
+            escenarioModal.setResizable(false);
+            escenarioModal.setScene(new Scene(raiz));
+            escenarioModal.centerOnScreen();
+            escenarioModal.show();
+
+            escenarioActual.close();
+
+        } catch (IOException e) {
+            UtilidadesFX.mostrarAlertaSimple(
+                    "Error del Sistema",
+                    "No se pudo cargar la interfaz de operaciones del cliente.",
+                    Alert.AlertType.ERROR
+            );
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     private void clicCancelar(ActionEvent event) {
         Stage escenario = (Stage) ((Node) event.getSource()).getScene().getWindow();
         escenario.close();
     }
-    
+
 }
