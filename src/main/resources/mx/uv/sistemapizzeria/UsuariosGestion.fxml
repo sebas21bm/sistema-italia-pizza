@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #f3f5fa;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.UsuariosGestionController">
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #f3f5fa;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.UsuariosGestionController">
    <children>
 
       <AnchorPane fx:id="pnl_contenido" layoutX="180.0" prefHeight="650.0" prefWidth="820.0" style="-fx-background-color: #f3f5fa;">
@@ -32,32 +33,30 @@
                </children>
             </HBox>
 
-            <Button fx:id="btn_buscar" layoutX="330.0" layoutY="72.0" mnemonicParsing="false" onAction="#clicBuscar" prefHeight="42.0" prefWidth="100.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Buscar" />
+            <Button layoutX="330.0" layoutY="72.0" mnemonicParsing="false" onAction="#clicBuscar" prefHeight="42.0" prefWidth="100.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Buscar" />
 
             <TableView fx:id="tbl_usuarios" fixedCellSize="38.0" layoutX="20.0" layoutY="130.0" prefHeight="410.0" prefWidth="760.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
                <columns>
-                  <TableColumn fx:id="col_nombre" prefWidth="120.0" text="Nombre" />
-                  <TableColumn fx:id="col_telefono" prefWidth="110.0" text="Teléfono" />
-                  <TableColumn fx:id="col_email" prefWidth="150.0" text="Email" />
-                  <TableColumn fx:id="col_direccion" prefWidth="220.0" text="Dirección" />
-                  <TableColumn fx:id="col_estatus" prefWidth="90.0" text="Estatus" />
-                  <TableColumn fx:id="col_tipo" prefWidth="70.0" text="Tipo" />
+                  <TableColumn fx:id="col_nombre" prefWidth="177.0" text="Nombre" />
+                  <TableColumn fx:id="col_telefono" prefWidth="205.0" text="Teléfono" />
+                  <TableColumn fx:id="col_email" prefWidth="288.0" text="Email" />
+                  <TableColumn fx:id="col_estatus" prefWidth="88.0" text="Estatus" />
                </columns>
             </TableView>
 
-            <Button fx:id="btn_nuevoUsuario" layoutX="20.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicNuevoUsuario" prefHeight="45.0" prefWidth="170.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="+ Nuevo usuario" />
+            <Button layoutX="20.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicNuevoUsuario" prefHeight="45.0" prefWidth="170.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="+ Nuevo usuario" />
 
-            <Button fx:id="btn_editar" layoutX="210.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEditar" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Editar" />
+            <Button layoutX="210.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEditar" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Editar" />
 
-            <Button fx:id="btn_eliminar" layoutX="350.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEliminar" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Eliminar" />
+            <Button layoutX="350.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEliminar" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Eliminar" />
 
-            <TitledPane fx:id="tp_filtroEstatus" animated="false" expanded="false" layoutX="515.0" layoutY="78.0" prefWidth="130.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1; -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Filtro">
+            <TitledPane animated="false" expanded="false" layoutX="515.0" layoutY="78.0" prefWidth="130.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1; -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Filtro">
                <content>
                   <VBox alignment="CENTER" prefWidth="130.0" spacing="0.0" style="-fx-background-color: white;">
                      <children>
                         <VBox alignment="CENTER_LEFT" prefWidth="130.0">
                            <children>
-                              <RadioButton fx:id="rb_nombre" selected="true" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Nombre" textFill="#202932">
+                              <RadioButton selected="true" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Nombre" textFill="#202932">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="tg_estatus" />
                                  </toggleGroup>
@@ -72,7 +71,7 @@
                                  </VBox.margin>
                               </AnchorPane>
 
-                              <RadioButton fx:id="rb_telefono" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Teléfono" textFill="#202932" toggleGroup="$tg_estatus">
+                              <RadioButton style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Teléfono" textFill="#202932" toggleGroup="$tg_estatus">
                                  <VBox.margin>
                                     <Insets bottom="10.0" left="14.0" top="10.0" />
                                  </VBox.margin>
@@ -80,7 +79,7 @@
 
                               <AnchorPane prefHeight="1.0" prefWidth="130.0" style="-fx-background-color: #d9dde5;" />
 
-                              <RadioButton fx:id="rb_direccion" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Dirección" textFill="#202932" toggleGroup="$tg_estatus">
+                              <RadioButton style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Dirección" textFill="#202932" toggleGroup="$tg_estatus">
                                  <VBox.margin>
                                     <Insets bottom="10.0" left="14.0" top="10.0" />
                                  </VBox.margin>
@@ -92,11 +91,11 @@
                </content>
             </TitledPane>
 
-            <TitledPane fx:id="tp_filtroTipo" animated="false" expanded="false" layoutX="660.0" layoutY="78.0" prefWidth="120.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1; -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Tipo">
+            <TitledPane animated="false" expanded="false" layoutX="660.0" layoutY="78.0" prefWidth="120.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1; -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Tipo">
                <content>
                   <VBox prefHeight="105.0" prefWidth="120.0" spacing="0.0" style="-fx-background-color: white;">
                      <children>
-                        <RadioButton fx:id="rb_tipoEmpleado" prefHeight="22.0" prefWidth="100.0" selected="true" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Empleado" textFill="#202932">
+                        <RadioButton prefHeight="22.0" prefWidth="100.0" selected="true" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Empleado" textFill="#202932">
                            <toggleGroup>
                               <ToggleGroup fx:id="tg_tipo" />
                            </toggleGroup>
@@ -111,7 +110,7 @@
                            </VBox.margin>
                         </AnchorPane>
 
-                        <RadioButton fx:id="rb_tipoCliente" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Cliente" textFill="#202932" toggleGroup="$tg_tipo">
+                        <RadioButton style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Cliente" textFill="#202932" toggleGroup="$tg_tipo">
                            <VBox.margin>
                               <Insets bottom="10.0" left="14.0" top="10.0" />
                            </VBox.margin>
@@ -145,7 +144,7 @@
 
             <Accordion fx:id="ac_menu" layoutX="10.0" layoutY="70.0" prefWidth="160.0" style="-fx-background-color: #f1f3f8; -fx-border-color: transparent;">
                <panes>
-                  <TitledPane fx:id="tp_administracion" animated="false" expanded="true" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Administración">
+                  <TitledPane animated="false" expanded="true" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Administración">
                      <content>
                         <VBox prefWidth="158.0" spacing="8.0" style="-fx-background-color: #f1f3f8;">
                            <padding>
@@ -169,13 +168,13 @@
                               <Insets bottom="10.0" left="12.0" right="8.0" top="8.0" />
                            </padding>
                            <children>
-                              <Button fx:id="btn_menuProductos" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicProductos" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Productos">
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicProductos" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Productos">
                                  <font>
                                     <Font size="12.0" />
                                  </font>
                               </Button>
 
-                              <Button fx:id="btn_menuInsumos" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicProductosInventario" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932; -fx-font-weight: bold; " text="Productos de Inventario">
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicProductosInventario" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Productos de Inventario">
                                  <font>
                                     <Font size="11.0" />
                                  </font>
@@ -191,7 +190,7 @@
                      </content>
                   </TitledPane>
 
-                  <TitledPane fx:id="tp_pedidos" animated="false" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Pedidos">
+                  <TitledPane animated="false" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Pedidos">
                      <content>
                         <VBox prefWidth="158.0" spacing="8.0" style="-fx-background-color: #f1f3f8;">
                            <padding>
@@ -210,7 +209,7 @@
                </panes>
             </Accordion>
 
-            <Button fx:id="btn_cerrarSesion" alignment="CENTER_LEFT" layoutX="18.0" layoutY="575.0" mnemonicParsing="false" onAction="#clicCerrarSesion" prefHeight="22.0" prefWidth="130.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #301f1f;" text="Cerrar sesión">
+            <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="575.0" mnemonicParsing="false" onAction="#clicCerrarSesion" prefHeight="22.0" prefWidth="130.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #301f1f;" text="Cerrar sesión">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -218,7 +217,7 @@
 
             <AnchorPane layoutX="10.0" layoutY="604.0" prefHeight="1.0" prefWidth="160.0" style="-fx-background-color: #e1e5eb;" />
 
-            <Button fx:id="btn_ayudaAcercaDe" alignment="CENTER_LEFT" layoutX="18.0" layoutY="615.0" mnemonicParsing="false" onAction="#clicAyudaAcercaDe" prefHeight="22.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Ayuda / Acerca de">
+            <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="615.0" mnemonicParsing="false" onAction="#clicAyudaAcercaDe" prefHeight="22.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Ayuda / Acerca de">
                <font>
                   <Font size="12.0" />
                </font>

@@ -47,6 +47,8 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
 
             conn.setAutoCommit(false);
             try {
+                /*
+                TODO esto tambien se va a cambiar ya que ahora se utiliza el procedimiento almacenado
                 // 1. Actualizar dirección (si existe)
                 if (cliente.getDireccion() != null && cliente.getDireccion().getIdDireccion() > 0) {
                     String sqlDir = "UPDATE direccion SET calle=?, numero=?, codigo_postal=?, ciudad=? " +
@@ -62,6 +64,8 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                     }
                 }
 
+                 */
+
                 // 2. Actualizar datos del cliente
                 String sql = "UPDATE cliente SET nombre=?, paterno=?, materno=?, " +
                         "telefono=?, email=?, estatus=? WHERE no_cliente=?";
@@ -71,7 +75,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                     ps.setString(3, cliente.getMaterno());
                     ps.setString(4, cliente.getTelefono());
                     ps.setString(5, cliente.getEmail());
-                    ps.setString(6, cliente.getEstatus());
+                    ps.setBoolean(6, cliente.getEstatus());
                     ps.setInt(7, cliente.getNoCliente());
                     ps.executeUpdate();
                 }
@@ -147,7 +151,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                     ps.setString(3, cliente.getMaterno());
                     ps.setString(4, cliente.getTelefono());
                     ps.setString(5, cliente.getEmail());
-                    ps.setString(6, cliente.getEstatus() != null ? cliente.getEstatus() : "Activo");
+                    // ps.setString(6, cliente.getEstatus() != null ? cliente.getEstatus() : "Activo"); TODO esta linea también está mal porque estatus es boolean
                     ps.executeUpdate();
                     try (ResultSet keys = ps.getGeneratedKeys()) {
                         if (!keys.next()) throw new SQLException("No se obtuvo ID del cliente.");
@@ -157,6 +161,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                 }
 
                 // 2. Insertar dirección si viene con el cliente
+                /* TODO corregir toda esta sección porque existe el procedimiento y cliente siempre viene con direccion
                 if (cliente.getDireccion() != null) {
                     int idDireccion;
                     String sqlDir = "INSERT INTO direccion (calle, numero, codigo_postal, ciudad) VALUES (?, ?, ?, ?)";
@@ -174,6 +179,8 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                         }
                     }
 
+
+
                     // 3. Vincular cliente <-> dirección
                     String sqlVinculo = "INSERT INTO cliente_direccion (no_cliente, id_direccion) VALUES (?, ?)";
                     try (PreparedStatement ps = conn.prepareStatement(sqlVinculo)) {
@@ -182,6 +189,8 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                         ps.executeUpdate();
                     }
                 }
+
+                 */
 
                 conn.commit();
                 return true;
@@ -201,7 +210,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
         c.setMaterno(rs.getString("materno"));
         c.setTelefono(rs.getString("telefono"));
         c.setEmail(rs.getString("email"));
-        c.setEstatus(rs.getString("estatus"));
+        c.setEstatus(rs.getBoolean("estatus"));
 
         int idDir = rs.getInt("id_direccion");
         if (!rs.wasNull()) {
@@ -211,7 +220,7 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
             d.setNumero(rs.getString("numero"));
             d.setCodigoPostal(rs.getString("codigo_postal"));
             d.setCiudad(rs.getString("ciudad"));
-            c.setDireccion(d);
+            // c.setDireccion(d); TODO tiene que ser boolean, otra vez.
         }
         return c;
     }

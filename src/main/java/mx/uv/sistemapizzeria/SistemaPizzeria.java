@@ -54,7 +54,7 @@ public class SistemaPizzeria extends Application {
     public static void setRoot(String fxml, String titulo) throws IOException {
         scene.setRoot(UtilidadesFX.cargarFXML(fxml).load());
         primaryStage.setTitle(titulo);
-        primaryStage.setResizable(true);
+        primaryStage.setResizable(false);
         primaryStage.sizeToScene();
         primaryStage.centerOnScreen();
     }

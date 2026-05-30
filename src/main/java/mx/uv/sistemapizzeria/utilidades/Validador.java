@@ -1,10 +1,7 @@
 package mx.uv.sistemapizzeria.utilidades;
 
-import mx.uv.sistemapizzeria.modelo.dto.ClienteDTO;
-import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
-import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
+import mx.uv.sistemapizzeria.modelo.dto.*;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
-import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -298,7 +295,7 @@ public class Validador {
     }
 
     /**
-     * Valida todos los campos requeridos de un {@link ProductoInventarioDTO}.
+     * Valida todos los campos requeridos de un {@link ProductoInsumoDTO}.
      *
      * <ul>
      *   <li>Código: formato I[0-9]{4}</li>
@@ -333,7 +330,7 @@ public class Validador {
      * Convierte una lista de errores en un único mensaje formateado,
      * listo para mostrarse en un {@code Alert} de JavaFX.
      *
-     * @param errores lista devuelta por cualquier método {@code validar*}
+     * @param errores lista devuelta por cualquier metodo {@code validar*}
      * @return cadena con los errores numerados, o cadena vacía si no hay errores
      */
     public static String formatearErrores(List<String> errores) {

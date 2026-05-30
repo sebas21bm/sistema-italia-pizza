@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="470.0" prefWidth="630.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.UsuarioTipoController">
+<AnchorPane prefHeight="400.0" prefWidth="500.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.UsuarioTipoController">
    <children>
-      <Label layoutX="34.0" layoutY="21.0" text="Tipo de usuario" textFill="#202932">
+      <Label fx:id="lb_titulo" layoutX="34.0" layoutY="21.0" text="Tipo de usuario" textFill="#202932">
          <font>
             <Font name="System Bold" size="38.0" />
          </font>
@@ -21,8 +21,8 @@
             <Font size="23.0" />
          </font>
       </Label>
-      <Button layoutX="102.0" layoutY="144.0" mnemonicParsing="false" onAction="#clicEmpleado" prefHeight="180.0" prefWidth="180.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 3; -fx-border-radius: 0; -fx-text-fill: white; -fx-font-size: 21px; -fx-font-weight: bold;" text="Empleado" />
-      <Button layoutX="397.0" layoutY="144.0" mnemonicParsing="false" onAction="#clicCliente" prefHeight="180.0" prefWidth="180.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 3; -fx-border-radius: 0; -fx-text-fill: white; -fx-font-size: 21px; -fx-font-weight: bold;" text="Cliente" />
-      <Button layoutX="273.0" layoutY="365.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="58.0" prefWidth="129.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 3; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 19px; -fx-font-weight: bold;" text="Cancelar" />
+      <Button layoutX="45.0" layoutY="138.0" mnemonicParsing="false" onAction="#clicEmpleado" prefHeight="125.0" prefWidth="158.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 3; -fx-border-radius: 0; -fx-text-fill: white; -fx-font-size: 21px; -fx-font-weight: bold;" text="Empleado" />
+      <Button layoutX="290.0" layoutY="138.0" mnemonicParsing="false" onAction="#clicCliente" prefHeight="125.0" prefWidth="158.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 3; -fx-border-radius: 0; -fx-text-fill: white; -fx-font-size: 21px; -fx-font-weight: bold;" text="Cliente" />
+      <Button layoutX="186.0" layoutY="306.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="58.0" prefWidth="129.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 3; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 19px; -fx-font-weight: bold;" text="Cancelar" />
    </children>
 </AnchorPane>
