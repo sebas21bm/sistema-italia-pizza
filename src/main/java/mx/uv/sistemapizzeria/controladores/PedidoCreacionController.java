@@ -1,5 +1,6 @@
 package mx.uv.sistemapizzeria.controladores;
 
+import java.io.File;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -176,9 +177,10 @@ public class PedidoCreacionController implements Initializable {
         imgView.setPreserveRatio(true);
         imgView.setPickOnBounds(true);
         if (p.getFoto() != null && !p.getFoto().isEmpty()) {
-            try {
-                imgView.setImage(new Image("file:" + p.getFoto(), true));
-            } catch (Exception ignored) {}
+            Image img = cargarImagen(p.getFoto());
+            if (img != null) {
+                imgView.setImage(img);
+            }
         }
 
         // Nombre del producto
@@ -380,4 +382,38 @@ public class PedidoCreacionController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    private Image cargarImagen(String rutaFoto) {
+        if (rutaFoto == null || rutaFoto.isBlank()) {
+            return null;
+        }
+
+        rutaFoto = rutaFoto.trim().replace("\\", "/");
+
+        if (!rutaFoto.contains("/")) {
+            rutaFoto = "/imagenes/" + rutaFoto;
+        }
+
+        try {
+            if (rutaFoto.startsWith("/imagenes/") || rutaFoto.startsWith("imagenes/")) {
+                String rutaRecurso = rutaFoto.startsWith("/") ? rutaFoto : "/" + rutaFoto;
+                var recurso = getClass().getResourceAsStream(rutaRecurso);
+                if (recurso == null) {
+                    return null;
+                }
+                return new Image(recurso);
+            }
+
+            File archivo = new File(rutaFoto);
+            if (archivo.exists()) {
+                return new Image(archivo.toURI().toString());
+            }
+
+        } catch (Exception e) {
+            return null;
+        }
+
+        return null;
+    }
+
 }
