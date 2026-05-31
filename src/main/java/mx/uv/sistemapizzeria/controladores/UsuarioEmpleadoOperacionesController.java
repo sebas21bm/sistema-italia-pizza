@@ -73,16 +73,33 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
             }
         });
 
+        txt_telefono.setTextFormatter(new TextFormatter<>(change -> {
+            if (change.getControlNewText().matches("\\d{0,10}")) return change;
+            return null;
+        }));
+
+        txt_codigoPostal.setTextFormatter(new TextFormatter<>(change -> {
+            if (change.getControlNewText().matches("\\d{0,5}")) return change;
+            return null;
+        }));
+
+        txt_noEmpleado.setTextFormatter(new TextFormatter<>(change -> {
+            change.setText(change.getText().toUpperCase()); // Auto mayúscula
+            if (change.getControlNewText().matches("[E]?[0-9]{0,4}")) return change;
+            return null;
+        }));
+
         if (registro) {
             psw_contrasena.setPromptText("Contraseña");
         } else {
-            psw_contrasena.setPromptText("Dejar en blanco para no cambiar");
-            // En edición el no_empleado no se puede cambiar
+            // Elementos ocultos durante la edición
             txt_noEmpleado.setDisable(true);
+            psw_contrasena.setDisable(true);
+            txt_contrasenaVisible.setDisable(true);
+            chkBtn_mostrar.setDisable(true);
         }
     }
 
-    // ── Llamado desde UsuariosGestionController en modo edición ──────────
     public void mostrarEmpleado(EmpleadoDTO empleado) {
         this.empleadoEdicion = empleado;
 
@@ -137,7 +154,8 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
                 return;
             }
             empleado.setContrasenia(hashearContrasenia(pass));
-            String noEmpleado = txt_noEmpleado.getText().trim();
+
+            String noEmpleado = txt_noEmpleado.getText().trim().toUpperCase();
             if (noEmpleado.isEmpty()) {
                 UtilidadesFX.mostrarAlertaSimple("Campo requerido",
                         "El número de empleado (ej. E0006) es obligatorio.",
@@ -145,12 +163,14 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
                 return;
             }
             empleado.setNoEmpleado(noEmpleado);
+
             String usuario = (empleado.getNombre().charAt(0) + empleado.getPaterno())
                     .replaceAll("\\s+", "");
             empleado.setUsuario(usuario);
-        } else if (!pass.isBlank()) {
-            // Edición: solo actualizar contraseña si escribió algo
-            empleado.setContrasenia(hashearContrasenia(pass));
+        } else {
+            if (empleadoEdicion != null && empleadoEdicion.getUsuario() != null) {
+                empleado.setUsuario(empleadoEdicion.getUsuario());
+            }
         }
 
         // Validar
@@ -161,6 +181,17 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
             UtilidadesFX.mostrarAlertaSimple("Datos inválidos",
                     Validador.formatearErrores(errores),
                     Alert.AlertType.WARNING);
+            return;
+        }
+
+        String accionConfirmacion = registro ? "registrar" : "actualizar";
+        boolean confirmar = UtilidadesFX.mostrarAlertaConfirmacion(
+                "Confirmar acción",
+                "¿Estás seguro de " + accionConfirmacion + " a este empleado?",
+                "Revisa que todos los datos capturados sean correctos."
+        );
+
+        if (!confirmar) {
             return;
         }
 
@@ -179,11 +210,16 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
                         Alert.AlertType.INFORMATION);
                 cerrarVentana();
             }
-        } catch (Exception e) {
-            UtilidadesFX.mostrarAlertaSimple("Error al guardar",
-                    e.getMessage(),
-                    Alert.AlertType.ERROR);
-        }
+        }  catch (Exception e) {
+            // Este horita lo modificamos, queda pendiente por el push
+        e.printStackTrace();
+
+        String mensajeOriginal = e.getMessage();
+
+        UtilidadesFX.mostrarAlertaSimple("MySQL",
+                "MySQL rechazó la edición con este mensaje exacto:\n\n" + mensajeOriginal,
+                Alert.AlertType.ERROR);
+    }
     }
 
     @FXML

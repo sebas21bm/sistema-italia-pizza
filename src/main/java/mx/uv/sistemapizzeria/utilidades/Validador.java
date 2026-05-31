@@ -176,9 +176,6 @@ public class Validador {
         if (!esNoVacio(cliente.getPaterno())) {
             errores.add("El apellido paterno del cliente no puede estar vacío.");
         }
-        if (!esNoVacio(cliente.getMaterno())) {
-            errores.add("El apellido materno del cliente no puede estar vacío.");
-        }
         if (!esTelefonoValido(cliente.getTelefono())) {
             errores.add("El teléfono debe contener exactamente 10 dígitos numéricos.");
         }
@@ -214,9 +211,6 @@ public class Validador {
         }
         if (!esNoVacio(empleado.getPaterno())) {
             errores.add("El apellido paterno del empleado no puede estar vacío.");
-        }
-        if (!esNoVacio(empleado.getMaterno())) {
-            errores.add("El apellido materno del empleado no puede estar vacío.");
         }
         if (!esTelefonoValido(empleado.getTelefono())) {
             errores.add("El teléfono debe contener exactamente 10 dígitos numéricos.");
