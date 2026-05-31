@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -79,8 +80,8 @@ public class PedidosGestionController implements Initializable {
     @FXML private Button btn_menuPedidos1;
     @FXML private Button btn_cerrarSesion1;
     @FXML private Button btn_ayudaAcercaDe1;
-    @FXML private Button btn_exportarPDF;
     @FXML private AnchorPane pnl_menuAdmin;
+    @FXML private ComboBox<String> cb_estatus;
 
     // ── Formato de fecha ──────────────────────────────────────────────────────
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -110,6 +111,9 @@ public class PedidosGestionController implements Initializable {
 
         // Carga inicial: todos los pedidos, sin filtros
         cargarTodos();
+
+        // Configurar el ComboBox con sus opciones
+        cb_estatus.setItems(FXCollections.observableArrayList("Entregado", "Cancelado"));
     }
 
     // ── Configuración de columnas ─────────────────────────────────────────────
@@ -289,7 +293,6 @@ public class PedidosGestionController implements Initializable {
     }
 
     // ── Eliminar ──────────────────────────────────────────────────────────────
-    @FXML
     private void clicEliminar(ActionEvent event) {
         PedidoDTO seleccionado = tbl_pedidos.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
@@ -461,5 +464,71 @@ public class PedidosGestionController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void clicCambiarEstatus(ActionEvent event) {
+        String nuevoEstatus = cb_estatus.getValue();
+
+        if (nuevoEstatus == null) return;
+
+        PedidoDTO seleccionado = tbl_pedidos.getSelectionModel().getSelectedItem();
+
+        if (seleccionado == null) {
+            UtilidadesFX.mostrarAlertaSimple("Selección requerida",
+                    "Primero selecciona un pedido para poder cambiar su estatus.",
+                    Alert.AlertType.WARNING);
+
+            // Impide que el prompt text se actualize y muestre campos vacios
+            javafx.application.Platform.runLater(() -> cb_estatus.setValue(null));
+            return;
+        }
+
+        String estatusActual = seleccionado.getEstatus();
+
+        if (nuevoEstatus.equals(estatusActual)) {
+            UtilidadesFX.mostrarAlertaSimple("Sin cambios",
+                    "El pedido #" + seleccionado.getIdPedido() + " ya se encuentra con el estatus '" + nuevoEstatus + "'.",
+                    Alert.AlertType.INFORMATION);
+            javafx.application.Platform.runLater(() -> cb_estatus.setValue(null));
+            return;
+        }
+
+        if ("Cancelado".equals(estatusActual)) {
+            UtilidadesFX.mostrarAlertaSimple("Acción no permitida",
+                    "No es posible modificar el estatus de un pedido que ya ha sido cancelado.",
+                    Alert.AlertType.WARNING);
+            javafx.application.Platform.runLater(() -> cb_estatus.setValue(null));
+            return;
+        }
+
+        if ("Entregado".equals(estatusActual)) {
+            UtilidadesFX.mostrarAlertaSimple("Acción no permitida",
+                    "No es posible cambiar a '" + nuevoEstatus + "' un pedido ya entregado.",
+                    Alert.AlertType.WARNING);
+            javafx.application.Platform.runLater(() -> cb_estatus.setValue(null));
+            return;
+        }
+
+        boolean confirmar = UtilidadesFX.mostrarAlertaConfirmacion(
+                "Confirmar cambio de estatus",
+                "¿Estás seguro de marcar el pedido #" + seleccionado.getIdPedido() + " como " + nuevoEstatus + "?",
+                "El estatus no podrá ser cambiado después de esta acción."
+        );
+
+        if (confirmar) {
+            try {
+                if (dao.cambiarEstatus(seleccionado.getIdPedido(), nuevoEstatus)) {
+                    cargarTodos();
+                } else {
+                    UtilidadesFX.mostrarAlertaSimple("Error", "No se pudo actualizar el estatus.", Alert.AlertType.WARNING);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Restaurar visualmente el ComboBox tras una operación
+        javafx.application.Platform.runLater(() -> cb_estatus.setValue(null));
     }
 }

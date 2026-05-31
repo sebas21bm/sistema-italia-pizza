@@ -100,6 +100,20 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         }
     }
 
+    public boolean cambiarEstatus(Integer idPedido, String nuevoEstatus)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE pedido SET estatus = ? WHERE id_pedido = ?")) {
+                ps.setString(1, nuevoEstatus);
+                ps.setInt(2, idPedido);
+                return ps.executeUpdate() > 0;
+            }
+        }
+    }
+
     // ── mostrarTodos(): usa vista_lista_pedidos ────────────────────────────
     @Override
     public List<PedidoDTO> mostrarTodos()
