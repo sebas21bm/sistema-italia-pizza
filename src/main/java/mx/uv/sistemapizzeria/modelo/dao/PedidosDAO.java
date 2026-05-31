@@ -1,28 +1,31 @@
 package mx.uv.sistemapizzeria.modelo.dao;
 
 import mx.uv.sistemapizzeria.db.ConnectionFactory;
-import mx.uv.sistemapizzeria.excepciones.LimiteInsumosException;
 import mx.uv.sistemapizzeria.modelo.dto.*;
 import mx.uv.sistemapizzeria.utilidades.Constantes;
 
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
+public class PedidosDAO {
 
-    // Columnas de vista_lista_pedidos (CONSULTAS.sql):
-    // nombre, paterno, materno, telefono, no_cliente, id_pedido, fecha, total_pagar, estatus,
-    // calle, numero, codigo_postal, ciudad
     private static final String COLS_VISTA =
             "nombre, paterno, materno, telefono, " +
                     "no_cliente, id_pedido, fecha, total_pagar, estatus, " +
                     "calle, numero, codigo_postal, ciudad";
 
-    // ── buscar(id_pedido): PedidoDTO con detalles ──────────────────────────
-    @Override
-    public PedidoDTO buscar(Integer idPedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    private static final String SQL_CREATE_TEMP =
+            "CREATE TEMPORARY TABLE IF NOT EXISTS temp_detalles_pedido (" +
+                    "  codigo_menu VARCHAR(5) NOT NULL, " +
+                    "  cantidad    INT        NOT NULL, " +
+                    "  costo       DOUBLE     NOT NULL" +
+                    ")";
+
+    public PedidoDTO buscar(Integer idPedido)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         PedidoDTO pedido = null;
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -46,185 +49,174 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         return pedido;
     }
 
-    // ── editar(pedido): boolean ────────────────────────────────────────────
-    @Override
-    public boolean editar(PedidoDTO pedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    public boolean editar(PedidoDTO pedido)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            conn.setAutoCommit(false);
-            try {
-                try (PreparedStatement ps = conn.prepareStatement(
-                        "DELETE FROM detalles_pedido WHERE id_pedido = ?")) {
-                    ps.setInt(1, pedido.getIdPedido());
-                    ps.executeUpdate();
-                }
-
-                for (DetallePedidoDTO det : pedido.getDetalles()) {
-                    validarInsumos(conn, det.getCodigoMenu(), det.getCantidad());
-                    insertarDetalle(conn, pedido.getIdPedido(), det);
-                    descontarInsumos(conn, det.getCodigoMenu(), det.getCantidad());
-                }
-
-                try (PreparedStatement ps = conn.prepareStatement(
-                        "UPDATE pedido SET total_pagar=?, estatus=? WHERE id_pedido=?")) {
-                    ps.setDouble(1, pedido.getTotalPagar());
-                    ps.setString(2, pedido.getEstatus());
-                    ps.setInt(3, pedido.getIdPedido());
-                    ps.executeUpdate();
-                }
-
-                conn.commit();
-                return true;
-            } catch (SQLException | LimiteInsumosException e) {
-                conn.rollback();
-                throw e;
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
-        }
-    }
 
-    // ── eliminar(id_pedido): cancela el pedido ─────────────────────────────
-    @Override
-    public boolean eliminar(Integer idPedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
-        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "UPDATE pedido SET estatus = 'Cancelado' WHERE id_pedido = ?")) {
-                ps.setInt(1, idPedido);
-                return ps.executeUpdate() > 0;
-            }
-        }
-    }
-
-    // ── mostrarTodos(): usa vista_lista_pedidos ────────────────────────────
-    @Override
-    public List<PedidoDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
-        List<PedidoDTO> pedidos = new ArrayList<>();
-
-        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            String sql = "SELECT " + COLS_VISTA +
-                    " FROM vista_lista_pedidos ORDER BY fecha DESC";
-
-            try (PreparedStatement ps = conn.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) pedidos.add(mapearDesdeVista(rs));
-            }
-        }
-        return pedidos;
-    }
-
-    // ── registrar(pedido): llama al stored procedure de CONSULTAS.sql ──────
-    // IMPORTANTE: La tabla temporal temp_detalles_pedido es de sesión MySQL.
-    // Cada conexión JDBC es una sesión nueva → hay que crearla explícitamente.
-    // NO se usa setAutoCommit(false) porque registrar_pedido ya maneja
-    // su propio START TRANSACTION / COMMIT / ROLLBACK internamente.
-    @Override
-    public boolean registrar(PedidoDTO pedido) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
-        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            // 0. Crear la tabla temporal en esta sesión JDBC y limpiarla
             try (Statement st = conn.createStatement()) {
-                st.execute(
-                        "CREATE TEMPORARY TABLE IF NOT EXISTS temp_detalles_pedido (" +
-                                "  codigo_menu VARCHAR(5) NOT NULL, " +
-                                "  cantidad    INT        NOT NULL, " +
-                                "  costo       DOUBLE     NOT NULL" +
-                                ")"
-                );
+                st.execute(SQL_CREATE_TEMP);
                 st.execute("DELETE FROM temp_detalles_pedido");
             }
 
-            // 1. Llenar tabla temporal con cada ítem del pedido (codigo_menu, cantidad)
             for (DetallePedidoDTO det : pedido.getDetalles()) {
-                try (CallableStatement cs = conn.prepareCall(
-                        "{CALL registrar_detalle_pedido(?, ?)}")) {
+                try (CallableStatement cs = conn.prepareCall("{CALL registrar_detalle_pedido(?, ?)}")) {
                     cs.setString(1, det.getCodigoMenu());
                     cs.setInt(2, det.getCantidad());
                     cs.execute();
                 }
             }
 
-            // 2. Stored procedure que hace toda la transacción:
-            //    INSERT pedido → INSERT detalles → validar stock → descontar insumos → COMMIT
-            //    4 parámetros: fecha, estatus, no_cliente, id_direccion
-            try (CallableStatement cs = conn.prepareCall(
-                    "{CALL registrar_pedido(?, ?, ?, ?)}")) {
-                cs.setTimestamp(1, Timestamp.valueOf(pedido.getFecha()));
-                cs.setString(2, pedido.getEstatus() != null
-                        ? pedido.getEstatus() : "En proceso");
-                cs.setInt(3, pedido.getNoCliente());
-                cs.setInt(4, pedido.getDireccion().getIdDireccion());
+            try (CallableStatement cs = conn.prepareCall("{CALL editar_pedido(?)}")) {
+                cs.setInt(1, pedido.getIdPedido());
                 cs.execute();
-            }
-
-            // 3. Recuperar el idPedido generado para que el ticket lo muestre
-            try (Statement st = conn.createStatement();
-                 ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()")) {
-                if (rs.next()) {
-                    pedido.setIdPedido(rs.getInt(1));
-                }
             }
 
             return true;
         }
     }
 
-    // ── buscarPorEstatus(): para los filtros de la tabla ───────────────────
-    public List<PedidoDTO> buscarPorEstatus(String estatus) throws Exception {
+    public boolean cambiarEstatus(Integer idPedido, String nuevoEstatus)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
+
+            String consulta = "UPDATE pedido SET estatus = ? WHERE id_pedido = ?";
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setString(1, nuevoEstatus);
+            ps.setInt(2, idPedido);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public List<PedidoDTO> mostrarTodos()
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<PedidoDTO> pedidos = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
+
+            String consulta = "SELECT " + COLS_VISTA +
+                    " FROM vista_lista_pedidos ORDER BY fecha DESC";
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                pedidos.add(mapearDesdeVista(rs));
+            }
+        }
+        return pedidos;
+    }
+
+    public boolean registrar(PedidoDTO pedido)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
-            String sql = "SELECT " + COLS_VISTA +
+            try (Statement st = conn.createStatement()) {
+                st.execute(SQL_CREATE_TEMP);
+                st.execute("DELETE FROM temp_detalles_pedido");
+            }
+
+            for (DetallePedidoDTO det : pedido.getDetalles()) {
+                try (CallableStatement cs = conn.prepareCall("{CALL registrar_detalle_pedido(?, ?)}")) {
+                    cs.setString(1, det.getCodigoMenu());
+                    cs.setInt(2, det.getCantidad());
+                    cs.execute();
+                }
+            }
+
+            try (CallableStatement cs = conn.prepareCall("{CALL registrar_pedido(?, ?, ?, ?)}")) {
+                cs.setTimestamp(1, Timestamp.valueOf(pedido.getFecha()));
+                cs.setString(2, pedido.getEstatus() != null ? pedido.getEstatus() : "En proceso");
+                cs.setInt(3, pedido.getNoCliente());
+                cs.setInt(4, pedido.getDireccion().getIdDireccion());
+                cs.execute();
+            }
+
+            try (Statement st = conn.createStatement();
+                 ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()")) {
+                if (rs.next()) pedido.setIdPedido(rs.getInt(1));
+            }
+
+            return true;
+        }
+    }
+
+    public List<PedidoDTO> buscarPorEstatus(String estatus)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+        List<PedidoDTO> pedidos = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
+
+            String consulta = "SELECT " + COLS_VISTA +
                     " FROM vista_lista_pedidos WHERE estatus = ? ORDER BY fecha DESC";
-
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, estatus);
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) pedidos.add(mapearDesdeVista(rs));
-                }
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setString(1, estatus);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                pedidos.add(mapearDesdeVista(rs));
             }
+
         }
         return pedidos;
     }
 
-    // ── buscarPorCliente(): para la barra de búsqueda ─────────────────────
-    public List<PedidoDTO> buscarPorCliente(String termino) throws Exception {
+    public List<PedidoDTO> buscarPorFecha(LocalDateTime fechaInicio, LocalDateTime fechaFin)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException{
         List<PedidoDTO> pedidos = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            if (conn == null){
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
 
-            String sql = "SELECT " + COLS_VISTA +
-                    " FROM vista_lista_pedidos" +
-                    " WHERE nombre LIKE ? OR paterno LIKE ?" +
-                    " ORDER BY fecha DESC";
-
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                String like = "%" + termino + "%";
-                ps.setString(1, like);
-                ps.setString(2, like);
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) pedidos.add(mapearDesdeVista(rs));
-                }
+            String consulta = "SELECT " + COLS_VISTA + " FROM vista_lista_pedidos " + "WHERE fecha BETWEEN ? AND ?";
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setTimestamp(1, Timestamp.valueOf(fechaInicio));
+            ps.setTimestamp(2, Timestamp.valueOf(fechaFin));
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                pedidos.add(mapearDesdeVista(rs));
             }
         }
         return pedidos;
     }
 
-    // ── Helpers privados ───────────────────────────────────────────────────
+    public List<PedidoDTO> buscarPorCliente(String termino)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException{
+        List<PedidoDTO> pedidos = new ArrayList<>();
 
-    /**
-     * Mapea una fila de vista_lista_pedidos a PedidoDTO.
-     * Columnas reales de la vista (CONSULTAS.sql):
-     * nombre, paterno, materno, telefono,
-     * no_cliente, id_pedido, fecha, total_pagar, estatus
-     */
+        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
+
+            String consulta = "SELECT " + COLS_VISTA + " FROM vista_lista_pedidos" +
+                    " WHERE nombre LIKE ? OR paterno LIKE ? ORDER BY fecha DESC";
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            String like = "%" + termino + "%";
+            ps.setString(1, like);
+            ps.setString(2, like);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                pedidos.add(mapearDesdeVista(rs));
+            }
+
+        }
+        return pedidos;
+    }
+
     private PedidoDTO mapearDesdeVista(ResultSet rs) throws SQLException {
         PedidoDTO p = new PedidoDTO();
         p.setIdPedido(rs.getInt("id_pedido"));
@@ -253,7 +245,6 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
     }
 
     private void cargarDetalles(Connection conn, PedidoDTO pedido) throws SQLException {
-        // Usa vista_detalles_pedido de CONSULTAS.sql
         String sql = "SELECT codigo_menu, id_pedido, cantidad, costo, " +
                 "total_producto, nombre, precio, foto " +
                 "FROM vista_detalles_pedido WHERE id_pedido = ?";
@@ -299,54 +290,6 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                     pedido.setDireccion(dir);
                 }
             }
-        }
-    }
-
-    private void validarInsumos(Connection conn, String codigoMenu, int cantidad)
-            throws SQLException {
-        String sql = "SELECT pi.nombre, pi.existencias, pc.cantidad AS por_unidad " +
-                "FROM producto_compuesto_por pc " +
-                "JOIN producto_inventario pi ON pc.codigo = pi.codigo " +
-                "WHERE pc.codigo_menu = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, codigoMenu);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    double necesario = rs.getDouble("por_unidad") * cantidad;
-                    if (rs.getInt("existencias") < necesario) {
-                        throw new LimiteInsumosException(
-                                "Stock insuficiente de \"" + rs.getString("nombre") + "\". " +
-                                        "Disponible: " + rs.getInt("existencias") +
-                                        ", requerido: " + (int) necesario);
-                    }
-                }
-            }
-        }
-    }
-
-    private void insertarDetalle(Connection conn, int idPedido, DetallePedidoDTO det)
-            throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO detalles_pedido (id_pedido, codigo_menu, cantidad, costo) " +
-                        "VALUES (?, ?, ?, ?)")) {
-            ps.setInt(1, idPedido);
-            ps.setString(2, det.getCodigoMenu());
-            ps.setInt(3, det.getCantidad());
-            ps.setDouble(4, det.getCosto());
-            ps.executeUpdate();
-        }
-    }
-
-    private void descontarInsumos(Connection conn, String codigoMenu, int cantidad)
-            throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(
-                "UPDATE producto_inventario pi " +
-                        "JOIN producto_compuesto_por pc ON pi.codigo = pc.codigo " +
-                        "SET pi.existencias = pi.existencias - (pc.cantidad * ?) " +
-                        "WHERE pc.codigo_menu = ?")) {
-            ps.setInt(1, cantidad);
-            ps.setString(2, codigoMenu);
-            ps.executeUpdate();
         }
     }
 }

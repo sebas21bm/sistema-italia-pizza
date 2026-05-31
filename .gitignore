@@ -2,6 +2,9 @@
 
 /.idea/
 jshell.history
+hs_err_pid3704.log
+hs_err_pid9008.log
+hs_err_pid10444.log
 *.class
 *.iml
 nbactions.xml

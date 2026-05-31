@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="620.0" prefWidth="860.0" style="-fx-background-color: #f7f8fc;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoEdicionController">
+<AnchorPane prefHeight="620.0" prefWidth="860.0" style="-fx-background-color: #f7f8fc;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoEdicionController">
 
    <children>
 
@@ -37,7 +37,7 @@
                   <Label text="Cliente del pedido" textFill="#1a2535">
                      <font><Font name="System Bold" size="12.0" /></font>
                   </Label>
-                  <TableView fx:id="tbl_cliente" prefHeight="65.0" prefWidth="794.0" fixedCellSize="32.0" style="-fx-background-color: white;                               -fx-border-color: #e2e6ed; -fx-border-width: 1;                               -fx-table-cell-border-color: #e2e6ed;                               -fx-selection-bar: #f0f4ff;                               -fx-selection-bar-non-focused: #f0f4ff;">
+                  <TableView fx:id="tbl_cliente" fixedCellSize="32.0" prefHeight="285.0" prefWidth="794.0" style="-fx-background-color: white;                               -fx-border-color: #e2e6ed; -fx-border-width: 1;                               -fx-table-cell-border-color: #e2e6ed;                               -fx-selection-bar: #f0f4ff;                               -fx-selection-bar-non-focused: #f0f4ff;">
                      <columns>
                         <TableColumn fx:id="col_nombre" prefWidth="170.0" text="Nombre" />
                         <TableColumn fx:id="col_numeroTelefono" prefWidth="110.0" text="Teléfono" />

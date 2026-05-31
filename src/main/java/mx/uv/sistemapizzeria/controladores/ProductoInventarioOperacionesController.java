@@ -32,15 +32,18 @@ import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
  */
 public class ProductoInventarioOperacionesController implements Initializable {
 
-
     @FXML
-    private TextField txt_codigo;
+    private
+    TextField txt_codigo;
     @FXML
-    private TextField txt_nombre;
+    private
+    TextField txt_nombre;
     @FXML
-    private TextField txt_existencias;
+    private
+    TextField txt_existencias;
     @FXML
-    private DatePicker dp_fechaCaducidad;
+    private
+    DatePicker dp_fechaCaducidad;
 
     private Boolean registro;
     @FXML
@@ -123,7 +126,7 @@ public class ProductoInventarioOperacionesController implements Initializable {
             UtilidadesFX.mostrarAlertaSimple("Error al registrar",
                 e.getMessage(),
                 Alert.AlertType.ERROR);
-         }catch(NullPointerException | ClassNotFoundException | IOException n){
+        }catch(NullPointerException | ClassNotFoundException | IOException n){
             UtilidadesFX.mostrarAlertaSimple("Error al cargar los datos del registro",
                 MSJ_ERROR_CARGA_DATOS,
                 Alert.AlertType.ERROR);

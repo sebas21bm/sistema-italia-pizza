@@ -20,25 +20,33 @@ import mx.uv.sistemapizzeria.modelo.dto.*;
 public class PedidoTicketController implements Initializable {
 
     @FXML
-    private Label lbl_fechaHora;
+    private
+    Label lbl_fechaHora;
     @FXML
-    private Label lbl_empleado;
+    private
+    Label lbl_empleado;
     @FXML
-    private Label lbl_cliente;
+    private
+    Label lbl_cliente;
     @FXML
-    private Label lbl_direccion;
+    private
+    Label lbl_direccion;
     @FXML
-    private Label lbl_telefono;
+    private
+    Label lbl_telefono;
 
     @FXML
-    private TableView<DetallePedidoDTO> tbl_productosTicket;
+    private
+    TableView<DetallePedidoDTO> tbl_productosTicket;
     @FXML
-    private TableColumn<DetallePedidoDTO, Integer> col_cantidad;
+    private
+    TableColumn<DetallePedidoDTO, Integer> col_cantidad;
     @FXML
-    private TableColumn<DetallePedidoDTO, ProductoVentaDTO> col_descripcion;
+    private
+    TableColumn<DetallePedidoDTO, ProductoVentaDTO> col_descripcion;
     @FXML
-    private TableColumn<DetallePedidoDTO, Double> col_subtotal;
-
+    private
+    TableColumn<DetallePedidoDTO, Double> col_subtotal;
 
     @FXML
     private Label lbl_totalPagar;
@@ -94,65 +102,25 @@ public class PedidoTicketController implements Initializable {
     }
 
     private void poblarEncabezado() {
-
-        if (lbl_fechaHora != null)
-            lbl_fechaHora.setText(pedido.getFecha() != null ? pedido.getFecha().format(FMT) : "-");
-
-        if (lbl_empleado != null) {
-            EmpleadoDTO emp = Sesion.empleadoSesion;
-            lbl_empleado.setText(emp != null ? emp.getNombreCompleto() : "-");
-        }
-
-        if (lbl_cliente != null) {
-            lbl_cliente.setText(pedido.getCliente() != null
-                    ? pedido.getCliente().getNombreCompleto() : "-");
-        }
-
-        if (lbl_direccion != null) {
-            DireccionDTO d = pedido.getDireccion();
-
-            if (d == null && pedido.getCliente() != null) {
-                ClienteDTO cliente = pedido.getCliente();
-                if (cliente.getDirecciones() != null && !cliente.getDirecciones().isEmpty()) {
-                    d = cliente.getDirecciones().get(0);
-                }
-            }
-
-            if (d != null) {
-                String calle  = d.getCalle()        != null ? d.getCalle()        : "";
-                String numero = d.getNumero()       != null ? d.getNumero()       : "";
-                String ciudad = d.getCiudad()       != null ? d.getCiudad()       : "";
-                String cp     = d.getCodigoPostal() != null ? d.getCodigoPostal() : "";
-                lbl_direccion.setText((calle + " #" + numero + ", " + ciudad + " C.P. " + cp).trim());
-            } else {
-                lbl_direccion.setText("-");
-            }
-        }
-
-        if (lbl_telefono != null) {
-            String tel = (pedido.getCliente() != null && pedido.getCliente().getTelefono() != null)
-                    ? pedido.getCliente().getTelefono() : "-";
-            lbl_telefono.setText(tel);
-        }
+        lbl_fechaHora.setText(pedido.getFecha().format(FMT));
+        lbl_empleado.setText(Sesion.empleadoSesion.getNoEmpleado());
+        lbl_cliente.setText(pedido.getCliente().getNombreCompleto());
+        lbl_direccion.setText(pedido.getDireccion().toString());
+        lbl_telefono.setText(pedido.getCliente().getTelefono());
     }
 
     private void poblarTabla() {
         ObservableList<DetallePedidoDTO> detalles = FXCollections.observableArrayList();
-        if (pedido.getDetalles() != null) detalles.addAll(pedido.getDetalles());
+        if (pedido.getDetalles() != null) {
+            detalles.addAll(pedido.getDetalles());
+        }
         tbl_productosTicket.setItems(detalles);
     }
 
     private void poblarTotales() {
-        if (lbl_totalPagar != null)
-            lbl_totalPagar.setText("$" + String.format("%.2f", pedido.getTotalPagar()));
-
-        if (lbl_numeroPedido != null) {
-            String folio = pedido.getIdPedido() > 0 ? String.valueOf(pedido.getIdPedido()) : "—";
-            lbl_numeroPedido.setText(folio);
-        }
-
-        if (lbl_estadoPedido != null)
-            lbl_estadoPedido.setText(pedido.getEstatus() != null ? pedido.getEstatus() : "En proceso");
+        lbl_totalPagar.setText("$" + String.format("%.2f", pedido.getTotalPagar()));
+        lbl_numeroPedido.setText(String.valueOf(pedido.getIdPedido()));
+        lbl_estadoPedido.setText(pedido.getEstatus() != null ? pedido.getEstatus() : "En proceso");
     }
 
     @FXML

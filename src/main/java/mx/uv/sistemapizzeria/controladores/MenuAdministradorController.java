@@ -35,41 +35,10 @@ import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
  */
 public class MenuAdministradorController implements Initializable {
 
-
     @FXML
     private Label lbl_nombreUsuario;
     @FXML
     private Label lbl_rolUsuario;
-    @FXML
-    private AnchorPane pnl_menuLateral;
-    @FXML
-    private ImageView img_logo;
-    @FXML
-    private Accordion ac_menu;
-    @FXML
-    private TitledPane tp_administracion;
-    @FXML
-    private Button btn_menuValidacionInventarios;
-    @FXML
-    private AnchorPane pnl_contenido;
-    @FXML
-    private AnchorPane pnl_encabezado;
-    @FXML
-    private Button btn_menuUsuarios;
-    @FXML
-    private TitledPane tp_inventarios;
-    @FXML
-    private Button btn_menuProductos;
-    @FXML
-    private Button btn_menuProductosInventario;
-    @FXML
-    private TitledPane tp_pedidos;
-    @FXML
-    private Button btn_menuPedidos;
-    @FXML
-    private Button btn_cerrarSesion;
-    @FXML
-    private Button btn_ayudaAcercaDe;
 
     private EmpleadoDTO empleado;
 
@@ -79,8 +48,6 @@ public class MenuAdministradorController implements Initializable {
         lbl_nombreUsuario.setText(empleado.getNombre());
         lbl_rolUsuario.setText(empleado.getTipoEmpleado().toString());
     }    
-
-
 
     //NAVEGACION MENÚ
     @FXML

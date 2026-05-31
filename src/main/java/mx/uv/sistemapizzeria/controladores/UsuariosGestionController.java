@@ -3,13 +3,9 @@ package mx.uv.sistemapizzeria.controladores;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperOffset;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,9 +16,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
@@ -35,14 +28,8 @@ import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 
 public class UsuariosGestionController implements Initializable {
 
-    // ── FXML ──────────────────────────────────────────────────────────────────
-    @FXML private AnchorPane pnl_menuLateral;
-    @FXML private ImageView img_logo;
-    @FXML private Accordion ac_menu;
-    @FXML private TitledPane tp_inventarios;
-    @FXML private AnchorPane pnl_contenido;
-    @FXML private HBox hbox_busqueda;
-    @FXML private TextField txt_buscar;
+    @FXML
+    private TextField txt_buscar;
 
     @FXML
     private TableView<Persona> tbl_usuarios;
@@ -59,17 +46,17 @@ public class UsuariosGestionController implements Initializable {
     @FXML
     private ComboBox<String> cb_tipo;
 
-
     private final EmpleadoDAO empleadoDAO = new EmpleadoDAO();
     private final ClienteDAO  clienteDAO  = new ClienteDAO();
 
     private ObservableList<Persona> usuarios;
-    private ObservableList<String> filtros = FXCollections.observableArrayList(
+    private final ObservableList<String> filtros = FXCollections.observableArrayList(
             "Por nombre", "Por telefono", "Por direccion", "Ver todos");
-    private ObservableList<String> tipos = FXCollections.observableArrayList(
+    private final ObservableList<String> tipos = FXCollections.observableArrayList(
             "Empleado", "Cliente");
-    private String filtroBusqueda;
-    private String filtroTipo = "Cliente";
+
+    private String filtroBusqueda = "";
+    private String filtroTipo = "Empleado";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -80,8 +67,6 @@ public class UsuariosGestionController implements Initializable {
         configurarSeleccionTipo();
         configurarSeleccionFiltro();
         cargarTodosEmpleados();
-        filtroBusqueda = "";
-        filtroTipo = "Empleado";
     }
 
     private void configurarColumnas() {
@@ -90,243 +75,125 @@ public class UsuariosGestionController implements Initializable {
         col_email.setCellValueFactory(new PropertyValueFactory<>("email"));
         col_estatus.setCellValueFactory(new PropertyValueFactory<>("estatus"));
         col_estatus.setCellFactory(col -> new TableCell<Persona, Boolean>() {
-
             @Override
             protected void updateItem(Boolean estatus, boolean empty) {
                 super.updateItem(estatus, empty);
-                if (empty || estatus == null) {
-                    setText(null);
-                } else {
-                    setText((estatus) ? "Activo" : "Inactivo");
-                }
+                setText(empty || estatus == null ? null : (estatus ? "Activo" : "Inactivo"));
             }
         });
+    }
+
+    private void configurarSeleccionTipo() {
+        cb_tipo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) return;
+            txt_buscar.setText("");
+            filtroBusqueda = "";
+            filtroTipo = newVal;
+            actualizarInformacion();
+        });
+    }
+
+    private void configurarSeleccionFiltro() {
+        cb_filtro.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) return;
+            if (newVal.equals("Ver todos")) {
+                txt_buscar.setText("");
+                filtroBusqueda = "";
+                actualizarInformacion();
+            } else {
+                filtroBusqueda = newVal;
+            }
+        });
+    }
+
+    private void actualizarInformacion() {
+        if (filtroTipo.equals("Empleado")){
+            cargarTodosEmpleados();
+        } else {
+            cargarTodosClientes();
+        }
     }
 
     private void cargarTodosEmpleados() {
         try {
             usuarios = FXCollections.observableArrayList();
-            List<EmpleadoDTO> empleadoAlmacenadosBD = empleadoDAO.mostrarTodos();
-            usuarios.addAll(empleadoAlmacenadosBD);
+            List<EmpleadoDTO> lista = empleadoDAO.mostrarTodos();
+            usuarios.addAll(lista);
             tbl_usuarios.setItems(usuarios);
         } catch (SQLException e) {
-            UtilidadesFX.mostrarAlertaSimple("Error al consultar",
-                    e.getMessage(),
-                    Alert.AlertType.ERROR);
-        } catch(NullPointerException | ClassNotFoundException | IOException n){
-            UtilidadesFX.mostrarAlertaSimple("Error al cargar productos del inventario",
-                    MSJ_ERROR_CARGA_DATOS,
-                    Alert.AlertType.ERROR);
+            UtilidadesFX.mostrarAlertaSimple("Error al consultar", e.getMessage(), Alert.AlertType.ERROR);
+        } catch (NullPointerException | ClassNotFoundException | IOException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar empleados", MSJ_ERROR_CARGA_DATOS, Alert.AlertType.ERROR);
         }
     }
 
     private void cargarTodosClientes() {
         try {
             usuarios = FXCollections.observableArrayList();
-            List<ClienteDTO> clienteAlmacenadosBD = clienteDAO.mostrarTodos();
-            usuarios.addAll(clienteAlmacenadosBD);
+            List<ClienteDTO> lista = clienteDAO.mostrarTodos();
+            usuarios.addAll(lista);
             tbl_usuarios.setItems(usuarios);
         } catch (SQLException e) {
-            UtilidadesFX.mostrarAlertaSimple("Error al consultar",
-                    e.getMessage(),
-                    Alert.AlertType.ERROR);
-        } catch(NullPointerException | ClassNotFoundException | IOException n){
-            UtilidadesFX.mostrarAlertaSimple("Error al cargar productos del inventario",
-                    MSJ_ERROR_CARGA_DATOS,
-                    Alert.AlertType.ERROR);
+            UtilidadesFX.mostrarAlertaSimple("Error al consultar", e.getMessage(), Alert.AlertType.ERROR);
+        } catch (NullPointerException | ClassNotFoundException | IOException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar clientes", MSJ_ERROR_CARGA_DATOS, Alert.AlertType.ERROR);
         }
     }
-
-    private void configurarSeleccionTipo() {
-        cb_tipo.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (newValue == null) {
-                    return;
-                }
-                if (newValue.equals("Empleado")) {
-                    txt_buscar.setText("");
-                    filtroTipo = "Empleado";
-                    cargarTodosEmpleados();
-                } else if (newValue.equals("Cliente")) {
-                    txt_buscar.setText("");
-                    filtroTipo = "Cliente";
-                    cargarTodosClientes();
-                }
-            }
-        });
-    }
-
-    private void configurarSeleccionFiltro(){
-        cb_filtro.valueProperty().addListener(new ChangeListener<String>(){
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if(newValue != null){
-                    if(newValue.equals("Ver todos")){
-                        txt_buscar.setText("");
-                        filtroBusqueda = "";
-                        actualizarInformacion();
-                    }else {
-                        filtroBusqueda = newValue;
-                    }
-                }
-            }
-        });
-    }
-
-    private void actualizarInformacion() {
-        if (filtroTipo.equals("Empleado")) {
-            cargarTodosEmpleados();
-        } else if (filtroTipo.equals("Cliente")) {
-            cargarTodosClientes();
-        }
-    }
-
 
     @FXML
-    private void clicBuscar(ActionEvent actionEvent) {
+    private void clicBuscar(ActionEvent event) {
         String campoBusqueda = txt_buscar.getText();
-        usuarios = FXCollections.observableArrayList();
 
-        if (filtroBusqueda.equals("") ) {
+        if (campoBusqueda == null || campoBusqueda.isEmpty()) {
+            UtilidadesFX.mostrarAlertaSimple("Sin nombre",
+                    "Por favor ingresa un nombre de cliente para buscar.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
+        if (filtroBusqueda.isEmpty()) {
             UtilidadesFX.mostrarAlertaSimple("Sin filtro",
-                    "Por favor selecciona un filtro para realizar la búsqueda",
+                    "Por favor selecciona un filtro para realizar la búsqueda.",
                     Alert.AlertType.WARNING);
             return;
         }
         try {
+            usuarios = FXCollections.observableArrayList();
             usuarios.addAll(buscarPorFiltro(campoBusqueda));
             tbl_usuarios.setItems(usuarios);
         } catch (SQLException e) {
-            UtilidadesFX.mostrarAlertaSimple("Error al consultar",
-                    e.getMessage(),
-                    Alert.AlertType.ERROR);
-        } catch (NullPointerException | ClassNotFoundException | IOException n) {
-            UtilidadesFX.mostrarAlertaSimple("Error al cargar productos del inventario",
-                    MSJ_ERROR_CARGA_DATOS,
-                    Alert.AlertType.ERROR);
+            UtilidadesFX.mostrarAlertaSimple("Error al consultar", e.getMessage(), Alert.AlertType.ERROR);
+        } catch (NullPointerException | ClassNotFoundException | IOException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al buscar", MSJ_ERROR_CARGA_DATOS, Alert.AlertType.ERROR);
         }
-
     }
 
     private List<? extends Persona> buscarPorFiltro(String campoBusqueda)
             throws SQLException, ClassNotFoundException, IOException, NullPointerException {
         if (filtroTipo.equals("Empleado")) {
-            if (filtroBusqueda.equals("Por nombre")) {
-                return empleadoDAO.buscarPorNombre(campoBusqueda);
-
-            } else if (filtroBusqueda.equals("Por telefono")) {
-                return empleadoDAO.buscarPorTelefono(campoBusqueda);
-
-            } else {
-                return empleadoDAO.buscarPorDireccion(campoBusqueda);
-            }
+            return switch (filtroBusqueda) {
+                case "Por nombre" -> empleadoDAO.buscarPorNombre(campoBusqueda);
+                case "Por telefono" -> empleadoDAO.buscarPorTelefono(campoBusqueda);
+                default -> empleadoDAO.buscarPorDireccion(campoBusqueda);
+            };
         } else {
-            if (filtroBusqueda.equals("Por nombre")) {
-                return clienteDAO.buscarPorNombre(campoBusqueda);
-
-            } else if (filtroBusqueda.equals("Por telefono")) {
-                return clienteDAO.buscarPorTelefono(campoBusqueda);
-
-            } else {
-                return clienteDAO.buscarPorDireccion(campoBusqueda);
-            }
+            return switch (filtroBusqueda) {
+                case "Por nombre" -> clienteDAO.buscarPorNombre(campoBusqueda);
+                case "Por telefono" -> clienteDAO.buscarPorTelefono(campoBusqueda);
+                default -> clienteDAO.buscarPorDireccion(campoBusqueda);
+            };
         }
     }
-    /*
-    // ── Búsqueda: botón buscar (igual que PedidosGestionController) ───────────
-    @FXML
-
-    private void clicBuscar(ActionEvent event) {
-        try {
-            String termino = txt_buscar.getText() == null
-                    ? "" : txt_buscar.getText().trim().toLowerCase();
-
-            // 1. Cargar lista base según tipo
-            List<Object> base = new ArrayList<>();
-            if (esEmpleado()) {
-                List<EmpleadoDTO> todos = empleadoDAO.mostrarTodos();
-                if (todos != null) base.addAll(todos);
-            } else {
-                List<ClienteDTO> todos = clienteDAO.mostrarTodos();
-                if (todos != null) base.addAll(todos);
-            }
-
-            // 2. Si hay texto, filtrar localmente según el campo seleccionado
-            if (termino.isEmpty()) {
-                listaTabla.setAll(base);
-            } else {
-                List<Object> filtrados = new ArrayList<>();
-                for (Object obj : base) {
-                    if (coincideConTermino(obj, termino)) {
-                        filtrados.add(obj);
-                    }
-                }
-                listaTabla.setAll(filtrados);
-            }
-
-        } catch (Exception e) {
-            UtilidadesFX.mostrarAlertaSimple(
-                    "Error", "No se pudo realizar la búsqueda:\n" + e.getMessage(),
-                    Alert.AlertType.ERROR);
-            e.printStackTrace();
-        }
-    }
-
-     */
-
-    /*
-    // ── Verifica si el objeto coincide con el término según el radio seleccionado
-    private boolean coincideConTermino(Object obj, String termino) {
-        if (rb_nombre != null && rb_nombre.isSelected()) {
-            // Buscar por nombre
-            if (obj instanceof EmpleadoDTO e)
-                return e.getNombreCompleto().toLowerCase().contains(termino);
-            if (obj instanceof ClienteDTO c)
-                return c.getNombreCompleto().toLowerCase().contains(termino);
-
-        } else if (rb_telefono != null && rb_telefono.isSelected()) {
-            // Buscar por teléfono
-            if (obj instanceof EmpleadoDTO e)
-                return e.getTelefono() != null && e.getTelefono().contains(termino);
-            if (obj instanceof ClienteDTO c)
-                return c.getTelefono() != null && c.getTelefono().contains(termino);
-
-        } else if (rb_direccion != null && rb_direccion.isSelected()) {
-            // Buscar por dirección
-            DireccionDTO dir = null;
-            if (obj instanceof EmpleadoDTO e) dir = e.getDireccion();
-            if (obj instanceof ClienteDTO c) dir = c.getDireccion();
-            if (dir != null) {
-                String dirCompleta = (dir.getCalle() + " " + dir.getCiudad()).toLowerCase();
-                return dirCompleta.contains(termino);
-            }
-        } else {
-            // Sin radio seleccionado: buscar all
-            if (obj instanceof EmpleadoDTO e)
-                return e.getNombreCompleto().toLowerCase().contains(termino)
-                        || (e.getTelefono() != null && e.getTelefono().contains(termino));
-            if (obj instanceof ClienteDTO c)
-                return c.getNombreCompleto().toLowerCase().contains(termino)
-                        || (c.getTelefono() != null && c.getTelefono().contains(termino));
-        }
-        return false;
-    }
-
-     */
 
     @FXML
     private void clicNuevoUsuario(ActionEvent event) {
         try {
             FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioTipo");
             Parent vista = loader.load();
-            Scene scene = new Scene(vista);
-
             Stage stage = new Stage();
             stage.setTitle("Nuevo Usuario");
             stage.setResizable(false);
-            stage.setScene(scene);
-
+            stage.setScene(new Scene(vista));
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
@@ -338,7 +205,7 @@ public class UsuariosGestionController implements Initializable {
 
     @FXML
     private void clicEditar(ActionEvent event) {
-        Object seleccionado = tbl_usuarios.getSelectionModel().getSelectedItem();
+        Persona seleccionado = tbl_usuarios.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
             UtilidadesFX.mostrarAlertaSimple("Selección requerida",
                     "Selecciona un usuario de la tabla para editarlo.",
@@ -347,25 +214,47 @@ public class UsuariosGestionController implements Initializable {
         }
 
         try {
-            FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioTipo");
-            Parent vista = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Editar Usuario");
-            stage.setResizable(false);
-            stage.setScene(new Scene(vista));
-            stage.centerOnScreen();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
+            if (seleccionado instanceof EmpleadoDTO empleado) {
+                SistemaPizzeria.setMetadatos("registrar-empleado", false);
+                FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioEmpleadoOperaciones");
+                Parent vista = loader.load();
+                UsuarioEmpleadoOperacionesController ctrl = loader.getController();
+                ctrl.mostrarEmpleado(empleado);
+
+                Stage stage = new Stage();
+                stage.setTitle("Editar Empleado");
+                stage.setResizable(false);
+                stage.setScene(new Scene(vista));
+                stage.centerOnScreen();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.showAndWait();
+
+            } else if (seleccionado instanceof ClienteDTO cliente) {
+                SistemaPizzeria.setMetadatos("registrar-cliente", false);
+                FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioClienteOperaciones");
+                Parent vista = loader.load();
+                UsuarioClienteOperacionesController ctrl = loader.getController();
+                ctrl.mostrarCliente(cliente);
+
+                Stage stage = new Stage();
+                stage.setTitle("Editar Cliente");
+                stage.setResizable(false);
+                stage.setScene(new Scene(vista));
+                stage.centerOnScreen();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.showAndWait();
+            }
+
             actualizarInformacion();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // ── Eliminar (baja lógica) ────────────────────────────────────────────────
     @FXML
     private void clicEliminar(ActionEvent event) {
-        Object seleccionado = tbl_usuarios.getSelectionModel().getSelectedItem();
+        Persona seleccionado = tbl_usuarios.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
             UtilidadesFX.mostrarAlertaSimple("Selección requerida",
                     "Selecciona un usuario de la tabla para eliminarlo.",
@@ -373,52 +262,56 @@ public class UsuariosGestionController implements Initializable {
             return;
         }
 
-        // Nombre del seleccionado para el mensaje de confirmación
-        String nombreMostrar = (seleccionado instanceof EmpleadoDTO e)
-                ? e.getNombreCompleto()
-                : (seleccionado instanceof ClienteDTO c) ? c.getNombreCompleto() : "?";
+        String nombreMostrar = seleccionado.getNombreCompleto();
 
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Confirmar eliminación");
-        confirmacion.setHeaderText(null);
-        confirmacion.setContentText("¿Deseas dar de baja a " + nombreMostrar + "?\nEsta acción no se puede deshacer.");
-
-        confirmacion.showAndWait().ifPresent(respuesta -> {
-            if (respuesta == ButtonType.OK) {
-                try {
-                    boolean resultado = false;
-
-                    if (seleccionado instanceof EmpleadoDTO e) {
-                        resultado = empleadoDAO.eliminar(e.getNoEmpleado());
-                    } else if (seleccionado instanceof ClienteDTO c) {
-                        resultado = clienteDAO.eliminar(c.getNoCliente());
-                    }
-
-                    if (resultado) {
-                        UtilidadesFX.mostrarAlertaSimple("Baja exitosa",
-                                nombreMostrar + " fue dado de baja correctamente.",
-                                Alert.AlertType.INFORMATION);
-                        cargarTodosEmpleados();
-                    } else {
-                        UtilidadesFX.mostrarAlertaSimple("Sin cambios",
-                                "No se encontró el registro o ya estaba inactivo.",
-                                Alert.AlertType.WARNING);
-                    }
-                } catch (Exception e) {
-                    UtilidadesFX.mostrarAlertaSimple("Error",
-                            "No se pudo eliminar el usuario:\n" + e.getMessage(),
-                            Alert.AlertType.ERROR);
-                    e.printStackTrace();
-                }
+        if (seleccionado instanceof EmpleadoDTO empleado) {
+            if (empleado.getNoEmpleado().equals(Sesion.empleadoSesion.getNoEmpleado())) {
+                UtilidadesFX.mostrarAlertaSimple("Operación no permitida",
+                        "No puedes dar de baja al usuario con sesión activa.",
+                        Alert.AlertType.WARNING);
+                return;
             }
-        });
+        }
+
+        if (!seleccionado.getEstatus()) {
+            UtilidadesFX.mostrarAlertaSimple("Sin cambios",
+                    "El usuario ya se encuentra eliminado.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
+        boolean confirmado = UtilidadesFX.mostrarAlertaConfirmacion(
+                "Confirmar eliminación",
+                "¿Estás seguro que deseas eliminar a: " + seleccionado.getNombreCompleto() +  "?",
+                null
+        );
+
+        if (confirmado) {
+            try {
+                boolean resultado = false;
+
+                if (seleccionado instanceof EmpleadoDTO e) {
+                    resultado = empleadoDAO.eliminar(e.getNoEmpleado());
+                } else if (seleccionado instanceof ClienteDTO c) {
+                    resultado = clienteDAO.eliminar(c.getNoCliente());
+                }
+
+                if (resultado) {
+                    UtilidadesFX.mostrarAlertaSimple("Baja exitosa",
+                            nombreMostrar + " fue dado de baja correctamente.",
+                            Alert.AlertType.INFORMATION);
+                }
+            } catch (SQLException | IOException | ClassNotFoundException e) {
+                UtilidadesFX.mostrarAlertaSimple("Error",
+                        "No se pudo eliminar el usuario:\n" + e.getMessage(),
+                        Alert.AlertType.ERROR);
+            }
+        }
         actualizarInformacion();
     }
 
-
-    // NAVEGACIÓN
-    @FXML
-    private void clicUsuarios(ActionEvent event) {
+    // Navegacion
+    @FXML private void clicUsuarios(ActionEvent event) {
         try {
             SistemaPizzeria.setRoot("UsuariosGestion", "Usuarios");
         }
@@ -427,8 +320,7 @@ public class UsuariosGestionController implements Initializable {
         }
     }
 
-    @FXML
-    private void clicProductos(ActionEvent event) {
+    @FXML private void clicProductos(ActionEvent event) {
         try {
             SistemaPizzeria.setRoot("ProductosGestion", "Productos");
         }
@@ -437,8 +329,7 @@ public class UsuariosGestionController implements Initializable {
         }
     }
 
-    @FXML
-    private void clicProductosInventario(ActionEvent event) {
+    @FXML private void clicProductosInventario(ActionEvent event) {
         try {
             SistemaPizzeria.setRoot("ProductosInventarioGestion", "Productos de Inventario");
         }
@@ -447,8 +338,7 @@ public class UsuariosGestionController implements Initializable {
         }
     }
 
-    @FXML
-    private void clicPedidos(ActionEvent event) {
+    @FXML private void clicPedidos(ActionEvent event) {
         try {
             SistemaPizzeria.setRoot("PedidosGestion", "Pedidos");
         }
@@ -457,8 +347,7 @@ public class UsuariosGestionController implements Initializable {
         }
     }
 
-    @FXML
-    private void clicValidacionInventarios(ActionEvent event) {
+    @FXML private void clicValidacionInventarios(ActionEvent event) {
         try {
             SistemaPizzeria.setRoot("ProductosInventarioValidacion", "Validación de Inventario");
         }
@@ -467,8 +356,7 @@ public class UsuariosGestionController implements Initializable {
         }
     }
 
-    @FXML
-    private void clicCerrarSesion(ActionEvent event) {
+    @FXML private void clicCerrarSesion(ActionEvent event) {
         SistemaPizzeria.setMetadatos("empleado", null);
         try {
             SistemaPizzeria.setRoot("InicioSesion", "Sistema Pizzeria - Login");
@@ -478,8 +366,7 @@ public class UsuariosGestionController implements Initializable {
         }
     }
 
-    @FXML
-    private void clicAyudaAcercaDe(ActionEvent event) {
+    @FXML private void clicAyudaAcercaDe(ActionEvent event) {
         try {
             FXMLLoader loader = UtilidadesFX.cargarFXML("AcercaDe");
             Parent vista = loader.load();
@@ -490,9 +377,6 @@ public class UsuariosGestionController implements Initializable {
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) { e.printStackTrace(); }
     }
-
 }

@@ -32,7 +32,9 @@ public class InicioSesionController implements Initializable {
     private Label lb_datosCompletosError;
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {}
+    public void initialize(URL url, ResourceBundle rb) {
+
+    }
 
     @FXML
     private void clicIniciarSesion(ActionEvent event) {
@@ -46,7 +48,6 @@ public class InicioSesionController implements Initializable {
         try {
             EmpleadoDTO empleadoLogin = Autenticador.iniciarSesion(usuario, contrasenia);
 
-            // 1. Guardar sesión en AMBOS lugares antes de cargar la escena
             Sesion.empleadoSesion = empleadoLogin;
             SistemaPizzeria.setMetadatos("empleado", empleadoLogin);
 
@@ -54,7 +55,6 @@ public class InicioSesionController implements Initializable {
                     "Bienvenido al sistema: " + empleadoLogin.getNombreCompleto(),
                     Alert.AlertType.INFORMATION);
 
-            // 2. Cargar escena después de tener la sesión lista
             String rutaMenu = CargadorEscenas.cargarEscenaSegunRol(empleadoLogin.getTipoEmpleado());
             cargarEscena(rutaMenu);
 
@@ -62,9 +62,7 @@ public class InicioSesionController implements Initializable {
             UtilidadesFX.mostrarAlertaSimple("Error",
                     "Ocurrió un error al intentar iniciar sesión. Causa: " + e.getMessage(),
                     Alert.AlertType.ERROR);
-        } catch (UsuarioNoEncontradoException e) {
-            UtilidadesFX.mostrarAlertaSimple("Error", e.getMessage(), Alert.AlertType.WARNING);
-        } catch (UsuarioInactivoException e) {
+        } catch (UsuarioNoEncontradoException | UsuarioInactivoException e ) {
             UtilidadesFX.mostrarAlertaSimple("Error", e.getMessage(), Alert.AlertType.WARNING);
         }
     }

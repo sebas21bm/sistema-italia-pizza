@@ -1,5 +1,6 @@
 package mx.uv.sistemapizzeria.controladores;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -215,7 +216,7 @@ public class PedidoEdicionController implements Initializable {
     // ── Construye una tarjeta de producto dinámicamente ───────────────────────
     private VBox crearTarjeta(ProductoVentaDTO p, int idx) {
         VBox card = new VBox(6);
-        card.setPrefWidth(190);
+        card.setPrefWidth(180);
         card.setPadding(new Insets(12));
         card.setStyle("-fx-background-color: white;" +
                 "-fx-border-color: #e2e6ed; -fx-border-width: 1;" +
@@ -223,12 +224,14 @@ public class PedidoEdicionController implements Initializable {
 
         // Imagen del producto
         ImageView imgView = new ImageView();
-        imgView.setFitWidth(166);
+        imgView.setFitWidth(150);
         imgView.setFitHeight(80);
         imgView.setPreserveRatio(true);
         if (p.getFoto() != null && !p.getFoto().isEmpty()) {
-            try { imgView.setImage(new Image("file:" + p.getFoto(), true)); }
-            catch (Exception ignored) {}
+            Image img = cargarImagen(p.getFoto());
+            if (img != null) {
+                imgView.setImage(img);
+            }
         }
 
         // Nombre
@@ -358,5 +361,38 @@ public class PedidoEdicionController implements Initializable {
 
     private void cerrarVentana() {
         ((Stage) btn_cancelar.getScene().getWindow()).close();
+    }
+
+    private Image cargarImagen(String rutaFoto) {
+        if (rutaFoto == null || rutaFoto.isBlank()) {
+            return null;
+        }
+
+        rutaFoto = rutaFoto.trim().replace("\\", "/");
+
+        if (!rutaFoto.contains("/")) {
+            rutaFoto = "/imagenes/" + rutaFoto;
+        }
+
+        try {
+            if (rutaFoto.startsWith("/imagenes/") || rutaFoto.startsWith("imagenes/")) {
+                String rutaRecurso = rutaFoto.startsWith("/") ? rutaFoto : "/" + rutaFoto;
+                var recurso = getClass().getResourceAsStream(rutaRecurso);
+                if (recurso == null) {
+                    return null;
+                }
+                return new Image(recurso);
+            }
+
+            File archivo = new File(rutaFoto);
+            if (archivo.exists()) {
+                return new Image(archivo.toURI().toString());
+            }
+
+        } catch (Exception e) {
+            return null;
+        }
+
+        return null;
     }
 }

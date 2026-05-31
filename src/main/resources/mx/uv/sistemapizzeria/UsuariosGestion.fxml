@@ -9,34 +9,24 @@
 
 <AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #f3f5fa;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.UsuariosGestionController">
    <children>
-
-      <AnchorPane fx:id="pnl_contenido" layoutX="180.0" prefHeight="650.0" prefWidth="820.0" style="-fx-background-color: #f3f5fa;">
+      <AnchorPane  layoutX="180.0" prefHeight="650.0" prefWidth="820.0" style="-fx-background-color: #f3f5fa;">
          <children>
             <Label layoutX="20.0" layoutY="18.0" text="Gestión de Usuarios" textFill="#202932">
                <font>
                   <Font name="System Bold" size="28.0" />
                </font>
             </Label>
-
-            <HBox fx:id="hbox_busqueda" alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" prefHeight="42.0" prefWidth="749.0" spacing="10.0" style="-fx-background-color: white;">
+            <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" prefHeight="42.0" prefWidth="749.0" spacing="10.0" style="-fx-background-color: white;">
                <padding>
                   <Insets left="14.0" right="8.0" />
                </padding>
                <children>
-                  <Label text="⌕" textFill="#68727d">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                  </Label>
-
                   <TextField fx:id="txt_buscar" prefHeight="40.0" prefWidth="230.0" promptText="Buscar por nombre, teléfono, dirección" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-size: 12px; -fx-prompt-text-fill: #69727c;" />
-      
-                        <Button mnemonicParsing="false" onAction="#clicBuscar" prefHeight="42.0" prefWidth="100.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Buscar" />
+                        <Button mnemonicParsing="false" onAction="#clicBuscar" prefHeight="32.0" prefWidth="100.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Buscar" />
                   <ComboBox fx:id="cb_filtro" prefWidth="150.0" promptText="Filtro" />
                   <ComboBox fx:id="cb_tipo" prefWidth="150.0" promptText="Tipo" />
                </children>
             </HBox>
-
             <TableView fx:id="tbl_usuarios" fixedCellSize="38.0" layoutX="20.0" layoutY="130.0" prefHeight="410.0" prefWidth="760.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
                <columns>
                   <TableColumn fx:id="col_nombre" prefWidth="177.0" text="Nombre" />
@@ -45,36 +35,29 @@
                   <TableColumn fx:id="col_estatus" prefWidth="88.0" text="Estatus" />
                </columns>
             </TableView>
-
             <Button layoutX="20.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicNuevoUsuario" prefHeight="45.0" prefWidth="170.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="+ Nuevo usuario" />
-
             <Button layoutX="210.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEditar" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Editar" />
-
             <Button layoutX="350.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEliminar" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Eliminar" />
          </children>
       </AnchorPane>
-
-      <AnchorPane fx:id="pnl_menuLateral" prefHeight="650.0" prefWidth="180.0" style="-fx-background-color: white;">
+      <AnchorPane prefHeight="650.0" prefWidth="180.0" style="-fx-background-color: white;">
          <children>
-            <ImageView fx:id="img_logo" fitHeight="50.0" fitWidth="60.0" layoutX="10.0" layoutY="8.0" preserveRatio="true">
+            <ImageView fitHeight="50.0" fitWidth="60.0" layoutX="10.0" layoutY="8.0" preserveRatio="true">
                <image>
                   <Image url="@../../../imagenes/logo%20mini.png" />
                </image>
             </ImageView>
-
             <Label layoutX="62.0" layoutY="19.0" text="Italia Pizza" textFill="#69727c">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font>
             </Label>
-
             <Label layoutX="111.0" layoutY="39.0" text="Restaurante" textFill="#69727c">
                <font>
                   <Font size="8.0" />
                </font>
             </Label>
-
-            <Accordion fx:id="ac_menu" layoutX="10.0" layoutY="70.0" prefWidth="160.0" style="-fx-background-color: #f1f3f8; -fx-border-color: transparent;">
+            <Accordion layoutX="10.0" layoutY="70.0" prefWidth="160.0" style="-fx-background-color: #f1f3f8; -fx-border-color: transparent;">
                <panes>
                   <TitledPane animated="false" expanded="true" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Administración">
                      <content>
@@ -92,8 +75,7 @@
                         </VBox>
                      </content>
                   </TitledPane>
-
-                  <TitledPane fx:id="tp_inventarios" animated="false" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Inventarios">
+                  <TitledPane animated="false" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Inventarios">
                      <content>
                         <VBox prefWidth="158.0" spacing="10.0" style="-fx-background-color: #f1f3f8;">
                            <padding>
@@ -105,13 +87,11 @@
                                     <Font size="12.0" />
                                  </font>
                               </Button>
-
                               <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicProductosInventario" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Productos de Inventario">
                                  <font>
                                     <Font size="11.0" />
                                  </font>
                               </Button>
-
                               <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicValidacionInventarios" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Validación inventario">
                                  <font>
                                     <Font size="12.0" />
@@ -121,7 +101,6 @@
                         </VBox>
                      </content>
                   </TitledPane>
-
                   <TitledPane animated="false" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Pedidos">
                      <content>
                         <VBox prefWidth="158.0" spacing="8.0" style="-fx-background-color: #f1f3f8;">
@@ -140,15 +119,12 @@
                   </TitledPane>
                </panes>
             </Accordion>
-
             <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="575.0" mnemonicParsing="false" onAction="#clicCerrarSesion" prefHeight="22.0" prefWidth="130.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #301f1f;" text="Cerrar sesión">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
             </Button>
-
             <AnchorPane layoutX="10.0" layoutY="604.0" prefHeight="1.0" prefWidth="160.0" style="-fx-background-color: #e1e5eb;" />
-
             <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="615.0" mnemonicParsing="false" onAction="#clicAyudaAcercaDe" prefHeight="22.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Ayuda / Acerca de">
                <font>
                   <Font size="12.0" />
@@ -156,6 +132,5 @@
             </Button>
          </children>
       </AnchorPane>
-
    </children>
 </AnchorPane>
