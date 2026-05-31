@@ -19,4 +19,7 @@ module mx.uv.sistemapizzeria {
     opens mx.uv.sistemapizzeria.modelo.dto to javafx.fxml, javafx.base;
 
     exports mx.uv.sistemapizzeria;
+    exports mx.uv.sistemapizzeria.modelo.dao;
+    exports mx.uv.sistemapizzeria.modelo.dto;
+    exports mx.uv.sistemapizzeria.utilidades;
 }

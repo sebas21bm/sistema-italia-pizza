@@ -24,26 +24,28 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                     "LEFT JOIN cliente_direccion cd ON c.no_cliente = cd.no_cliente " +
                     "LEFT JOIN direccion d ON cd.id_direccion = d.id_direccion ";
 
-    @Override
-    public ClienteDTO buscar(Integer noCliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
-        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) {
-                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-            }
+@Override
+public ClienteDTO buscar(Integer noCliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
+        if (conn == null) {
+            throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+        }
 
-            String consulta = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION + "WHERE c.no_cliente = ?";
+        String consulta = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION + "WHERE c.no_cliente = ?";
 
-            PreparedStatement ps = conn.prepareStatement(consulta);
-            ps.setInt(1, noCliente);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                List<ClienteDTO> resultado = mapearClientes(rs);
-                return resultado.get(0);
-            }
+        PreparedStatement ps = conn.prepareStatement(consulta);
+        ps.setInt(1, noCliente);
+        ResultSet rs = ps.executeQuery();
 
+        List<ClienteDTO> resultado = mapearClientes(rs);
+
+        if (resultado.isEmpty()) {
             return null;
         }
+
+        return resultado.get(0);
     }
+}
 
     @Override
     public boolean editar(ClienteDTO cliente)

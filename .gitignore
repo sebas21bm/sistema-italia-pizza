@@ -11,3 +11,4 @@ nbactions.xml
 /out/
 /src/main/resources/config/*.properties
 /src/main/java/mx/uv/sistemapizzeria/modelo/dao/.vs/
+/nbproject/
