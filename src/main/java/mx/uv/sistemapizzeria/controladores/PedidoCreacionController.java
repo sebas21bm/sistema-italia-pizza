@@ -1,5 +1,6 @@
 package mx.uv.sistemapizzeria.controladores;
 
+import java.io.File;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -176,9 +177,10 @@ public class PedidoCreacionController implements Initializable {
         imgView.setPreserveRatio(true);
         imgView.setPickOnBounds(true);
         if (p.getFoto() != null && !p.getFoto().isEmpty()) {
-            try {
-                imgView.setImage(new Image("file:" + p.getFoto(), true));
-            } catch (Exception ignored) {}
+            Image img = cargarImagen(p.getFoto());
+            if (img != null) {
+                imgView.setImage(img);
+            }
         }
 
         // Nombre del producto
@@ -380,4 +382,69 @@ public class PedidoCreacionController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    // Método basado enn el método de Yara (más o menos porque sigue guardando las imagenes en el proyecto)
+    // Esta cosa no se ni como jalo, pero funciona
+    // este método esta hecho para que alguien más (Isaac) lo continue, por eso están las alertas, emojis
+    // ── Método adaptado CON MODO DEBUG (Rastreador de rutas) ──
+    private Image cargarImagen(String rutaFoto) {
+        System.out.println("\n--- Intentando cargar imagen: [" + rutaFoto + "] ---");
+
+        if (rutaFoto == null || rutaFoto.isBlank()) {
+            System.out.println("  -> La ruta está vacía o nula. Abortando.");
+            return null;
+        }
+
+        // Limpieza original
+        rutaFoto = rutaFoto.trim().replace("\\", "/");
+        System.out.println("  -> Ruta limpiada: [" + rutaFoto + "]");
+
+        try {
+            // Adaptación: Si solo viene el nombre, inyectamos la carpeta
+            if (!rutaFoto.contains("/")) {
+                rutaFoto = "/imagenes/productos/" + rutaFoto;
+                System.out.println("  -> Se le agregó la carpeta de tu módulo: [" + rutaFoto + "]");
+            }
+
+            // Lógica original del método de la clase ProductosGestion, (donde yara sube las imagenes usando ruta absoluta)
+            if (rutaFoto.startsWith("/imagenes/") || rutaFoto.startsWith("imagenes/")) {
+                String rutaRecurso = rutaFoto.startsWith("/") ? rutaFoto : "/" + rutaFoto;
+                System.out.println("  -> 1. Buscando en Resources internos con la ruta EXACTA: [" + rutaRecurso + "]");
+
+                var recurso = getClass().getResourceAsStream(rutaRecurso);
+
+                if (recurso == null) {
+                    System.out.println("  ❌ Falló: Maven no lo encontró en resources (¿Falta compilar o el nombre/extensión no coincide?).");
+                } else {
+                    System.out.println("  ✅ Recurso encontrado. Intentando construir la imagen...");
+                    Image img = new Image(recurso);
+
+                    if (img.isError()) {
+                        System.out.println("  ⚠️ ALERTA: La imagen existe pero JavaFX no pudo leer los píxeles (¿Es un archivo dañado o WebP?).");
+                    } else {
+                        System.out.println("  ✅ ¡Imagen cargada exitosamente!");
+                        return img;
+                    }
+                }
+            }
+
+            System.out.println("  -> 2. Intentando cargar como archivo físico absoluto en la PC...");
+            java.io.File archivo = new java.io.File(rutaFoto);
+
+            if (archivo.exists()) {
+                System.out.println("  ✅ Archivo físico encontrado. Retornando imagen externa.");
+                return new Image(archivo.toURI().toString());
+            } else {
+                System.out.println("  ❌ Tampoco existe el archivo físico en el disco duro.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("  ❌ Excepción crítica procesando la imagen: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        System.out.println("--- Fin del intento (Resultado: Imagen no cargada) ---");
+        return null;
+    }
+
 }
