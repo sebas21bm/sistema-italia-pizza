@@ -3,6 +3,7 @@ package mx.uv.sistemapizzeria.controladores;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,30 +39,37 @@ import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
+import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
+
 public class PedidoCreacionController implements Initializable {
 
     @FXML
-    private TextField txt_busqueda;
+    private
+    TextField txt_busqueda;
     @FXML
-    private TableView<ClienteDTO> tbl_clientes;
+    private
+    TableView<ClienteDTO> tbl_clientes;
     @FXML
-    private TableColumn<ClienteDTO, String> col_nombre;
+    private
+    TableColumn<ClienteDTO, String> col_nombre;
     @FXML
-    private TableColumn<ClienteDTO, String> col_telefono;
+    private
+    TableColumn<ClienteDTO, String> col_telefono;
     @FXML
-    private TableColumn<ClienteDTO, String> col_email;
+    private
+    TableColumn<ClienteDTO, String> col_email;
     @FXML
-    private ComboBox<DireccionDTO> cmb_cliente;
+    private
+    ComboBox<DireccionDTO> cmb_cliente;
 
-    @FXML private TextField  txt_busquedaProducto;
-    @FXML private Button     btn_buscarProducto;
-    @FXML private ScrollPane scroll_productos;
-    @FXML private FlowPane   flow_productos;
-    @FXML private Label      lbl_total;
+    @FXML
+    private TextField txt_busquedaProducto;
+    @FXML
+    private FlowPane flow_productos;
+    @FXML
+    private Label lbl_total;
 
     @FXML private Button btn_cancelar;
-    @FXML private Button btn_guardar;
-    @FXML private Button btn_buscar;
 
     private final ClienteDAO  clienteDAO  = new ClienteDAO();
     private final ProductoDAO productoDAO = new ProductoDAO();
@@ -80,7 +88,6 @@ public class PedidoCreacionController implements Initializable {
         configurarColumnas();
         tbl_clientes.setItems(listaTabla);
 
-        // Al seleccionar cliente → llenar combo de direcciones
         tbl_clientes.getSelectionModel().selectedItemProperty()
                 .addListener((obs, old, nuevo) -> {
                     clienteSeleccionado = nuevo;
@@ -109,10 +116,10 @@ public class PedidoCreacionController implements Initializable {
             todosLosClientes.clear();
             if (lista != null) todosLosClientes.addAll(lista);
             listaTabla.setAll(todosLosClientes);
-        } catch (Exception e) {
-            UtilidadesFX.mostrarAlertaSimple("Error",
-                    "No se pudieron cargar los clientes:\n" + e.getMessage(),
-                    Alert.AlertType.ERROR);
+        } catch (SQLException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al consultar", e.getMessage(), Alert.AlertType.ERROR);
+        } catch (NullPointerException | ClassNotFoundException | IOException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar clientes", MSJ_ERROR_CARGA_DATOS, Alert.AlertType.ERROR);
         }
     }
 
@@ -122,10 +129,10 @@ public class PedidoCreacionController implements Initializable {
             todosLosProductos = lista != null ? lista : new ArrayList<>();
             cantidades = new int[todosLosProductos.size()]; // todos en 0
             filtrarYRenderizarProductos("");
-        } catch (Exception e) {
-            UtilidadesFX.mostrarAlertaSimple("Error",
-                    "No se pudieron cargar los productos:\n" + e.getMessage(),
-                    Alert.AlertType.ERROR);
+        } catch (SQLException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al consultar", e.getMessage(), Alert.AlertType.ERROR);
+        } catch (NullPointerException | ClassNotFoundException | IOException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar productos", MSJ_ERROR_CARGA_DATOS, Alert.AlertType.ERROR);
         }
     }
 
@@ -150,7 +157,6 @@ public class PedidoCreacionController implements Initializable {
         }
 
         for (ProductoVentaDTO p : productosFiltrados) {
-            // El índice real en todosLosProductos (para leer/escribir cantidades[])
             int idx = todosLosProductos.indexOf(p);
             flow_productos.getChildren().add(crearTarjeta(p, idx));
         }
@@ -198,7 +204,7 @@ public class PedidoCreacionController implements Initializable {
         lblCantidad.setFont(Font.font("System", FontWeight.BOLD, 12));
         lblCantidad.setTextFill(Color.web("#202932"));
 
-        // Botones + / –
+        // Botones
         Button btnMenos = new Button("−");
         btnMenos.setPrefWidth(52);
         btnMenos.setPrefHeight(28);
@@ -299,12 +305,6 @@ public class PedidoCreacionController implements Initializable {
         }
         cargarClientes();
 
-        /*
-        UtilidadesFX.mostrarAlertaSimple("Nuevo cliente",
-                "Para registrar un nuevo cliente usa el módulo Usuarios.",
-                Alert.AlertType.INFORMATION);
-
-         */
     }
 
     @FXML
@@ -312,11 +312,9 @@ public class PedidoCreacionController implements Initializable {
         ((Stage) btn_cancelar.getScene().getWindow()).close();
     }
 
-    // ── Guardar → validar y abrir confirmación ───────────────────────────────
     @FXML
     private void clicGuardar(ActionEvent event) {
 
-        // 1. Cliente seleccionado
         if (clienteSeleccionado == null) {
             UtilidadesFX.mostrarAlertaSimple("Cliente requerido",
                     "Selecciona un cliente de la tabla antes de continuar.",
@@ -324,7 +322,6 @@ public class PedidoCreacionController implements Initializable {
             return;
         }
 
-        // 2. Dirección seleccionada
         DireccionDTO dirSeleccionada = cmb_cliente.getValue();
         if (dirSeleccionada == null) {
             UtilidadesFX.mostrarAlertaSimple("Dirección requerida",
@@ -333,7 +330,6 @@ public class PedidoCreacionController implements Initializable {
             return;
         }
 
-        // 3. Al menos un producto
         boolean hayProductos = false;
         for (int c : cantidades) if (c > 0) { hayProductos = true; break; }
         if (!hayProductos) {
@@ -343,7 +339,6 @@ public class PedidoCreacionController implements Initializable {
             return;
         }
 
-        // 4. Construir pedido
         PedidoDTO pedido = new PedidoDTO();
         pedido.setFecha(LocalDateTime.now());
         pedido.setEstatus("En proceso");
@@ -369,7 +364,6 @@ public class PedidoCreacionController implements Initializable {
         abrirConfirmacion(pedido);
     }
 
-    // ── Abre PedidoConfirmacion ───────────────────────────────────────────────
     private void abrirConfirmacion(PedidoDTO pedido) {
         try {
             Stage stageCreacion = (Stage) btn_cancelar.getScene().getWindow();

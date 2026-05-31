@@ -1,7 +1,9 @@
 package mx.uv.sistemapizzeria.controladores;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -30,49 +32,57 @@ import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.ProductoVentaDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
+import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
+
 public class PedidoEdicionController implements Initializable {
 
-    // ── Encabezado ────────────────────────────────────────────────────────────
-    @FXML private Label  lbl_titulo;
+    @FXML
+    private Label lbl_titulo;
 
-    // ── Tabla cliente (solo lectura) ──────────────────────────────────────────
-    @FXML private TableView<PedidoDTO>           tbl_cliente;
-    @FXML private TableColumn<PedidoDTO, String> col_nombre;
-    @FXML private TableColumn<PedidoDTO, String> col_numeroTelefono;
-    @FXML private TableColumn<PedidoDTO, String> col_calle;
-    @FXML private TableColumn<PedidoDTO, String> col_numeroCalle;
-    @FXML private TableColumn<PedidoDTO, String> col_codigoPostal;
-    @FXML private TableColumn<PedidoDTO, String> col_ciudad;
+    @FXML
+    private TableView<PedidoDTO> tbl_cliente;
+    @FXML
+    private TableColumn<PedidoDTO, String> col_nombre;
+    @FXML
+    private TableColumn<PedidoDTO, String> col_numeroTelefono;
+    @FXML
+    private TableColumn<PedidoDTO, String> col_calle;
+    @FXML
+    private TableColumn<PedidoDTO, String> col_numeroCalle;
+    @FXML
+    private TableColumn<PedidoDTO, String> col_codigoPostal;
+    @FXML
+    private TableColumn<PedidoDTO, String> col_ciudad;
 
-    // ── Sección productos ─────────────────────────────────────────────────────
-    @FXML private TextField  txt_busquedaProducto;
-    @FXML private Button     btn_buscarProducto;
-    @FXML private ScrollPane scroll_productos;
-    @FXML private FlowPane   flow_productos;
-    @FXML private Label      lbl_total;
+    @FXML
+    private TextField txt_busquedaProducto;
+    @FXML
+    private Button btn_buscarProducto;
+    @FXML
+    private FlowPane flow_productos;
+    @FXML
+    private Label lbl_total;
 
-    // ── Botones ───────────────────────────────────────────────────────────────
-    @FXML private Button btn_cancelar;
-    @FXML private Button btn_guardar;
+    @FXML
+    private Button btn_cancelar;
+    @FXML
 
-    // ── Estado interno ────────────────────────────────────────────────────────
+
     private final PedidosDAO  pedidosDAO  = new PedidosDAO();
     private final ProductoDAO productoDAO = new ProductoDAO();
 
-    private PedidoDTO              pedidoActual;
-    private List<ProductoVentaDTO> todosLosProductos  = new ArrayList<>();
-    private int[]                  cantidades         = new int[0];
+    private PedidoDTO pedidoActual;
+    private List<ProductoVentaDTO> todosLosProductos = new ArrayList<>();
+    private int[] cantidades  = new int[0];
 
-    // ── Inicialización ────────────────────────────────────────────────────────
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         configurarColumnas();
         cargarIconoBuscar();
         cargarProductos();
-        // El pedido se inyecta después vía setPedido()
     }
 
-    // ── Carga el ícono del botón buscar desde Java (evita rutas con espacios en FXML) ──
     private void cargarIconoBuscar() {
         try {
             URL iconUrl = getClass().getResource("/imagenes/search icon.png");
@@ -88,13 +98,11 @@ public class PedidoEdicionController implements Initializable {
         }
     }
 
-    // ── Inyección del pedido a editar ─────────────────────────────────────────
     public void setPedido(PedidoDTO pedido) {
         this.pedidoActual = pedido;
         cargarDatosPedido();
     }
 
-    // ── Configurar columnas de la tabla de cliente ────────────────────────────
     private void configurarColumnas() {
         tbl_cliente.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         col_nombre.setCellValueFactory(data -> {
@@ -131,7 +139,6 @@ public class PedidoEdicionController implements Initializable {
         });
     }
 
-    // ── Carga todos los productos desde BD ───────────────────────────────────
     private void cargarProductos() {
         try {
             List<ProductoVentaDTO> lista = productoDAO.mostrarTodos();
@@ -144,7 +151,6 @@ public class PedidoEdicionController implements Initializable {
         }
     }
 
-    // ── Carga datos del pedido en pantalla ────────────────────────────────────
     private void cargarDatosPedido() {
         if (pedidoActual == null) return;
 
@@ -152,17 +158,12 @@ public class PedidoEdicionController implements Initializable {
             lbl_titulo.setText("Editar pedido #" + pedidoActual.getIdPedido());
         }
 
-        // Tabla del cliente: una sola fila.
-        // Se usa Platform.runLater para que el setItems se ejecute DESPUÉS de que
-        // el scene graph esté completamente renderizado. Sin esto, la tabla aparece
-        // vacía hasta que otra operación fuerza un layout pass (el bug original).
         ObservableList<PedidoDTO> fila = FXCollections.observableArrayList(pedidoActual);
         Platform.runLater(() -> {
             tbl_cliente.setItems(fila);
             tbl_cliente.refresh();
         });
 
-        // Mapear cantidades existentes del pedido → array cantidades[]
         if (pedidoActual.getDetalles() != null) {
             for (DetallePedidoDTO det : pedidoActual.getDetalles()) {
                 for (int i = 0; i < todosLosProductos.size(); i++) {
@@ -174,12 +175,10 @@ public class PedidoEdicionController implements Initializable {
             }
         }
 
-        // Renderizar todas las tarjetas al abrir (sin filtro)
         renderizarProductos(todosLosProductos);
         actualizarTotal();
     }
 
-    // ── Botón buscar: filtra y redibuja el FlowPane ───────────────────────────
     @FXML
     private void clicBuscarProducto(ActionEvent event) {
         String filtro = txt_busquedaProducto.getText() == null
@@ -195,7 +194,6 @@ public class PedidoEdicionController implements Initializable {
         renderizarProductos(filtrados);
     }
 
-    // ── Dibuja las tarjetas en el FlowPane con la lista recibida ─────────────
     private void renderizarProductos(List<ProductoVentaDTO> lista) {
         flow_productos.getChildren().clear();
 
@@ -213,7 +211,6 @@ public class PedidoEdicionController implements Initializable {
         }
     }
 
-    // ── Construye una tarjeta de producto dinámicamente ───────────────────────
     private VBox crearTarjeta(ProductoVentaDTO p, int idx) {
         VBox card = new VBox(6);
         card.setPrefWidth(180);
@@ -296,7 +293,6 @@ public class PedidoEdicionController implements Initializable {
         return card;
     }
 
-    // ── Recalcula y muestra el total ──────────────────────────────────────────
     private void actualizarTotal() {
         double total = 0;
         for (int i = 0; i < todosLosProductos.size(); i++) {
@@ -305,11 +301,12 @@ public class PedidoEdicionController implements Initializable {
         lbl_total.setText(String.format("$%.2f", total));
     }
 
-    // ── Cancelar ─────────────────────────────────────────────────────────────
     @FXML
-    private void clicCancelar(ActionEvent event) { cerrarVentana(); }
+    private void clicCancelar(ActionEvent event) {
+        cerrarVentana();
+    }
 
-    // ── Guardar cambios ───────────────────────────────────────────────────────
+
     @FXML
     private void clicGuardar(ActionEvent event) {
         if (pedidoActual == null) {
@@ -351,11 +348,10 @@ public class PedidoEdicionController implements Initializable {
                     "Los cambios se guardaron correctamente.\nTotal: $" + String.format("%.2f", total),
                     Alert.AlertType.INFORMATION);
             cerrarVentana();
-        } catch (Exception e) {
-            UtilidadesFX.mostrarAlertaSimple("Error al guardar",
-                    "No se pudo actualizar el pedido:\n" + e.getMessage(),
+        } catch(SQLException | IOException | ClassNotFoundException | NullPointerException e ){
+            UtilidadesFX.mostrarAlertaSimple("Error al registrar",
+                    e.getMessage(),
                     Alert.AlertType.ERROR);
-            e.printStackTrace();
         }
     }
 
