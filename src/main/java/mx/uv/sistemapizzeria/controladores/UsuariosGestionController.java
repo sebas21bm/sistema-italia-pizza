@@ -40,13 +40,20 @@ public class UsuariosGestionController implements Initializable {
     @FXML private HBox hbox_busqueda;
     @FXML private TextField txt_buscar;
 
-    @FXML private TableView<Persona> tbl_usuarios;
-    @FXML private TableColumn<Persona, String> col_nombre;
-    @FXML private TableColumn<Persona, String> col_telefono;
-    @FXML private TableColumn<Persona, String> col_email;
-    @FXML private TableColumn<Persona, Boolean> col_estatus;
-    @FXML private ComboBox<String> cb_filtro;
-    @FXML private ComboBox<String> cb_tipo;
+    @FXML
+    private TableView<Persona> tbl_usuarios;
+    @FXML
+    private TableColumn<Persona, String> col_nombre;
+    @FXML
+    private TableColumn<Persona, String> col_telefono;
+    @FXML
+    private TableColumn<Persona, String> col_email;
+    @FXML
+    private TableColumn<Persona, Boolean> col_estatus;
+    @FXML
+    private ComboBox<String> cb_filtro;
+    @FXML
+    private ComboBox<String> cb_tipo;
 
     private final EmpleadoDAO empleadoDAO = new EmpleadoDAO();
     private final ClienteDAO  clienteDAO  = new ClienteDAO();
@@ -58,7 +65,7 @@ public class UsuariosGestionController implements Initializable {
             "Empleado", "Cliente");
 
     private String filtroBusqueda = "";
-    private String filtroTipo     = "Empleado";
+    private String filtroTipo = "Empleado";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -71,7 +78,6 @@ public class UsuariosGestionController implements Initializable {
         cargarTodosEmpleados();
     }
 
-    // ── Configuración de tabla ─────────────────────────────────────────────
     private void configurarColumnas() {
         col_nombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
         col_telefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
@@ -86,7 +92,37 @@ public class UsuariosGestionController implements Initializable {
         });
     }
 
-    // ── Carga de datos ────────────────────────────────────────────────────
+    private void configurarSeleccionTipo() {
+        cb_tipo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) return;
+            txt_buscar.setText("");
+            filtroBusqueda = "";
+            filtroTipo = newVal;
+            actualizarInformacion();
+        });
+    }
+
+    private void configurarSeleccionFiltro() {
+        cb_filtro.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) return;
+            if (newVal.equals("Ver todos")) {
+                txt_buscar.setText("");
+                filtroBusqueda = "";
+                actualizarInformacion();
+            } else {
+                filtroBusqueda = newVal;
+            }
+        });
+    }
+
+    private void actualizarInformacion() {
+        if (filtroTipo.equals("Empleado")){
+            cargarTodosEmpleados();
+        } else {
+            cargarTodosClientes();
+        }
+    }
+
     private void cargarTodosEmpleados() {
         try {
             usuarios = FXCollections.observableArrayList();
@@ -113,39 +149,17 @@ public class UsuariosGestionController implements Initializable {
         }
     }
 
-    private void actualizarInformacion() {
-        if (filtroTipo.equals("Empleado")) cargarTodosEmpleados();
-        else cargarTodosClientes();
-    }
-
-    // ── Listeners de ComboBox ─────────────────────────────────────────────
-    private void configurarSeleccionTipo() {
-        cb_tipo.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal == null) return;
-            txt_buscar.setText("");
-            filtroBusqueda = "";
-            filtroTipo = newVal;
-            actualizarInformacion();
-        });
-    }
-
-    private void configurarSeleccionFiltro() {
-        cb_filtro.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal == null) return;
-            if (newVal.equals("Ver todos")) {
-                txt_buscar.setText("");
-                filtroBusqueda = "";
-                actualizarInformacion();
-            } else {
-                filtroBusqueda = newVal;
-            }
-        });
-    }
-
-    // ── Buscar ────────────────────────────────────────────────────────────
     @FXML
     private void clicBuscar(ActionEvent event) {
         String campoBusqueda = txt_buscar.getText();
+
+        if (campoBusqueda == null || campoBusqueda.isEmpty()) {
+            UtilidadesFX.mostrarAlertaSimple("Sin nombre",
+                    "Por favor ingresa un nombre de cliente para buscar.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
         if (filtroBusqueda.isEmpty()) {
             UtilidadesFX.mostrarAlertaSimple("Sin filtro",
                     "Por favor selecciona un filtro para realizar la búsqueda.",
