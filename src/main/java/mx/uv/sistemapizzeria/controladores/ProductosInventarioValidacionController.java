@@ -256,7 +256,7 @@ public class ProductosInventarioValidacionController implements Initializable {
             conteoFisico = conteoFisico != null ? conteoFisico : 0.0;
             existencias = existencias != null ? existencias : 0.0;
 
-            Double diferencia = existencias - conteoFisico;
+            Double diferencia = conteoFisico - existencias;
             detalle.setDiferencia(diferencia);
 
             if (Double.compare(diferencia, 0.0) == 0) {
