@@ -16,9 +16,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
@@ -31,14 +28,8 @@ import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 
 public class UsuariosGestionController implements Initializable {
 
-    // ── FXML ──────────────────────────────────────────────────────────────────
-    @FXML private AnchorPane pnl_menuLateral;
-    @FXML private ImageView img_logo;
-    @FXML private Accordion ac_menu;
-    @FXML private TitledPane tp_inventarios;
-    @FXML private AnchorPane pnl_contenido;
-    @FXML private HBox hbox_busqueda;
-    @FXML private TextField txt_buscar;
+    @FXML
+    private TextField txt_buscar;
 
     @FXML
     private TableView<Persona> tbl_usuarios;
@@ -181,20 +172,19 @@ public class UsuariosGestionController implements Initializable {
             throws SQLException, ClassNotFoundException, IOException, NullPointerException {
         if (filtroTipo.equals("Empleado")) {
             return switch (filtroBusqueda) {
-                case "Por nombre"    -> empleadoDAO.buscarPorNombre(campoBusqueda);
-                case "Por telefono"  -> empleadoDAO.buscarPorTelefono(campoBusqueda);
-                default              -> empleadoDAO.buscarPorDireccion(campoBusqueda);
+                case "Por nombre" -> empleadoDAO.buscarPorNombre(campoBusqueda);
+                case "Por telefono" -> empleadoDAO.buscarPorTelefono(campoBusqueda);
+                default -> empleadoDAO.buscarPorDireccion(campoBusqueda);
             };
         } else {
             return switch (filtroBusqueda) {
-                case "Por nombre"    -> clienteDAO.buscarPorNombre(campoBusqueda);
-                case "Por telefono"  -> clienteDAO.buscarPorTelefono(campoBusqueda);
-                default              -> clienteDAO.buscarPorDireccion(campoBusqueda);
+                case "Por nombre" -> clienteDAO.buscarPorNombre(campoBusqueda);
+                case "Por telefono" -> clienteDAO.buscarPorTelefono(campoBusqueda);
+                default -> clienteDAO.buscarPorDireccion(campoBusqueda);
             };
         }
     }
 
-    // ── Nuevo usuario ─────────────────────────────────────────────────────
     @FXML
     private void clicNuevoUsuario(ActionEvent event) {
         try {
@@ -213,7 +203,6 @@ public class UsuariosGestionController implements Initializable {
         }
     }
 
-    // ── Editar — detecta el tipo con instanceof, sin pasar por UsuarioTipo ─
     @FXML
     private void clicEditar(ActionEvent event) {
         Persona seleccionado = tbl_usuarios.getSelectionModel().getSelectedItem();
@@ -263,7 +252,6 @@ public class UsuariosGestionController implements Initializable {
         }
     }
 
-    // ── Eliminar (baja lógica) ────────────────────────────────────────────
     @FXML
     private void clicEliminar(ActionEvent event) {
         Persona seleccionado = tbl_usuarios.getSelectionModel().getSelectedItem();
@@ -276,7 +264,6 @@ public class UsuariosGestionController implements Initializable {
 
         String nombreMostrar = seleccionado.getNombreCompleto();
 
-        // Verificar que no se elimine al empleado de la sesión activa
         if (seleccionado instanceof EmpleadoDTO empleado) {
             if (empleado.getNoEmpleado().equals(Sesion.empleadoSesion.getNoEmpleado())) {
                 UtilidadesFX.mostrarAlertaSimple("Operación no permitida",
@@ -286,73 +273,97 @@ public class UsuariosGestionController implements Initializable {
             }
         }
 
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Confirmar eliminación");
-        confirmacion.setHeaderText(null);
-        confirmacion.setContentText("¿Deseas dar de baja a " + nombreMostrar + "?\nEsta acción no se puede deshacer.");
+        if (!seleccionado.getEstatus()) {
+            UtilidadesFX.mostrarAlertaSimple("Sin cambios",
+                    "El usuario ya se encuentra eliminado.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
 
-        confirmacion.showAndWait().ifPresent(respuesta -> {
-            if (respuesta == ButtonType.OK) {
-                try {
-                    boolean resultado = false;
+        boolean confirmado = UtilidadesFX.mostrarAlertaConfirmacion(
+                "Confirmar eliminación",
+                "¿Estás seguro que deseas eliminar a: " + seleccionado.getNombreCompleto() +  "?",
+                null
+        );
 
-                    if (seleccionado instanceof EmpleadoDTO e) {
-                        resultado = empleadoDAO.eliminar(e.getNoEmpleado());
-                    } else if (seleccionado instanceof ClienteDTO c) {
-                        resultado = clienteDAO.eliminar(c.getNoCliente());
-                    }
+        if (confirmado) {
+            try {
+                boolean resultado = false;
 
-                    if (resultado) {
-                        UtilidadesFX.mostrarAlertaSimple("Baja exitosa",
-                                nombreMostrar + " fue dado de baja correctamente.",
-                                Alert.AlertType.INFORMATION);
-                    } else {
-                        UtilidadesFX.mostrarAlertaSimple("Sin cambios",
-                                "No se encontró el registro o ya estaba inactivo.",
-                                Alert.AlertType.WARNING);
-                    }
-                } catch (Exception e) {
-                    UtilidadesFX.mostrarAlertaSimple("Error",
-                            "No se pudo eliminar el usuario:\n" + e.getMessage(),
-                            Alert.AlertType.ERROR);
+                if (seleccionado instanceof EmpleadoDTO e) {
+                    resultado = empleadoDAO.eliminar(e.getNoEmpleado());
+                } else if (seleccionado instanceof ClienteDTO c) {
+                    resultado = clienteDAO.eliminar(c.getNoCliente());
                 }
-            }
-        });
 
-        // Siempre refrescar con el tipo actualmente seleccionado (fix del bug)
+                if (resultado) {
+                    UtilidadesFX.mostrarAlertaSimple("Baja exitosa",
+                            nombreMostrar + " fue dado de baja correctamente.",
+                            Alert.AlertType.INFORMATION);
+                }
+            } catch (SQLException | IOException | ClassNotFoundException e) {
+                UtilidadesFX.mostrarAlertaSimple("Error",
+                        "No se pudo eliminar el usuario:\n" + e.getMessage(),
+                        Alert.AlertType.ERROR);
+            }
+        }
         actualizarInformacion();
     }
 
-    // ── Navegación ────────────────────────────────────────────────────────
+    // Navegacion
     @FXML private void clicUsuarios(ActionEvent event) {
-        try { SistemaPizzeria.setRoot("UsuariosGestion", "Usuarios"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("UsuariosGestion", "Usuarios");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML private void clicProductos(ActionEvent event) {
-        try { SistemaPizzeria.setRoot("ProductosGestion", "Productos"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("ProductosGestion", "Productos");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML private void clicProductosInventario(ActionEvent event) {
-        try { SistemaPizzeria.setRoot("ProductosInventarioGestion", "Productos de Inventario"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("ProductosInventarioGestion", "Productos de Inventario");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML private void clicPedidos(ActionEvent event) {
-        try { SistemaPizzeria.setRoot("PedidosGestion", "Pedidos"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("PedidosGestion", "Pedidos");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML private void clicValidacionInventarios(ActionEvent event) {
-        try { SistemaPizzeria.setRoot("ProductosInventarioValidacion", "Validación de Inventario"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("ProductosInventarioValidacion", "Validación de Inventario");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML private void clicCerrarSesion(ActionEvent event) {
         SistemaPizzeria.setMetadatos("empleado", null);
-        try { SistemaPizzeria.setRoot("InicioSesion", "Sistema Pizzeria - Login"); }
-        catch (IOException e) { e.printStackTrace(); }
+        try {
+            SistemaPizzeria.setRoot("InicioSesion", "Sistema Pizzeria - Login");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML private void clicAyudaAcercaDe(ActionEvent event) {

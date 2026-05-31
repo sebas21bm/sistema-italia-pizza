@@ -1,6 +1,7 @@
 package mx.uv.sistemapizzeria.controladores;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -26,6 +28,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mx.uv.sistemapizzeria.SistemaPizzeria;
 import mx.uv.sistemapizzeria.modelo.dao.ClienteDAO;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoDAO;
 import mx.uv.sistemapizzeria.modelo.dto.ClienteDTO;
@@ -37,40 +40,41 @@ import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 public class PedidoCreacionController implements Initializable {
 
-    // ── Sección clientes ──────────────────────────────────────────────────────
-    @FXML private TextField                       txt_busqueda;
-    @FXML private TableView<ClienteDTO>           tbl_clientes;
-    @FXML private TableColumn<ClienteDTO, String> col_nombre;
-    @FXML private TableColumn<ClienteDTO, String> col_telefono;
-    @FXML private TableColumn<ClienteDTO, String> col_email;
-    @FXML private ComboBox<DireccionDTO>          cmb_cliente;
+    @FXML
+    private TextField txt_busqueda;
+    @FXML
+    private TableView<ClienteDTO> tbl_clientes;
+    @FXML
+    private TableColumn<ClienteDTO, String> col_nombre;
+    @FXML
+    private TableColumn<ClienteDTO, String> col_telefono;
+    @FXML
+    private TableColumn<ClienteDTO, String> col_email;
+    @FXML
+    private ComboBox<DireccionDTO> cmb_cliente;
 
-    // ── Sección productos ─────────────────────────────────────────────────────
     @FXML private TextField  txt_busquedaProducto;
     @FXML private Button     btn_buscarProducto;
     @FXML private ScrollPane scroll_productos;
     @FXML private FlowPane   flow_productos;
     @FXML private Label      lbl_total;
 
-    // ── Botones de acción ─────────────────────────────────────────────────────
     @FXML private Button btn_cancelar;
     @FXML private Button btn_guardar;
     @FXML private Button btn_buscar;
 
-    // ── Estado interno ────────────────────────────────────────────────────────
     private final ClienteDAO  clienteDAO  = new ClienteDAO();
     private final ProductoDAO productoDAO = new ProductoDAO();
 
-    private final List<ClienteDTO>           todosLosClientes = new ArrayList<>();
-    private final ObservableList<ClienteDTO> listaTabla       = FXCollections.observableArrayList();
+    private final List<ClienteDTO> todosLosClientes = new ArrayList<>();
+    private final ObservableList<ClienteDTO> listaTabla = FXCollections.observableArrayList();
 
-    private List<ProductoVentaDTO> todosLosProductos   = new ArrayList<>();
-    private List<ProductoVentaDTO> productosFiltrados  = new ArrayList<>();
-    private int[]                  cantidades;          // índices alineados a todosLosProductos
+    private List<ProductoVentaDTO> todosLosProductos = new ArrayList<>();
+    private List<ProductoVentaDTO> productosFiltrados = new ArrayList<>();
+    private int[] cantidades;
 
     private ClienteDTO clienteSeleccionado;
 
-    // ── Inicialización ────────────────────────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         configurarColumnas();
@@ -93,19 +97,12 @@ public class PedidoCreacionController implements Initializable {
         cargarProductos();
     }
 
-    // ── Columnas de la tabla de clientes ─────────────────────────────────────
     private void configurarColumnas() {
-        col_nombre.setCellValueFactory(data ->
-                new SimpleStringProperty(data.getValue().getNombreCompleto()));
-        col_telefono.setCellValueFactory(data ->
-                new SimpleStringProperty(
-                        data.getValue().getTelefono() != null ? data.getValue().getTelefono() : ""));
-        col_email.setCellValueFactory(data ->
-                new SimpleStringProperty(
-                        data.getValue().getEmail() != null ? data.getValue().getEmail() : ""));
+        col_nombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
+        col_telefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
+        col_email.setCellValueFactory(new PropertyValueFactory<>("email"));
     }
 
-    // ── Carga clientes ────────────────────────────────────────────────────────
     private void cargarClientes() {
         try {
             List<ClienteDTO> lista = clienteDAO.mostrarTodos();
@@ -119,7 +116,6 @@ public class PedidoCreacionController implements Initializable {
         }
     }
 
-    // ── Carga productos desde BD y renderiza tarjetas ─────────────────────────
     private void cargarProductos() {
         try {
             List<ProductoVentaDTO> lista = productoDAO.mostrarTodos();
@@ -133,7 +129,6 @@ public class PedidoCreacionController implements Initializable {
         }
     }
 
-    // ── Filtra la lista y vuelve a dibujar el FlowPane ───────────────────────
     private void filtrarYRenderizarProductos(String filtro) {
         flow_productos.getChildren().clear();
         productosFiltrados = new ArrayList<>();
@@ -161,7 +156,6 @@ public class PedidoCreacionController implements Initializable {
         }
     }
 
-    // ── Construye una tarjeta de producto dinámicamente ───────────────────────
     private VBox crearTarjeta(ProductoVentaDTO p, int idx) {
         VBox card = new VBox(6);
         card.setPrefWidth(210);
@@ -245,7 +239,6 @@ public class PedidoCreacionController implements Initializable {
         return card;
     }
 
-    // ── Recalcula el total visible ────────────────────────────────────────────
     private void actualizarTotal() {
         double total = 0;
         for (int i = 0; i < todosLosProductos.size(); i++) {
@@ -254,7 +247,6 @@ public class PedidoCreacionController implements Initializable {
         lbl_total.setText(String.format("$%.2f", total));
     }
 
-    // ── Buscar cliente (botón) ────────────────────────────────────────────────
     @FXML
     private void clicBuscar(ActionEvent event) {
         String termino = txt_busqueda.getText() == null
@@ -274,7 +266,6 @@ public class PedidoCreacionController implements Initializable {
         listaTabla.setAll(filtrados);
     }
 
-    // ── Buscar producto (botón) ───────────────────────────────────────────────
     @FXML
     private void clicBuscarProducto(ActionEvent event) {
         String termino = txt_busquedaProducto.getText() == null
@@ -282,15 +273,40 @@ public class PedidoCreacionController implements Initializable {
         filtrarYRenderizarProductos(termino);
     }
 
-    // ── Nuevo cliente ─────────────────────────────────────────────────────────
     @FXML
     private void clicNuevoCliente(ActionEvent event) {
+        try {
+            SistemaPizzeria.setMetadatos("registrar-cliente", true);
+
+            FXMLLoader loader = UtilidadesFX.cargarFXML("UsuarioClienteOperaciones");
+            Parent raiz = loader.load();
+
+            Stage escenarioModal = new Stage();
+            escenarioModal.initModality(Modality.APPLICATION_MODAL);
+            escenarioModal.setTitle("Registrar Cliente");
+            escenarioModal.setResizable(false);
+            escenarioModal.setScene(new Scene(raiz));
+
+            escenarioModal.centerOnScreen();
+            escenarioModal.showAndWait();
+        } catch (IOException e) {
+            UtilidadesFX.mostrarAlertaSimple(
+                    "Error del Sistema",
+                    "No se pudo cargar la interfaz de operaciones del cliente.",
+                    Alert.AlertType.ERROR
+            );
+            e.printStackTrace();
+        }
+        cargarClientes();
+
+        /*
         UtilidadesFX.mostrarAlertaSimple("Nuevo cliente",
                 "Para registrar un nuevo cliente usa el módulo Usuarios.",
                 Alert.AlertType.INFORMATION);
+
+         */
     }
 
-    // ── Cancelar ─────────────────────────────────────────────────────────────
     @FXML
     private void clicCancelar(ActionEvent event) {
         ((Stage) btn_cancelar.getScene().getWindow()).close();

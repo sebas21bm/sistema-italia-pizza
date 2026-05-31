@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -287,7 +288,7 @@ public class PedidosGestionController implements Initializable {
             stage.centerOnScreen();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-            cargarTodos(); // refresca sin filtros al volver
+            cargarTodos();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -330,12 +331,14 @@ public class PedidosGestionController implements Initializable {
             stage.showAndWait();
             cargarTodos();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
             UtilidadesFX.mostrarAlertaSimple("Error",
                     "No se pudo cargar el pedido:\n" + e.getMessage(),
                     Alert.AlertType.ERROR);
             e.printStackTrace();
+        } catch(SQLException |  ClassNotFoundException | NullPointerException e ){
+            UtilidadesFX.mostrarAlertaSimple("No se puedo editar el pedido",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
         }
     }
 
@@ -352,8 +355,7 @@ public class PedidosGestionController implements Initializable {
                     "Primero selecciona un pedido para poder cambiar su estatus.",
                     Alert.AlertType.WARNING);
 
-            // Impide que el prompt text se actualize y muestre campos vacios
-            javafx.application.Platform.runLater(() -> cb_estatus.setValue(null));
+            Platform.runLater(() -> cb_estatus.setValue(null));
             return;
         }
 
@@ -383,26 +385,27 @@ public class PedidosGestionController implements Initializable {
             return;
         }
 
-        boolean confirmar = UtilidadesFX.mostrarAlertaConfirmacion(
+        boolean confirmado = UtilidadesFX.mostrarAlertaConfirmacion(
                 "Confirmar cambio de estatus",
                 "¿Estás seguro de marcar el pedido #" + seleccionado.getIdPedido() + " como " + nuevoEstatus + "?",
                 "El estatus no podrá ser cambiado después de esta acción."
         );
 
-        if (confirmar) {
+        if (confirmado) {
             try {
                 if (pedidosDAO.cambiarEstatus(seleccionado.getIdPedido(), nuevoEstatus)) {
                     cargarTodos();
                 } else {
                     UtilidadesFX.mostrarAlertaSimple("Error", "No se pudo actualizar el estatus.", Alert.AlertType.WARNING);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch( SQLException | ClassNotFoundException | NullPointerException | IOException e ){
+                UtilidadesFX.mostrarAlertaSimple("No se pudo cambiar el estado del pedido",
+                        e.getMessage(),
+                        Alert.AlertType.ERROR);
             }
         }
 
-        // Restaurar visualmente el ComboBox tras una operación
-        javafx.application.Platform.runLater(() -> cb_estatus.setValue(null));
+        Platform.runLater(() -> cb_estatus.setValue(null));
     }
 
     @FXML

@@ -8,6 +8,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.DoubleBuffer;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -45,18 +46,18 @@ public class ProductosInventarioValidacionController implements Initializable {
     @FXML
     private TableView<DetalleReporteDTO> tbl_validacionProductosInventario;
     @FXML
-    private TableColumn col_codigo;
+    private TableColumn<DetalleReporteDTO, String> col_codigo;
     @FXML
-    private TableColumn col_existencias;
+    private TableColumn<DetalleReporteDTO, Double> col_existencias;
     @FXML
-    private TableColumn col_conteoFisicoReal;
+    private TableColumn<DetalleReporteDTO, Double> col_conteoFisicoReal;
     @FXML
-    private TableColumn col_diferencia;
+    private TableColumn<DetalleReporteDTO, DoubleBuffer> col_diferencia;
     @FXML
-    private TableColumn col_productoInventario;
+    private TableColumn<DetalleReporteDTO, String> col_productoInventario;
 
     private ObservableList<DetalleReporteDTO> detallesReporte;
-    private DetalleReporteInventarioDAO reporteInventarioDAO = new DetalleReporteInventarioDAO();
+    private final DetalleReporteInventarioDAO reporteInventarioDAO = new DetalleReporteInventarioDAO();
     private boolean validacionCalculada = false;
 
     @Override

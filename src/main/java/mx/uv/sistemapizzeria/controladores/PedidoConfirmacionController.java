@@ -1,6 +1,8 @@
 package mx.uv.sistemapizzeria.controladores;
 
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
@@ -12,37 +14,33 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.modelo.dao.PedidosDAO;
 import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
-import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.Sesion;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
+import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
+
 public class PedidoConfirmacionController implements Initializable {
 
     @FXML
-    private Label  lblSubtitulo;
+    private Label lbl_subtitulo;
     @FXML
-    private Label  lblFechaHora;
+    private Label lbl_fechaHora;
     @FXML
-    private Label  lblAtiende;
+    private Label lbl_atiende;
     @FXML
-    private Label  lblCliente;
+    private Label lbl_cliente;
     @FXML
-    private Label  lblDireccion;
+    private Label lbl_direccion;
     @FXML
-    private Label  lblTelefono;
+    private Label lbl_telefono;
     @FXML
-    private Label  lblTotal;
-    @FXML
-    private Button btnAtras;
-    @FXML
-    private Button btnConfirmar;
+    private Label  lbl_total;
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -61,67 +59,39 @@ public class PedidoConfirmacionController implements Initializable {
     }
 
     private void poblarResumen() {
-        if (pedido == null) return;
-
-        if (lblSubtitulo != null)
-            lblSubtitulo.setText("Revisa los datos antes de confirmar");
-
-        if (lblFechaHora != null) {
-            String fecha = pedido.getFecha() != null ? pedido.getFecha().format(FMT) : "-";
-            lblFechaHora.setText(fecha);
+        if (pedido == null) {
+            return;
         }
 
-        if (lblAtiende != null) {
-            EmpleadoDTO emp = Sesion.empleadoSesion;
-            lblAtiende.setText(emp != null ? emp.getNombreCompleto() : "-");
-        }
+        lbl_subtitulo.setText("Revisa los datos antes de confirmar");
+        lbl_fechaHora.setText(pedido.getFecha().format(FMT));
+        lbl_atiende.setText(Sesion.empleadoSesion.getNombreCompleto());
+        lbl_cliente.setText(pedido.getCliente().getNombreCompleto());
+        lbl_direccion.setText(pedido.getDireccion().toString());
+        lbl_telefono.setText(pedido.getCliente().getTelefono());
 
-        if (lblCliente != null) {
-            String nombre = pedido.getCliente() != null
-                    ? pedido.getCliente().getNombreCompleto() : "-";
-            lblCliente.setText(nombre);
-        }
-
-        if (lblDireccion != null) {
-            DireccionDTO d = pedido.getDireccion();
-            if (d != null) {
-                String dir = (d.getCalle()       != null ? d.getCalle()       : "") + " "
-                        + (d.getNumero()      != null ? d.getNumero()      : "") + ", "
-                        + (d.getCiudad()      != null ? d.getCiudad()      : "") + " C.P. "
-                        + (d.getCodigoPostal()!= null ? d.getCodigoPostal(): "");
-                lblDireccion.setText(dir.trim());
-            } else {
-                lblDireccion.setText("-");
+        StringBuilder sb = new StringBuilder();
+        if (pedido.getDetalles() != null) {
+            for (var det : pedido.getDetalles()) {
+                String nombre = det.getProductoVenta() != null
+                        ? det.getProductoVenta().getNombre() : det.getCodigoMenu();
+                sb.append("• ").append(det.getCantidad())
+                        .append("x ").append(nombre)
+                        .append("  $").append(String.format("%.2f", det.getSubtotal()))
+                        .append("\n");
             }
         }
+        sb.append("\nTotal: $").append(String.format("%.2f", pedido.getTotalPagar()));
+        lbl_total.setText(sb.toString());
 
-        if (lblTelefono != null) {
-            String tel = (pedido.getCliente() != null && pedido.getCliente().getTelefono() != null)
-                    ? pedido.getCliente().getTelefono() : "-";
-            lblTelefono.setText(tel);
-        }
-
-        if (lblTotal != null) {
-            StringBuilder sb = new StringBuilder();
-            if (pedido.getDetalles() != null) {
-                for (var det : pedido.getDetalles()) {
-                    String nombre = det.getProductoVenta() != null
-                            ? det.getProductoVenta().getNombre() : det.getCodigoMenu();
-                    sb.append("• ").append(det.getCantidad())
-                            .append("x ").append(nombre)
-                            .append("  $").append(String.format("%.2f", det.getSubtotal()))
-                            .append("\n");
-                }
-            }
-            sb.append("\nTotal: $").append(String.format("%.2f", pedido.getTotalPagar()));
-            lblTotal.setText(sb.toString());
-        }
     }
 
     @FXML
     private void clicAtras(ActionEvent event) {
         cerrarEstaVentana();
-        if (stageCreacion != null) stageCreacion.show();
+        if (stageCreacion != null) {
+            stageCreacion.show();
+        }
     }
 
     @FXML
@@ -134,11 +104,10 @@ public class PedidoConfirmacionController implements Initializable {
                 abrirTicket(pedido);
             });
 
-        } catch (Exception e) {
-            UtilidadesFX.mostrarAlertaSimple("Error al confirmar",
-                    "No se pudo guardar el pedido:\n" + e.getMessage(),
+        } catch(SQLException | IOException | ClassNotFoundException | NullPointerException e ){
+            UtilidadesFX.mostrarAlertaSimple("Error al registrar",
+                    e.getMessage(),
                     Alert.AlertType.ERROR);
-            e.printStackTrace();
         }
     }
 
@@ -158,7 +127,7 @@ public class PedidoConfirmacionController implements Initializable {
             stage.centerOnScreen();
             stage.showAndWait();
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             UtilidadesFX.mostrarAlertaSimple("Error",
                     "No se pudo abrir el ticket:\n" + e.getMessage(),
                     Alert.AlertType.ERROR);
@@ -167,7 +136,7 @@ public class PedidoConfirmacionController implements Initializable {
     }
 
     private void cerrarEstaVentana() {
-        Stage stage = (Stage) btnConfirmar.getScene().getWindow();
+        Stage stage = (Stage) lbl_atiende.getScene().getWindow();
         stage.close();
     }
 }

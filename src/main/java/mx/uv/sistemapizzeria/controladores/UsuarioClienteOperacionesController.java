@@ -22,18 +22,30 @@ import java.util.ResourceBundle;
 
 public class UsuarioClienteOperacionesController implements Initializable {
 
-    @FXML private TextField txt_nombres1;
-    @FXML private TextField txt_apellidoPaterno1;
-    @FXML private TextField txt_apellidoMaterno1;
-    @FXML private TextField txt_telefono1;
-    @FXML private TextField txt_correoElectronico1;
-    @FXML private TextField txt_calle1;
-    @FXML private TextField txt_codigoPostal1;
-    @FXML private TextField txt_numero1;
-    @FXML private TextField txt_ciudad1;
-    @FXML private Button btn_agregarDireccion1;
-    @FXML private Button btn_cancelar1;
-    @FXML private Button btn_guardar1;
+    @FXML
+    private TextField txt_nombres1;
+    @FXML
+    private TextField txt_apellidoPaterno1;
+    @FXML
+    private TextField txt_apellidoMaterno1;
+    @FXML
+    private TextField txt_telefono1;
+    @FXML
+    private TextField txt_correoElectronico1;
+    @FXML
+    private TextField txt_calle1;
+    @FXML
+    private TextField txt_codigoPostal1;
+    @FXML
+    private TextField txt_numero1;
+    @FXML
+    private TextField txt_ciudad1;
+    @FXML
+    private Button btn_agregarDireccion1;
+    @FXML
+    private Button btn_cancelar1;
+    @FXML
+    private Button btn_guardar1;
 
     private final ClienteDAO clienteDAO = new ClienteDAO();
 
@@ -47,7 +59,6 @@ public class UsuarioClienteOperacionesController implements Initializable {
         this.registro = Boolean.TRUE.equals(SistemaPizzeria.getMetadatos("registrar-cliente"));
     }
 
-    // ── Llamado desde UsuariosGestionController en modo edición ──────────
     public void mostrarCliente(ClienteDTO cliente) {
         this.clienteEdicion = cliente;
 
@@ -65,17 +76,15 @@ public class UsuarioClienteOperacionesController implements Initializable {
             txt_ciudad1.setText(primera.getCiudad());
             direccionesAcumuladas.addAll(cliente.getDirecciones());
         }
-
         actualizarLabelDirecciones();
     }
 
-    // ── + Agregar Dirección ────────────────────────────────────────────────
     @FXML
     private void clicAgregarDireccion(ActionEvent event) {
-        String calle   = txt_calle1.getText().trim();
-        String numero  = txt_numero1.getText().trim();
-        String cp      = txt_codigoPostal1.getText().trim();
-        String ciudad  = txt_ciudad1.getText().trim();
+        String calle = txt_calle1.getText().trim();
+        String numero = txt_numero1.getText().trim();
+        String cp = txt_codigoPostal1.getText().trim();
+        String ciudad = txt_ciudad1.getText().trim();
 
         DireccionDTO dir = new DireccionDTO(0, calle, numero, cp, ciudad);
         List<String> errores = Validador.validarDireccion(dir);
@@ -87,7 +96,6 @@ public class UsuarioClienteOperacionesController implements Initializable {
             return;
         }
 
-        // Si ya tenemos la dirección precargada en edición, actualizarla en vez de duplicar
         if (!registro && !direccionesAcumuladas.isEmpty()) {
             DireccionDTO primera = direccionesAcumuladas.get(0);
             primera.setCalle(calle);
@@ -98,7 +106,6 @@ public class UsuarioClienteOperacionesController implements Initializable {
             direccionesAcumuladas.add(dir);
         }
 
-        // Limpiar campos y mostrar contador
         txt_calle1.clear();
         txt_numero1.clear();
         txt_codigoPostal1.clear();
@@ -110,14 +117,11 @@ public class UsuarioClienteOperacionesController implements Initializable {
                 Alert.AlertType.INFORMATION);
     }
 
-    // ── Guardar ───────────────────────────────────────────────────────────
     @FXML
     private void clicGuardar(ActionEvent event) {
-        // Si hay datos en los campos de dirección sin haber presionado "Agregar",
-        // los incluimos automáticamente
-        String calle  = txt_calle1.getText().trim();
+        String calle = txt_calle1.getText().trim();
         String numero = txt_numero1.getText().trim();
-        String cp     = txt_codigoPostal1.getText().trim();
+        String cp = txt_codigoPostal1.getText().trim();
         String ciudad = txt_ciudad1.getText().trim();
 
         if (!calle.isEmpty() || !numero.isEmpty() || !cp.isEmpty() || !ciudad.isEmpty()) {
@@ -148,7 +152,6 @@ public class UsuarioClienteOperacionesController implements Initializable {
             return;
         }
 
-        // Construir DTO
         ClienteDTO cliente = (!registro && clienteEdicion != null) ? clienteEdicion : new ClienteDTO();
         cliente.setNombre(txt_nombres1.getText().trim());
         cliente.setPaterno(txt_apellidoPaterno1.getText().trim());
@@ -158,7 +161,6 @@ public class UsuarioClienteOperacionesController implements Initializable {
         cliente.setEstatus(true);
         cliente.setDirecciones(direccionesAcumuladas);
 
-        // Validar datos personales
         List<String> errores = Validador.validarCliente(cliente);
         if (!errores.isEmpty()) {
             UtilidadesFX.mostrarAlertaSimple("Datos inválidos",
@@ -199,7 +201,7 @@ public class UsuarioClienteOperacionesController implements Initializable {
         stage.close();
     }
 
-    // Actualiza el texto del botón para que el usuario sepa cuántas direcciones lleva
+    // TODO añadir tabla para que muestre el acumulado
     private void actualizarLabelDirecciones() {
         int total = direccionesAcumuladas.size();
         btn_agregarDireccion1.setText(total == 0

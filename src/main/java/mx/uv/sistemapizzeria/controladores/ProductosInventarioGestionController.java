@@ -39,19 +39,24 @@ import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 
 public class ProductosInventarioGestionController implements Initializable {
 
-
     @FXML
-    private TableColumn<ProductoInventarioDTO, String> col_nombre;
+    private
+    TableColumn<ProductoInventarioDTO, String> col_nombre;
     @FXML
-    private TableColumn<ProductoInventarioDTO, Integer> col_existencias;
+    private
+    TableColumn<ProductoInventarioDTO, Integer> col_existencias;
     @FXML
-    private TextField txt_buscar;
+    private
+    TextField txt_buscar;
     @FXML
-    private TableColumn<ProductoInventarioDTO,String> col_fotografia;
+    private
+    TableColumn<ProductoInventarioDTO,String> col_fotografia;
     @FXML
-    private TableColumn<ProductoInventarioDTO, String> col_fechaCaducidad;
+    private
+    TableColumn<ProductoInventarioDTO, String> col_fechaCaducidad;
     @FXML
-    private TableView<ProductoInventarioDTO> tbl_productoInventario;
+    private
+    TableView<ProductoInventarioDTO> tbl_productoInventario;
     @FXML
     private ComboBox<String> cb_filtro;
 

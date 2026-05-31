@@ -33,24 +33,6 @@ import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 public class MenuCajeroController implements Initializable {
 
     @FXML
-    private AnchorPane pnl_menuLateral;
-    @FXML
-    private ImageView img_logo;
-    @FXML
-    private Accordion ac_menu;
-    @FXML
-    private TitledPane tp_pedidos;
-    @FXML
-    private Button btn_menuPedidos;
-    @FXML
-    private Button btn_cerrarSesion;
-    @FXML
-    private Button btn_ayudaAcercaDe;
-    @FXML
-    private AnchorPane pnl_contenido;
-    @FXML
-    private AnchorPane pnl_encabezado;
-    @FXML
     private Label lbl_nombreUsuario;
     @FXML
     private Label lbl_rolUsuario;
@@ -61,6 +43,7 @@ public class MenuCajeroController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         this.empleado = (EmpleadoDTO) SistemaPizzeria.getMetadatos("empleado");
         lbl_nombreUsuario.setText(empleado.getNombre());
+        lbl_rolUsuario.setText(empleado.getTipoEmpleado().toString());
     }
 
     @FXML

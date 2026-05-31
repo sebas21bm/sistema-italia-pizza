@@ -97,8 +97,7 @@ public class UsuarioTipoController implements Initializable {
 
     @FXML
     private void clicCancelar(ActionEvent event) {
-        Stage escenario = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        escenario.close();
+        ((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
     }
 
 }
