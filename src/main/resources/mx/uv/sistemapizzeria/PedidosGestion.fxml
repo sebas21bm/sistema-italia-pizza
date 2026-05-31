@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #f3f5fa;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidosGestionController">
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #f3f5fa;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidosGestionController">
    <children>
       <AnchorPane fx:id="pnl_contenido" layoutX="180.0" prefHeight="650.0" prefWidth="820.0" style="-fx-background-color: #f3f5fa;">
          <children>
@@ -22,10 +21,10 @@
                </padding>
                <children>
                   <TextField fx:id="txt_buscar" prefHeight="40.0" prefWidth="230.0" promptText="Buscar por cliente" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-size: 12px; -fx-prompt-text-fill: #69727c;" />
-                  <Button mnemonicParsing="false" onAction="#clicBuscar" prefHeight="33.0" prefWidth="39.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Buscar" />
-                  <ComboBox fx:id="cb_estatusFiltro" prefHeight="31.0" prefWidth="149.0" promptText="Estatus" />
-                  <DatePicker fx:id="dp_fechaInicio" prefHeight="31.0" prefWidth="136.0" promptText="Fecha inicio" />
-                  <DatePicker fx:id="dp_fechaFinal" prefHeight="31.0" prefWidth="136.0" promptText="Fecha fin" />
+                  <Button mnemonicParsing="false" onAction="#clicBuscar" prefHeight="33.0" prefWidth="116.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Buscar" />
+                  <ComboBox fx:id="cb_estatusFiltro" prefHeight="31.0" prefWidth="139.0" promptText="Estatus" />
+                  <DatePicker fx:id="dp_fechaInicio" prefHeight="31.0" prefWidth="106.0" promptText="Fecha inicio" />
+                  <DatePicker fx:id="dp_fechaFinal" prefHeight="31.0" prefWidth="108.0" promptText="Fecha fin" />
                </children>
             </HBox>
             <TableView fx:id="tbl_pedidos" fixedCellSize="38.0" layoutX="20.0" layoutY="130.0" prefHeight="405.0" prefWidth="760.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
