@@ -23,6 +23,8 @@ import java.util.ResourceBundle;
 public class UsuarioClienteOperacionesController implements Initializable {
 
     @FXML
+    private Label lb_formulario;
+    @FXML
     private TextField txt_nombres1;
     @FXML
     private TextField txt_apellidoPaterno1;
@@ -56,7 +58,18 @@ public class UsuarioClienteOperacionesController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        /*
         this.registro = Boolean.TRUE.equals(SistemaPizzeria.getMetadatos("registrar-cliente"));
+
+         */
+        this.registro = (Boolean) SistemaPizzeria.getMetadatos("registrar-producto-inventario");
+
+        if (registro){
+            lb_formulario.setText("Registrar cliente");
+        } else {
+            lb_formulario.setText("Editar cliente");
+
+        }
     }
 
     public void mostrarCliente(ClienteDTO cliente) {

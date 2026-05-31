@@ -31,14 +31,15 @@ public class PedidosDAO {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
-            String sql = "SELECT " + COLS_VISTA +
+            String consulta = "SELECT " + COLS_VISTA +
                     " FROM vista_lista_pedidos WHERE id_pedido = ?";
 
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, idPedido);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) pedido = mapearDesdeVista(rs);
-                }
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setInt(1, idPedido);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                pedido = mapearDesdeVista(rs);
             }
 
             if (pedido != null) {
@@ -103,8 +104,7 @@ public class PedidosDAO {
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
 
-            String consulta = "SELECT " + COLS_VISTA +
-                    " FROM vista_lista_pedidos ORDER BY fecha DESC";
+            String consulta = "SELECT " + COLS_VISTA + " FROM vista_lista_pedidos ORDER BY fecha DESC";
             PreparedStatement ps = conn.prepareStatement(consulta);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -245,51 +245,49 @@ public class PedidosDAO {
     }
 
     private void cargarDetalles(Connection conn, PedidoDTO pedido) throws SQLException {
-        String sql = "SELECT codigo_menu, id_pedido, cantidad, costo, " +
+        String consulta = "SELECT codigo_menu, id_pedido, cantidad, costo, " +
                 "total_producto, nombre, precio, foto " +
                 "FROM vista_detalles_pedido WHERE id_pedido = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, pedido.getIdPedido());
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    DetallePedidoDTO det = new DetallePedidoDTO();
-                    det.setIdPedido(rs.getInt("id_pedido"));
-                    det.setCodigoMenu(rs.getString("codigo_menu"));
-                    det.setCantidad(rs.getInt("cantidad"));
-                    det.setCosto(rs.getDouble("costo"));
+        PreparedStatement ps = conn.prepareStatement(consulta);
+        ps.setInt(1, pedido.getIdPedido());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            DetallePedidoDTO det = new DetallePedidoDTO();
+            det.setIdPedido(rs.getInt("id_pedido"));
+            det.setCodigoMenu(rs.getString("codigo_menu"));
+            det.setCantidad(rs.getInt("cantidad"));
+            det.setCosto(rs.getDouble("costo"));
 
-                    ProductoVentaDTO pv = new ProductoVentaDTO();
-                    pv.setCodigoMenu(rs.getString("codigo_menu"));
-                    pv.setNombre(rs.getString("nombre"));
-                    pv.setPrecio(rs.getDouble("precio"));
-                    pv.setFoto(rs.getString("foto"));
-                    det.setProductoVenta(pv);
+            ProductoVentaDTO pv = new ProductoVentaDTO();
+            pv.setCodigoMenu(rs.getString("codigo_menu"));
+            pv.setNombre(rs.getString("nombre"));
+            pv.setPrecio(rs.getDouble("precio"));
+            pv.setFoto(rs.getString("foto"));
+            det.setProductoVenta(pv);
 
-                    pedido.agregarDetalle(det);
-                }
-            }
+            pedido.agregarDetalle(det);
         }
     }
 
     private void cargarDireccion(Connection conn, PedidoDTO pedido) throws SQLException {
-        String sql = "SELECT d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
+        String consulta = "SELECT d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
                 "FROM pedido p " +
                 "JOIN direccion d ON p.id_direccion = d.id_direccion " +
                 "WHERE p.id_pedido = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, pedido.getIdPedido());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    DireccionDTO dir = new DireccionDTO();
-                    dir.setIdDireccion(rs.getInt("id_direccion"));
-                    dir.setCalle(rs.getString("calle"));
-                    dir.setNumero(rs.getString("numero"));
-                    dir.setCodigoPostal(rs.getString("codigo_postal"));
-                    dir.setCiudad(rs.getString("ciudad"));
-                    pedido.setDireccion(dir);
-                }
-            }
+
+        PreparedStatement ps = conn.prepareStatement(consulta);
+        ps.setInt(1, pedido.getIdPedido());
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            DireccionDTO dir = new DireccionDTO();
+            dir.setIdDireccion(rs.getInt("id_direccion"));
+            dir.setCalle(rs.getString("calle"));
+            dir.setNumero(rs.getString("numero"));
+            dir.setCodigoPostal(rs.getString("codigo_postal"));
+            dir.setCiudad(rs.getString("ciudad"));
+            pedido.setDireccion(dir);
         }
     }
 }

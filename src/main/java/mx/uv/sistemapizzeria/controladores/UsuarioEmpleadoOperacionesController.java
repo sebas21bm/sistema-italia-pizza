@@ -23,20 +23,39 @@ import java.util.ResourceBundle;
 
 public class UsuarioEmpleadoOperacionesController implements Initializable {
 
-    @FXML private TextField txt_noEmpleado;
-    @FXML private TextField txt_nombres;
-    @FXML private TextField txt_apellidoPaterno;
-    @FXML private TextField txt_apellidoMaterno;
-    @FXML private TextField txt_telefono;
-    @FXML private TextField txt_correoElectronico;
-    @FXML private TextField txt_calle;
-    @FXML private TextField txt_numero;
-    @FXML private TextField txt_codigoPostal;
-    @FXML private TextField txt_ciudad;
-    @FXML private PasswordField psw_contrasena;
-    @FXML private TextField     txt_contrasenaVisible;
-    @FXML private CheckBox chkBtn_mostrar;
-    @FXML private ComboBox<TipoEmpleado> cmb_tipoEmpleado;
+    @FXML
+    private
+    Label lb_contrasenia;
+    @FXML
+    private Label lb_formulario;
+    @FXML
+    private TextField txt_noEmpleado;
+    @FXML
+    private TextField txt_nombres;
+    @FXML
+    private TextField txt_apellidoPaterno;
+    @FXML
+    private TextField txt_apellidoMaterno;
+    @FXML
+    private TextField txt_telefono;
+    @FXML
+    private TextField txt_correoElectronico;
+    @FXML
+    private TextField txt_calle;
+    @FXML
+    private TextField txt_numero;
+    @FXML
+    private TextField txt_codigoPostal;
+    @FXML
+    private TextField txt_ciudad;
+    @FXML
+    private PasswordField psw_contrasena;
+    @FXML
+    private TextField     txt_contrasenaVisible;
+    @FXML
+    private CheckBox chkBtn_mostrar;
+    @FXML
+    private ComboBox<TipoEmpleado> cmb_tipoEmpleado;
 
     private final EmpleadoDAO empleadoDAO = new EmpleadoDAO();
 
@@ -47,12 +66,48 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         cmb_tipoEmpleado.setItems(FXCollections.observableArrayList(TipoEmpleado.values()));
 
-        this.registro = Boolean.TRUE.equals(SistemaPizzeria.getMetadatos("registrar-empleado"));
+        this.registro = (Boolean) SistemaPizzeria.getMetadatos("registrar-empleado");
 
-        // Sincronizar promptText del campo visible con el del PasswordField
         txt_contrasenaVisible.promptTextProperty().bind(psw_contrasena.promptTextProperty());
 
-        // Mostrar/ocultar contraseña con el CheckBox
+        configurarCheckBoxMostrarContrasenia();
+
+        txt_telefono.setTextFormatter(new TextFormatter<>(change -> {
+            if (change.getControlNewText().matches("\\d{0,10}")) {
+                return change;
+            }
+            return null;
+        }));
+
+        txt_codigoPostal.setTextFormatter(new TextFormatter<>(change -> {
+            if (change.getControlNewText().matches("\\d{0,5}")) {
+                return change;
+            }
+            return null;
+        }));
+
+        txt_noEmpleado.setTextFormatter(new TextFormatter<>(change -> {
+            change.setText(change.getText().toUpperCase()); // Auto mayúscula
+            if (change.getControlNewText().matches("[E]?[0-9]{0,4}")) {
+                return change;
+            }
+            return null;
+        }));
+
+        if (registro) {
+            lb_formulario.setText("Registrar empleado");
+            psw_contrasena.setPromptText("Contraseña");
+        } else {
+            lb_formulario.setText("Editar empleado");
+            txt_noEmpleado.setDisable(true);
+            psw_contrasena.setVisible(false);
+            txt_contrasenaVisible.setVisible(false);
+            chkBtn_mostrar.setVisible(false);
+            lb_contrasenia.setVisible(false);
+        }
+    }
+
+    private void configurarCheckBoxMostrarContrasenia() {
         chkBtn_mostrar.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
             if (isSelected) {
                 txt_contrasenaVisible.setText(psw_contrasena.getText());
@@ -72,32 +127,6 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
                 psw_contrasena.end();
             }
         });
-
-        txt_telefono.setTextFormatter(new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("\\d{0,10}")) return change;
-            return null;
-        }));
-
-        txt_codigoPostal.setTextFormatter(new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("\\d{0,5}")) return change;
-            return null;
-        }));
-
-        txt_noEmpleado.setTextFormatter(new TextFormatter<>(change -> {
-            change.setText(change.getText().toUpperCase()); // Auto mayúscula
-            if (change.getControlNewText().matches("[E]?[0-9]{0,4}")) return change;
-            return null;
-        }));
-
-        if (registro) {
-            psw_contrasena.setPromptText("Contraseña");
-        } else {
-            // Elementos ocultos durante la edición
-            txt_noEmpleado.setDisable(true);
-            psw_contrasena.setDisable(true);
-            txt_contrasenaVisible.setDisable(true);
-            chkBtn_mostrar.setDisable(true);
-        }
     }
 
     public void mostrarEmpleado(EmpleadoDTO empleado) {

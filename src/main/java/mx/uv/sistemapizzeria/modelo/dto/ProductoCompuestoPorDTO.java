@@ -1,13 +1,5 @@
 package mx.uv.sistemapizzeria.modelo.dto;
 
-/**
- * DTO que mapea la tabla: producto_compuesto_por
- * Campos BD: codigo (FK → producto_insumo), codigo_menu (FK → producto_venta), cantidad
- *
- * Representa la RECETA: qué insumos y en qué cantidad componen un producto del menú.
- * Se incluyen los objetos anidados para acceder directamente a los datos
- * del insumo y del producto sin consultas extra.
- */
 public class ProductoCompuestoPorDTO {
 
     private String codigoInsumo;

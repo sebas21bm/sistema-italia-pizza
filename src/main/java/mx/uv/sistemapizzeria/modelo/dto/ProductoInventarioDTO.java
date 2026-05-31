@@ -2,21 +2,14 @@ package mx.uv.sistemapizzeria.modelo.dto;
 
 import java.time.LocalDate;
 
-/**
- * DTO que mapea la tabla: producto_insumo
- * Campos BD: codigo, nombre, estatus, existencias, fecha_caducidad, foto
- *
- * Representa la materia prima / insumos del inventario físico
- * (harina, queso, tomate, refrescos en stock, etc.).
- */
 public class ProductoInventarioDTO {
 
     private String codigo;
     private String nombre;
-    private int estatus;            // 1 = activo, 0 = eliminado lógicamente
+    private int estatus;
     private int existencias;
     private LocalDate fechaCaducidad;
-    private String foto;            // ruta/path VARCHAR(255)
+    private String foto;
 
     public ProductoInventarioDTO() {
 
