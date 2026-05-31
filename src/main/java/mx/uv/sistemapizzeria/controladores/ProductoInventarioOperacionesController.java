@@ -183,6 +183,15 @@ public class ProductoInventarioOperacionesController implements Initializable {
             registrarProductoInventario();
             ((Stage)txt_existencias.getScene().getWindow()).close();
         }else{
+            boolean confirmado = UtilidadesFX.mostrarAlertaConfirmacion(
+                    "Confirmar eliminación",
+                    "¿Estás seguro de que deseas modificar este producto de inventario?",
+                    "El producto se actualizará con los datos que editaste");
+
+
+            if (!confirmado) {
+                return;
+            }
             editarProductoInventario();
             ((Stage)txt_existencias.getScene().getWindow()).close();
         }

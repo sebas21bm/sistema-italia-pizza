@@ -14,34 +14,38 @@ import java.util.List;
 
 public class ProductoDAO {
 
-    public boolean registrarConReceta(ProductoVentaDTO producto, List<ProductoCompuestoPorDTO> receta) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    public boolean registrarConReceta(ProductoVentaDTO producto, List<ProductoCompuestoPorDTO> receta)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null){
+            if (conn == null) {
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
 
             String consulta = "CREATE TEMPORARY TABLE IF NOT EXISTS temp_receta(" +
                     "codigo VARCHAR(5) NOT NULL, " +
                     "cantidad DOUBLE NOT NULL)";
-            PreparedStatement sentenciaTabla = conn.prepareStatement(consulta);
-            sentenciaTabla.executeUpdate();
 
+            try (PreparedStatement sentenciaTabla = conn.prepareStatement(consulta)) {
+                sentenciaTabla.execute();
+            }
 
-            PreparedStatement sentenciaLimpiarTabla = conn.prepareStatement("TRUNCATE temp_receta;");
-            sentenciaLimpiarTabla.executeUpdate();
+            try (PreparedStatement sentenciaLimpiarTabla = conn.prepareStatement("TRUNCATE temp_receta")) {
+                sentenciaLimpiarTabla.execute();
+            }
 
             String sqlReceta = "{CALL registrar_receta(?, ?)}";
+
             try (PreparedStatement psReceta = conn.prepareCall(sqlReceta)) {
                 for (ProductoCompuestoPorDTO item : receta) {
-                    psReceta.setString(1, item.getInsumo().getCodigo());
+                    psReceta.setString(1, item.getCodigoInsumo());
                     psReceta.setDouble(2, item.getCantidad());
-                    if (psReceta.executeUpdate() == 0){
-                        return false;
-                    }
+                    psReceta.execute();
                 }
             }
 
             String sqlPrincipal = "{CALL registrar_producto_con_receta(?, ?, ?, ?, ?, ?)}";
+
             try (PreparedStatement ps = conn.prepareCall(sqlPrincipal)) {
                 ps.setString(1, producto.getCodigoMenu());
                 ps.setString(2, producto.getNombre());
@@ -49,21 +53,23 @@ public class ProductoDAO {
                 ps.setString(4, producto.getFoto());
                 ps.setDouble(5, producto.getPrecio());
                 ps.setInt(6, producto.getLimite());
-                if (ps.executeUpdate() == 0){
-                    return false;
-                }
+                ps.execute();
             }
+
             return true;
         }
     }
 
-    public boolean registrarSinReceta(ProductoVentaDTO producto, int existencias, LocalDate fechaCaducidad)  throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    public boolean registrarSinReceta(ProductoVentaDTO producto, int existencias, LocalDate fechaCaducidad)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null){
+            if (conn == null) {
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
 
             String sql = "{CALL registrar_producto_sin_receta(?, ?, ?, ?, ?, ?, ?, ?)}";
+
             try (PreparedStatement ps = conn.prepareCall(sql)) {
                 ps.setString(1, producto.getCodigoMenu());
                 ps.setString(2, producto.getNombre());
@@ -73,20 +79,18 @@ public class ProductoDAO {
                 ps.setInt(6, producto.getLimite());
                 ps.setInt(7, existencias);
                 ps.setDate(8, java.sql.Date.valueOf(fechaCaducidad));
-                if (ps.executeUpdate() == 0){
-                    return false;
-                }
+                ps.execute();
             }
+
             return true;
         }
     }
 
+    public boolean editarConReceta(ProductoVentaDTO producto, List<ProductoCompuestoPorDTO> receta)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
 
-
-
-    public boolean editarConReceta(ProductoVentaDTO producto, List<ProductoCompuestoPorDTO> receta) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null){
+            if (conn == null) {
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
 
@@ -94,25 +98,26 @@ public class ProductoDAO {
                     "codigo VARCHAR(5) NOT NULL, " +
                     "cantidad DOUBLE NOT NULL)";
 
-            PreparedStatement sentenciaTabla = conn.prepareStatement(consulta);
-            sentenciaTabla.executeUpdate();
+            try (PreparedStatement sentenciaTabla = conn.prepareStatement(consulta)) {
+                sentenciaTabla.execute();
+            }
 
-            PreparedStatement sentenciaLimpiarTabla = conn.prepareStatement("TRUNCATE temp_receta;");
-            sentenciaLimpiarTabla.executeUpdate();
-
+            try (PreparedStatement sentenciaLimpiarTabla = conn.prepareStatement("TRUNCATE temp_receta")) {
+                sentenciaLimpiarTabla.execute();
+            }
 
             String consultaReceta = "{CALL registrar_receta(?, ?)}";
+
             try (PreparedStatement sentenciaReceta = conn.prepareCall(consultaReceta)) {
                 for (ProductoCompuestoPorDTO item : receta) {
                     sentenciaReceta.setString(1, item.getCodigoInsumo());
                     sentenciaReceta.setDouble(2, item.getCantidad());
-                    if (sentenciaReceta.executeUpdate() == 0) {
-                        return false;
-                    }
+                    sentenciaReceta.execute();
                 }
             }
 
             String consultaEdicion = "{CALL editar_producto_venta(?, ?, ?, ?, ?, ?)}";
+
             try (PreparedStatement sentenciaEdicion = conn.prepareCall(consultaEdicion)) {
                 sentenciaEdicion.setString(1, producto.getCodigoMenu());
                 sentenciaEdicion.setString(2, producto.getNombre());
@@ -120,128 +125,161 @@ public class ProductoDAO {
                 sentenciaEdicion.setInt(4, producto.getLimite());
                 sentenciaEdicion.setString(5, producto.getDescripcion());
                 sentenciaEdicion.setString(6, producto.getFoto());
-                if (sentenciaEdicion.execute()) {
-                    return false;
-                }
+                sentenciaEdicion.execute();
             }
-           return true;
+
+            return true;
         }
     }
 
-    public boolean editarSinReceta(ProductoVentaDTO producto) throws NullPointerException, IOException, SQLException, ClassNotFoundException{
+    public boolean editarSinReceta(ProductoVentaDTO producto)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null){
+            if (conn == null) {
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
 
             String consulta = "UPDATE producto_venta " +
-                    "SET nombre = ?, precio = ?, limite = ?, descripcion = ?, foto = ?  " +
+                    "SET nombre = ?, precio = ?, limite = ?, descripcion = ?, foto = ? " +
                     "WHERE codigo_menu = ?";
-            PreparedStatement sentencia = conn.prepareStatement(consulta);
-            sentencia.setString(1, producto.getNombre());
-            sentencia.setDouble(2, producto.getPrecio());
-            sentencia.setInt(3, producto.getLimite());
-            sentencia.setString(4, producto.getDescripcion());
-            sentencia.setString(5, producto.getFoto());
-            sentencia.setString(6, producto.getCodigoMenu());
-            if(sentencia.executeUpdate() != 0){
-                return true;
+
+            try (PreparedStatement sentencia = conn.prepareStatement(consulta)) {
+                sentencia.setString(1, producto.getNombre());
+                sentencia.setDouble(2, producto.getPrecio());
+                sentencia.setInt(3, producto.getLimite());
+                sentencia.setString(4, producto.getDescripcion());
+                sentencia.setString(5, producto.getFoto());
+                sentencia.setString(6, producto.getCodigoMenu());
+
+                return sentencia.executeUpdate() > 0;
             }
         }
-        return false;
     }
 
-    public boolean eliminar(String codigoMenu) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    public boolean eliminar(String codigoMenu)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null){
+            if (conn == null) {
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
-            String consulta = "CALL eliminar_producto_venta(?);";
-            PreparedStatement sentencia = conn.prepareStatement(consulta);
-            sentencia.setString(1, codigoMenu);
-            return (sentencia.executeUpdate() != 0);
+
+            String consulta = "CALL eliminar_producto_venta(?)";
+
+            try (PreparedStatement sentencia = conn.prepareStatement(consulta)) {
+                sentencia.setString(1, codigoMenu);
+                sentencia.execute();
+            }
+
+            return true;
         }
     }
 
+    public List<ProductoVentaDTO> mostrarTodos()
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
 
-
-    public List<ProductoVentaDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<ProductoVentaDTO> lista = new ArrayList<>();
+
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null){
+            if (conn == null) {
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
 
             String consulta = "SELECT codigo_menu, nombre, estatus, precio, limite, descripcion, foto " +
                     "FROM producto_venta WHERE estatus = 1";
-            PreparedStatement sentencia = conn.prepareStatement(consulta);
-            ResultSet resultado = sentencia.executeQuery();
-            while (resultado.next()){
-                ProductoVentaDTO productoVenta = new ProductoVentaDTO();
-                productoVenta.setCodigoMenu(resultado.getString("codigo_menu"));
-                productoVenta.setNombre(resultado.getString("nombre"));
-                productoVenta.setEstatus(resultado.getInt("estatus"));
-                productoVenta.setPrecio(resultado.getDouble("precio"));
-                productoVenta.setLimite(resultado.getInt("limite"));
-                productoVenta.setDescripcion(resultado.getString("descripcion"));
-                productoVenta.setFoto(resultado.getString("foto"));
-                lista.add(productoVenta);
+
+            try (PreparedStatement sentencia = conn.prepareStatement(consulta);
+                 ResultSet resultado = sentencia.executeQuery()) {
+
+                while (resultado.next()) {
+                    ProductoVentaDTO productoVenta = new ProductoVentaDTO();
+
+                    productoVenta.setCodigoMenu(resultado.getString("codigo_menu"));
+                    productoVenta.setNombre(resultado.getString("nombre"));
+                    productoVenta.setEstatus(resultado.getInt("estatus"));
+                    productoVenta.setPrecio(resultado.getDouble("precio"));
+                    productoVenta.setLimite(resultado.getInt("limite"));
+                    productoVenta.setDescripcion(resultado.getString("descripcion"));
+                    productoVenta.setFoto(resultado.getString("foto"));
+
+                    lista.add(productoVenta);
+                }
             }
         }
+
         return lista;
     }
 
+    public ProductoVentaDTO buscar(String codigoMenu)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
 
-    public ProductoVentaDTO buscar(String codigoMenu) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
-        ProductoVentaDTO producto = new ProductoVentaDTO();
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null){
+            if (conn == null) {
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
 
             String consulta = "SELECT codigo_menu, nombre, estatus, precio, limite, descripcion, foto " +
                     "FROM producto_venta WHERE codigo_menu = ? AND estatus = 1";
-            PreparedStatement sentencia = conn.prepareStatement(consulta);
-            sentencia.setString(1, codigoMenu);
-            ResultSet resultado = sentencia.executeQuery();
-            if (resultado.next()){
-                producto.setCodigoMenu(resultado.getString("codigo_menu"));
-                producto.setNombre(resultado.getString("nombre"));
-                producto.setEstatus(resultado.getInt("estatus"));
-                producto.setPrecio(resultado.getDouble("precio"));
-                producto.setLimite(resultado.getInt("limite"));
-                producto.setDescripcion(resultado.getString("descripcion"));
-                producto.setFoto(resultado.getString("foto"));
-                return producto;
+
+            try (PreparedStatement sentencia = conn.prepareStatement(consulta)) {
+                sentencia.setString(1, codigoMenu);
+
+                try (ResultSet resultado = sentencia.executeQuery()) {
+                    if (resultado.next()) {
+                        ProductoVentaDTO producto = new ProductoVentaDTO();
+
+                        producto.setCodigoMenu(resultado.getString("codigo_menu"));
+                        producto.setNombre(resultado.getString("nombre"));
+                        producto.setEstatus(resultado.getInt("estatus"));
+                        producto.setPrecio(resultado.getDouble("precio"));
+                        producto.setLimite(resultado.getInt("limite"));
+                        producto.setDescripcion(resultado.getString("descripcion"));
+                        producto.setFoto(resultado.getString("foto"));
+
+                        return producto;
+                    }
+                }
             }
         }
+
         return null;
     }
 
-    public List<ProductoVentaDTO> buscarPorNombre(String nombre) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    public List<ProductoVentaDTO> buscarPorNombre(String nombre)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+
         List<ProductoVentaDTO> lista = new ArrayList<>();
+
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null){
+            if (conn == null) {
                 throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
 
             String consulta = "SELECT codigo_menu, nombre, estatus, precio, limite, descripcion, foto " +
                     "FROM producto_venta WHERE nombre LIKE ? AND estatus = 1";
-            PreparedStatement sentencia = conn.prepareStatement(consulta);
-            sentencia.setString(1, "%" + nombre + "%");
-            ResultSet resultado = sentencia.executeQuery();
-            while (resultado.next()){
-                ProductoVentaDTO productoVenta = new ProductoVentaDTO();
-                productoVenta.setCodigoMenu(resultado.getString("codigo_menu"));
-                productoVenta.setNombre(resultado.getString("nombre"));
-                productoVenta.setEstatus(resultado.getInt("estatus"));
-                productoVenta.setPrecio(resultado.getDouble("precio"));
-                productoVenta.setLimite(resultado.getInt("limite"));
-                productoVenta.setDescripcion(resultado.getString("descripcion"));
-                productoVenta.setFoto(resultado.getString("foto"));
-                lista.add(productoVenta);
+
+            try (PreparedStatement sentencia = conn.prepareStatement(consulta)) {
+                sentencia.setString(1, "%" + nombre + "%");
+
+                try (ResultSet resultado = sentencia.executeQuery()) {
+                    while (resultado.next()) {
+                        ProductoVentaDTO productoVenta = new ProductoVentaDTO();
+
+                        productoVenta.setCodigoMenu(resultado.getString("codigo_menu"));
+                        productoVenta.setNombre(resultado.getString("nombre"));
+                        productoVenta.setEstatus(resultado.getInt("estatus"));
+                        productoVenta.setPrecio(resultado.getDouble("precio"));
+                        productoVenta.setLimite(resultado.getInt("limite"));
+                        productoVenta.setDescripcion(resultado.getString("descripcion"));
+                        productoVenta.setFoto(resultado.getString("foto"));
+
+                        lista.add(productoVenta);
+                    }
+                }
             }
         }
+
         return lista;
     }
 }

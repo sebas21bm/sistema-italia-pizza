@@ -99,9 +99,10 @@ public class ProductoOperacionesController implements Initializable {
 
     String rutaFotoActual;
 
-    ProductoInventarioDAO productoInventarioDAO = new ProductoInventarioDAO();
-    ProductoCompuestoPorDAO productoCompuestoPorDAO = new ProductoCompuestoPorDAO();
-    ProductoDAO productoDAO = new ProductoDAO();
+    private ProductoInventarioDAO productoInventarioDAO = new ProductoInventarioDAO();
+    private ProductoCompuestoPorDAO productoCompuestoPorDAO = new ProductoCompuestoPorDAO();
+    private ProductoDAO productoDAO = new ProductoDAO();
+    private boolean tieneReceta;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -186,10 +187,12 @@ public class ProductoOperacionesController implements Initializable {
                 pnl_receta.setVisible(true);
                 pnl_sinReceta.setVisible(false);
                 listaInsumosReceta.setAll(recetaCompleta);
+                tieneReceta = true;
             } else {
                 pnl_receta.setVisible(false);
                 pnl_sinReceta.setVisible(false);
                 listaInsumosReceta.clear();
+                tieneReceta = false;
             }
         } catch (SQLException e) {
             UtilidadesFX.mostrarAlertaSimple("Error al obtener receta",
@@ -245,7 +248,7 @@ public class ProductoOperacionesController implements Initializable {
                     && itemExistente.getCodigoInsumo().equals(insumoSeleccionado.getCodigo())) {
                 UtilidadesFX.mostrarAlertaSimple(
                         "Insumo repetido",
-                        "Este insumo ya está integrado en la receta actual, para cambiar la cantidad elimínalo de la receta y vuelve a agregarlo",
+                        "Este insumo ya está integrado en la receta actual",
                         Alert.AlertType.WARNING
                 );
                 return;
@@ -253,10 +256,10 @@ public class ProductoOperacionesController implements Initializable {
         }
 
         ProductoCompuestoPorDTO ingredienteReceta = new ProductoCompuestoPorDTO();
-        ingredienteReceta.setInsumo(insumoSeleccionado);
         ingredienteReceta.setCodigoInsumo(insumoSeleccionado.getCodigo());
         ingredienteReceta.setNombreProductoInventario(insumoSeleccionado.getNombre());
         ingredienteReceta.setCantidad(cantidad);
+
 
         listaInsumosReceta.add(ingredienteReceta);
 
@@ -279,21 +282,23 @@ public class ProductoOperacionesController implements Initializable {
 
     private List<ProductoCompuestoPorDTO> recuperarDatosReceta(){
         return List.copyOf(tbl_insumos.getItems());
-
     }
 
 
     public boolean editarProductoConReceta() {
+
         try {
             if (productoDAO.editarConReceta(recuperarDatosProducto(), recuperarDatosReceta())) {
                 UtilidadesFX.mostrarAlertaSimple("Edición exitosa",
                         "Se ha editado el producto correctamente",
                         Alert.AlertType.INFORMATION);
                 return true;
+            }else{
+                UtilidadesFX.mostrarAlertaSimple("Falló la edición",
+                        "La edición del producto no pudo realizarse, intente de nuevo",
+                        Alert.AlertType.WARNING);
+                return false;
             }
-            UtilidadesFX.mostrarAlertaSimple("Falló la edición",
-                    "La edición del producto no pudo realizarse, intente de nuevo",
-                    Alert.AlertType.WARNING);
         } catch (SQLException e) {
             UtilidadesFX.mostrarAlertaSimple("Error al editar",
                     e.getMessage(),
@@ -313,11 +318,12 @@ public class ProductoOperacionesController implements Initializable {
                         "Se ha editado el producto correctamente",
                         Alert.AlertType.INFORMATION);
                 return true;
+            }else{
+                UtilidadesFX.mostrarAlertaSimple("Falló la edición",
+                        "La edición del producto no pudo realizarse, intente de nuevo",
+                        Alert.AlertType.WARNING);
+                return false;
             }
-
-            UtilidadesFX.mostrarAlertaSimple("Falló la edición",
-                    "La edición del producto no pudo realizarse, intente de nuevo",
-                    Alert.AlertType.WARNING);
         } catch (SQLException e) {
             UtilidadesFX.mostrarAlertaSimple("Error al editar",
                     e.getMessage(),
@@ -342,7 +348,6 @@ public class ProductoOperacionesController implements Initializable {
         }
 
         boolean guardado = false;
-
         if (registro) {
             try {
                 if (rb_requiereRecetaSi.isSelected()) {
@@ -356,7 +361,17 @@ public class ProductoOperacionesController implements Initializable {
                         Alert.AlertType.WARNING);
             }
         } else {
-            if (pnl_receta.isVisible()) {
+            boolean confirmado = UtilidadesFX.mostrarAlertaConfirmacion(
+                    "Confirmar eliminación",
+                    "¿Estás seguro de que deseas modificar este producto?",
+                    "El producto se actualizará con los datos que editaste");
+
+
+            if (!confirmado) {
+                return;
+            }
+
+            if (tieneReceta) {
                 guardado = editarProductoConReceta();
             } else {
                 guardado = editarProductoSinReceta();
@@ -393,7 +408,7 @@ public class ProductoOperacionesController implements Initializable {
         }
 
         if (rb_requiereRecetaSi.isSelected()) {
-            if (listaInsumosReceta.isEmpty()) {
+            if (listaInsumosReceta.isEmpty() && tieneReceta) {
                 UtilidadesFX.mostrarAlertaSimple("Receta vacía", "Debe agregar al menos un insumo a la receta.", Alert.AlertType.WARNING);
                 return false;
             }
@@ -430,11 +445,12 @@ public class ProductoOperacionesController implements Initializable {
                         "Se ha registrado el producto correctamente",
                         Alert.AlertType.INFORMATION);
                 return true;
+            }else {
+                UtilidadesFX.mostrarAlertaSimple("Falló registro",
+                        "El producto no pudo registrarse, intente de nuevo.",
+                        Alert.AlertType.WARNING);
+                return false;
             }
-
-            UtilidadesFX.mostrarAlertaSimple("Falló registro",
-                    "El producto no pudo registrarse, intente de nuevo.",
-                    Alert.AlertType.WARNING);
         } catch (SQLException e) {
             UtilidadesFX.mostrarAlertaSimple("Error al registrar producto",
                     e.getMessage(),
@@ -444,7 +460,6 @@ public class ProductoOperacionesController implements Initializable {
                     MSJ_ERROR_CARGA_DATOS,
                     Alert.AlertType.ERROR);
         }
-
         return false;
     }
 

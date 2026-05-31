@@ -15,8 +15,6 @@ public class ProductoCompuestoPorDTO {
     private String nombreProductoInventario;
     private double cantidad;
 
-    private ProductoInventarioDTO insumo;
-    private ProductoVentaDTO productoVenta;
 
     public ProductoCompuestoPorDTO() {}
 
@@ -36,14 +34,6 @@ public class ProductoCompuestoPorDTO {
         this.codigoMenu = codigoMenu;
     }
 
-    public double getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(double cantidad) {
-        this.cantidad = cantidad;
-    }
-
     public String getNombreProductoInventario() {
         return nombreProductoInventario;
     }
@@ -51,27 +41,13 @@ public class ProductoCompuestoPorDTO {
     public void setNombreProductoInventario(String nombreProductoInventario) {
         this.nombreProductoInventario = nombreProductoInventario;
     }
-    
-    public ProductoInventarioDTO getInsumo() {
-        return insumo;
+
+    public double getCantidad() {
+        return cantidad;
     }
 
-    public void setInsumo(ProductoInventarioDTO insumo) {
-        this.insumo = insumo;
-        if (insumo != null) {
-            this.codigoInsumo = insumo.getCodigo();
-        }
-    }
-
-    public ProductoVentaDTO getProductoVenta() {
-        return productoVenta;
-    }
-
-    public void setProductoVenta(ProductoVentaDTO productoVenta) {
-        this.productoVenta = productoVenta;
-        if (productoVenta != null) {
-            this.codigoMenu = productoVenta.getCodigoMenu();
-        }
+    public void setCantidad(double cantidad) {
+        this.cantidad = cantidad;
     }
 
     @Override
