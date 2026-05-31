@@ -11,6 +11,7 @@ module mx.uv.sistemapizzeria {
     requires io;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.ikonli.fontawesome5;
+    requires mysql.connector.j;
 
     opens mx.uv.sistemapizzeria to javafx.fxml;
     opens mx.uv.sistemapizzeria.controladores to javafx.fxml;

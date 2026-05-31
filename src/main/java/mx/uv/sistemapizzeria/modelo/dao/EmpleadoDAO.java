@@ -14,31 +14,37 @@ import java.util.List;
 public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
 
     @Override
-    public EmpleadoDTO buscar(String identificador) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    public EmpleadoDTO buscar(String identificador)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
 
-            String sql = "SELECT e.no_empleado, e.usuario, e.nombre, e.paterno, e.materno, " +
+            String consulta = "SELECT e.no_empleado, e.usuario, e.nombre, e.paterno, e.materno, " +
                     "e.telefono, e.email, e.estatus, e.tipo_empleado, " +
                     "d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad " +
                     "FROM empleado e " +
                     "LEFT JOIN direccion d ON e.id_direccion = d.id_direccion " +
                     "WHERE e.no_empleado = ?";
 
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, identificador);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) return mapearEmpleado(rs);
-                }
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setString(1, identificador);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapearEmpleado(rs);
             }
         }
         return null;
     }
 
     @Override
-    public boolean editar(EmpleadoDTO empleado) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    public boolean editar(EmpleadoDTO empleado)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
 
             DireccionDTO d = empleado.getDireccion();
             String sql = "{CALL editar_empleado(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
@@ -60,22 +66,24 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
         }
     }
 
-    // ── eliminar(identificador: String): boolean ───────────────────────────
     @Override
-    public boolean eliminar(String identificador) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    public boolean eliminar(String identificador)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            String sql = "UPDATE empleado SET estatus = false WHERE no_empleado = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, identificador);
-                return ps.executeUpdate() > 0;
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
+
+            String consulta = "UPDATE empleado SET estatus = false WHERE no_empleado = ?";
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setString(1, identificador);
+            return ps.executeUpdate() > 0;
         }
     }
 
     @Override
-    public List<EmpleadoDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    public List<EmpleadoDTO> mostrarTodos()
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<EmpleadoDTO> empleados = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -96,9 +104,9 @@ public class EmpleadoDAO implements Operaciones<String, EmpleadoDTO> {
         return empleados;
     }
 
-    // ── registrar(empleado: Empleado): boolean ─────────────────────────────
     @Override
-    public boolean registrar(EmpleadoDTO empleado) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    public boolean registrar(EmpleadoDTO empleado)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 

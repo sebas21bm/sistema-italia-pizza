@@ -14,29 +14,52 @@ import mx.uv.sistemapizzeria.modelo.dto.TipoEmpleado;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 import mx.uv.sistemapizzeria.utilidades.Validador;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
+
 public class UsuarioEmpleadoOperacionesController implements Initializable {
 
-    @FXML private TextField txt_noEmpleado;
-    @FXML private TextField txt_nombres;
-    @FXML private TextField txt_apellidoPaterno;
-    @FXML private TextField txt_apellidoMaterno;
-    @FXML private TextField txt_telefono;
-    @FXML private TextField txt_correoElectronico;
-    @FXML private TextField txt_calle;
-    @FXML private TextField txt_numero;
-    @FXML private TextField txt_codigoPostal;
-    @FXML private TextField txt_ciudad;
-    @FXML private PasswordField psw_contrasena;
-    @FXML private TextField     txt_contrasenaVisible;
-    @FXML private CheckBox chkBtn_mostrar;
-    @FXML private ComboBox<TipoEmpleado> cmb_tipoEmpleado;
+    @FXML
+    private
+    Label lb_contrasenia;
+    @FXML
+    private Label lb_formulario;
+    @FXML
+    private TextField txt_noEmpleado;
+    @FXML
+    private TextField txt_nombres;
+    @FXML
+    private TextField txt_apellidoPaterno;
+    @FXML
+    private TextField txt_apellidoMaterno;
+    @FXML
+    private TextField txt_telefono;
+    @FXML
+    private TextField txt_correoElectronico;
+    @FXML
+    private TextField txt_calle;
+    @FXML
+    private TextField txt_numero;
+    @FXML
+    private TextField txt_codigoPostal;
+    @FXML
+    private TextField txt_ciudad;
+    @FXML
+    private PasswordField psw_contrasena;
+    @FXML
+    private TextField     txt_contrasenaVisible;
+    @FXML
+    private CheckBox chkBtn_mostrar;
+    @FXML
+    private ComboBox<TipoEmpleado> cmb_tipoEmpleado;
 
     private final EmpleadoDAO empleadoDAO = new EmpleadoDAO();
 
@@ -47,12 +70,48 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         cmb_tipoEmpleado.setItems(FXCollections.observableArrayList(TipoEmpleado.values()));
 
-        this.registro = Boolean.TRUE.equals(SistemaPizzeria.getMetadatos("registrar-empleado"));
+        this.registro = (Boolean) SistemaPizzeria.getMetadatos("registrar-empleado");
 
-        // Sincronizar promptText del campo visible con el del PasswordField
         txt_contrasenaVisible.promptTextProperty().bind(psw_contrasena.promptTextProperty());
 
-        // Mostrar/ocultar contraseña con el CheckBox
+        configurarCheckBoxMostrarContrasenia();
+
+        txt_telefono.setTextFormatter(new TextFormatter<>(change -> {
+            if (change.getControlNewText().matches("\\d{0,10}")) {
+                return change;
+            }
+            return null;
+        }));
+
+        txt_codigoPostal.setTextFormatter(new TextFormatter<>(change -> {
+            if (change.getControlNewText().matches("\\d{0,5}")) {
+                return change;
+            }
+            return null;
+        }));
+
+        txt_noEmpleado.setTextFormatter(new TextFormatter<>(change -> {
+            change.setText(change.getText().toUpperCase()); // Auto mayúscula
+            if (change.getControlNewText().matches("[E]?[0-9]{0,4}")) {
+                return change;
+            }
+            return null;
+        }));
+
+        if (registro) {
+            lb_formulario.setText("Registrar empleado");
+            psw_contrasena.setPromptText("Contraseña");
+        } else {
+            lb_formulario.setText("Editar empleado");
+            txt_noEmpleado.setDisable(true);
+            psw_contrasena.setVisible(false);
+            txt_contrasenaVisible.setVisible(false);
+            chkBtn_mostrar.setVisible(false);
+            lb_contrasenia.setVisible(false);
+        }
+    }
+
+    private void configurarCheckBoxMostrarContrasenia() {
         chkBtn_mostrar.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
             if (isSelected) {
                 txt_contrasenaVisible.setText(psw_contrasena.getText());
@@ -72,32 +131,6 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
                 psw_contrasena.end();
             }
         });
-
-        txt_telefono.setTextFormatter(new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("\\d{0,10}")) return change;
-            return null;
-        }));
-
-        txt_codigoPostal.setTextFormatter(new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("\\d{0,5}")) return change;
-            return null;
-        }));
-
-        txt_noEmpleado.setTextFormatter(new TextFormatter<>(change -> {
-            change.setText(change.getText().toUpperCase()); // Auto mayúscula
-            if (change.getControlNewText().matches("[E]?[0-9]{0,4}")) return change;
-            return null;
-        }));
-
-        if (registro) {
-            psw_contrasena.setPromptText("Contraseña");
-        } else {
-            // Elementos ocultos durante la edición
-            txt_noEmpleado.setDisable(true);
-            psw_contrasena.setDisable(true);
-            txt_contrasenaVisible.setDisable(true);
-            chkBtn_mostrar.setDisable(true);
-        }
     }
 
     public void mostrarEmpleado(EmpleadoDTO empleado) {
@@ -121,68 +154,22 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
 
     @FXML
     private void clicGuardar(ActionEvent event) {
-        // Construir DTO con los datos del formulario
-        EmpleadoDTO empleado = (!registro && empleadoEdicion != null) ? empleadoEdicion : new EmpleadoDTO();
-
-        empleado.setNombre(txt_nombres.getText().trim());
-        empleado.setPaterno(txt_apellidoPaterno.getText().trim());
-        empleado.setMaterno(txt_apellidoMaterno.getText().trim());
-        empleado.setTelefono(txt_telefono.getText().trim());
-        empleado.setEmail(txt_correoElectronico.getText().trim());
-        empleado.setTipoEmpleado(cmb_tipoEmpleado.getValue());
-        empleado.setEstatus(true);
-
-        // Dirección
-        DireccionDTO dir = (!registro && empleadoEdicion != null && empleadoEdicion.getDireccion() != null)
-                ? empleadoEdicion.getDireccion() : new DireccionDTO();
-        dir.setCalle(txt_calle.getText().trim());
-        dir.setNumero(txt_numero.getText().trim());
-        dir.setCodigoPostal(txt_codigoPostal.getText().trim());
-        dir.setCiudad(txt_ciudad.getText().trim());
-        empleado.setDireccion(dir);
-
-        // Contraseña (solo en registro o si se escribió algo en edición)
-        String pass = psw_contrasena.isVisible()
-                ? psw_contrasena.getText()
-                : txt_contrasenaVisible.getText();
         if (registro) {
-            // Registro: la contraseña es obligatoria
-            if (pass == null || pass.isBlank()) {
+            if (psw_contrasena.getText().isEmpty() || txt_contrasenaVisible.getText().isEmpty()) {
                 UtilidadesFX.mostrarAlertaSimple("Campo requerido",
                         "La contraseña es obligatoria para registrar un empleado.",
                         Alert.AlertType.WARNING);
                 return;
             }
-            empleado.setContrasenia(hashearContrasenia(pass));
-
-            String noEmpleado = txt_noEmpleado.getText().trim().toUpperCase();
-            if (noEmpleado.isEmpty()) {
+            if (txt_noEmpleado.getText().trim().isEmpty()) {
                 UtilidadesFX.mostrarAlertaSimple("Campo requerido",
                         "El número de empleado (ej. E0006) es obligatorio.",
                         Alert.AlertType.WARNING);
                 return;
             }
-            empleado.setNoEmpleado(noEmpleado);
-
-            String usuario = (empleado.getNombre().charAt(0) + empleado.getPaterno())
-                    .replaceAll("\\s+", "");
-            empleado.setUsuario(usuario);
-        } else {
-            if (empleadoEdicion != null && empleadoEdicion.getUsuario() != null) {
-                empleado.setUsuario(empleadoEdicion.getUsuario());
-            }
         }
 
-        // Validar
-        List<String> errores = Validador.validarEmpleado(empleado);
-        errores.addAll(Validador.validarDireccion(dir));
-
-        if (!errores.isEmpty()) {
-            UtilidadesFX.mostrarAlertaSimple("Datos inválidos",
-                    Validador.formatearErrores(errores),
-                    Alert.AlertType.WARNING);
-            return;
-        }
+        EmpleadoDTO empleado = crearEmpleadoRegistrar();
 
         String accionConfirmacion = registro ? "registrar" : "actualizar";
         boolean confirmar = UtilidadesFX.mostrarAlertaConfirmacion(
@@ -210,31 +197,69 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
                         Alert.AlertType.INFORMATION);
                 cerrarVentana();
             }
-        }  catch (Exception e) {
-            // Este horita lo modificamos, queda pendiente por el push
-        e.printStackTrace();
-
-        String mensajeOriginal = e.getMessage();
-
-        UtilidadesFX.mostrarAlertaSimple("MySQL",
-                "MySQL rechazó la edición con este mensaje exacto:\n\n" + mensajeOriginal,
-                Alert.AlertType.ERROR);
+        }catch(SQLException e){
+            UtilidadesFX.mostrarAlertaSimple("Error al guardar",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        }catch(NullPointerException | ClassNotFoundException | IOException n){
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar los datos del registro",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
+        }
     }
+
+    private EmpleadoDTO crearEmpleadoRegistrar() {
+        EmpleadoDTO empleado = (!registro && empleadoEdicion != null) ? empleadoEdicion : new EmpleadoDTO();
+
+        empleado.setNombre(txt_nombres.getText().trim());
+        empleado.setPaterno(txt_apellidoPaterno.getText().trim());
+        empleado.setMaterno(txt_apellidoMaterno.getText().trim());
+        empleado.setTelefono(txt_telefono.getText().trim());
+        empleado.setEmail(txt_correoElectronico.getText().trim());
+        empleado.setTipoEmpleado(cmb_tipoEmpleado.getValue());
+        empleado.setEstatus(true);
+
+        DireccionDTO dir = (!registro && empleadoEdicion != null && empleadoEdicion.getDireccion() != null)
+                ? empleadoEdicion.getDireccion() : new DireccionDTO();
+        dir.setCalle(txt_calle.getText().trim());
+        dir.setNumero(txt_numero.getText().trim());
+        dir.setCodigoPostal(txt_codigoPostal.getText().trim());
+        dir.setCiudad(txt_ciudad.getText().trim());
+        empleado.setDireccion(dir);
+
+        if (registro) {
+            String pass = psw_contrasena.isVisible()
+                    ? psw_contrasena.getText()
+                    : txt_contrasenaVisible.getText();
+            empleado.setContrasenia(hashearContrasenia(pass));
+            String noEmpleado = txt_noEmpleado.getText().trim().toUpperCase();
+            empleado.setNoEmpleado(noEmpleado);
+
+            String usuario = (empleado.getNombre().charAt(0) + empleado.getPaterno())
+                    .replaceAll("\\s+", "");
+            empleado.setUsuario(usuario);
+        } else {
+            if (empleadoEdicion != null && empleadoEdicion.getUsuario() != null) {
+                empleado.setUsuario(empleadoEdicion.getUsuario());
+            }
+        }
+
+        List<String> errores = Validador.validarEmpleado(empleado);
+        errores.addAll(Validador.validarDireccion(dir));
+
+        if (!errores.isEmpty()) {
+            UtilidadesFX.mostrarAlertaSimple("Datos inválidos",
+                    Validador.formatearErrores(errores),
+                    Alert.AlertType.WARNING);
+            return null;
+        }
+
+        return empleado;
     }
 
     @FXML
     private void clicCancelar(ActionEvent event) {
         cerrarVentana();
-    }
-
-    @FXML
-    private void clicCerrar(ActionEvent event) {
-        cerrarVentana();
-    }
-
-    @FXML
-    private void clicMostrarContrasena(ActionEvent event) {
-        // El CheckBox chkBtn_mostrar ya tiene su listener en initialize()
     }
 
     private void cerrarVentana() {

@@ -4,13 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DTO que mapea la tabla: reporte_inventario
- * Campos BD: id_inventario, fecha
- *
- * Representa el encabezado de un reporte de validación de inventario.
- * Se incluye la lista de DetalleReporteDTO para tener el reporte completo.
- */
 public class ReporteInventarioDTO {
 
     private int idInventario;

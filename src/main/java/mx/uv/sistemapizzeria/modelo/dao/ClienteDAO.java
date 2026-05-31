@@ -15,7 +15,6 @@ import java.util.Map;
 
 public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
 
-    // Columnas base que se repiten en todas las queries
     private static final String COLS_CLIENTE =
             "c.no_cliente, c.nombre, c.paterno, c.materno, c.telefono, c.email, c.estatus, " +
                     "d.id_direccion, d.calle, d.numero, d.codigo_postal, d.ciudad ";
@@ -25,32 +24,36 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                     "LEFT JOIN cliente_direccion cd ON c.no_cliente = cd.no_cliente " +
                     "LEFT JOIN direccion d ON cd.id_direccion = d.id_direccion ";
 
-    // ── buscar(identificador: int): ClienteDTO ─────────────────────────────
     @Override
     public ClienteDTO buscar(Integer noCliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            String sql = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION + "WHERE c.no_cliente = ?";
-
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, noCliente);
-                try (ResultSet rs = ps.executeQuery()) {
-                    List<ClienteDTO> resultado = mapearClientes(rs);
-                    return resultado.isEmpty() ? null : resultado.get(0);
-                }
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
             }
+
+            String consulta = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION + "WHERE c.no_cliente = ?";
+
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setInt(1, noCliente);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                List<ClienteDTO> resultado = mapearClientes(rs);
+                return resultado.get(0);
+            }
+
+            return null;
         }
     }
 
-    // ── editar(cliente: ClienteDTO): boolean ───────────────────────────────
     @Override
-    public boolean editar(ClienteDTO cliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
+    public boolean editar(ClienteDTO cliente)
+            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
 
-            // Crear tabla temporal para esta sesión (es por sesión, no persiste entre conexiones)
-            try (java.sql.Statement st = conn.createStatement()) {
+            try (Statement st = conn.createStatement()) {
                 st.execute("CREATE TEMPORARY TABLE IF NOT EXISTS temp_direcciones (" +
                         "calle VARCHAR(45) NOT NULL, " +
                         "numero VARCHAR(4) NOT NULL, " +
@@ -59,7 +62,6 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                 st.execute("DELETE FROM temp_direcciones");
             }
 
-            // 1. Llenar tabla temporal con las direcciones actualizadas
             String sqlDir = "{CALL registrar_direcciones_temporales(?, ?, ?, ?)}";
             try (CallableStatement cs = conn.prepareCall(sqlDir)) {
                 for (DireccionDTO d : cliente.getDirecciones()) {
@@ -71,7 +73,6 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                 }
             }
 
-            // 2. Llamar al stored procedure principal
             String sql = "{CALL editar_cliente(?, ?, ?, ?, ?, ?)}";
             try (CallableStatement cs = conn.prepareCall(sql)) {
                 cs.setInt(1, cliente.getNoCliente());
@@ -86,11 +87,12 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
         }
     }
 
-    // ── eliminar(identificador: int): boolean ──────────────────────────────
     @Override
     public boolean eliminar(Integer noCliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
 
             String sql = "{CALL eliminar_cliente(?)}";
             try (CallableStatement cs = conn.prepareCall(sql)) {
@@ -101,29 +103,30 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
         }
     }
 
-    // ── mostrarTodos(): List<ClienteDTO> ───────────────────────────────────
     @Override
     public List<ClienteDTO> mostrarTodos() throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
 
-            String sql = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION +
+            String consulta = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION +
                     "ORDER BY c.paterno, c.nombre, d.id_direccion";
 
-            try (PreparedStatement ps = conn.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()) {
-                return mapearClientes(rs);
-            }
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ResultSet rs = ps.executeQuery();
+            return mapearClientes(rs);
+
         }
     }
 
-    // ── registrar(cliente: ClienteDTO): boolean ────────────────────────────
     @Override
     public boolean registrar(ClienteDTO cliente) throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
 
-            // Crear tabla temporal para esta sesión (es por sesión, no persiste entre conexiones)
             try (java.sql.Statement st = conn.createStatement()) {
                 st.execute("CREATE TEMPORARY TABLE IF NOT EXISTS temp_direcciones (" +
                         "calle VARCHAR(45) NOT NULL, " +
@@ -133,7 +136,6 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                 st.execute("DELETE FROM temp_direcciones");
             }
 
-            // 1. Llenar tabla temporal con las direcciones
             String sqlDir = "{CALL registrar_direcciones_temporales(?, ?, ?, ?)}";
             try (CallableStatement cs = conn.prepareCall(sqlDir)) {
                 for (DireccionDTO d : cliente.getDirecciones()) {
@@ -145,7 +147,6 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                 }
             }
 
-            // 2. Llamar al stored procedure principal
             String sql = "{CALL registrar_cliente(?, ?, ?, ?, ?)}";
             try (CallableStatement cs = conn.prepareCall(sql)) {
                 cs.setString(1, cliente.getNombre());
@@ -159,71 +160,63 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
         }
     }
 
-    // ── buscarPorNombre ────────────────────────────────────────────────────
     public List<ClienteDTO> buscarPorNombre(String nombreBusqueda)
             throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
-            String sql = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION +
+            String consulta = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION +
                     "WHERE (c.nombre LIKE ? OR c.paterno LIKE ? OR c.materno LIKE ?) " +
                     "ORDER BY c.paterno, c.nombre, d.id_direccion";
 
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                String patron = "%" + nombreBusqueda + "%";
-                ps.setString(1, patron);
-                ps.setString(2, patron);
-                ps.setString(3, patron);
-                try (ResultSet rs = ps.executeQuery()) {
-                    return mapearClientes(rs);
-                }
-            }
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            String patron = "%" + nombreBusqueda + "%";
+            ps.setString(1, patron);
+            ps.setString(2, patron);
+            ps.setString(3, patron);
+
+            ResultSet rs = ps.executeQuery();
+            return mapearClientes(rs);
         }
     }
 
-    // ── buscarPorTelefono ──────────────────────────────────────────────────
     public List<ClienteDTO> buscarPorTelefono(String telefono)
             throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
             if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
 
-            String sql = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION +
+            String consulta = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION +
                     "WHERE c.telefono LIKE ? " +
                     "ORDER BY c.paterno, c.nombre, d.id_direccion";
 
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, "%" + telefono + "%");
-                try (ResultSet rs = ps.executeQuery()) {
-                    return mapearClientes(rs);
-                }
-            }
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ps.setString(1, "%" + telefono + "%");
+            ResultSet rs = ps.executeQuery();
+            return mapearClientes(rs);
         }
     }
 
-    // ── buscarPorDireccion ─────────────────────────────────────────────────
     public List<ClienteDTO> buscarPorDireccion(String direccion)
             throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-
-            String sql = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION +
+            if (conn == null) {
+                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
+            }
+            String consulta = "SELECT " + COLS_CLIENTE + JOINS_DIRECCION +
                     "WHERE (d.calle LIKE ? OR d.numero LIKE ? OR d.codigo_postal LIKE ? OR d.ciudad LIKE ?) " +
                     "ORDER BY c.paterno, c.nombre, d.id_direccion";
 
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                String patron = "%" + direccion + "%";
-                ps.setString(1, patron);
-                ps.setString(2, patron);
-                ps.setString(3, patron);
-                ps.setString(4, patron);
-                try (ResultSet rs = ps.executeQuery()) {
-                    return mapearClientes(rs);
-                }
-            }
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            String patron = "%" + direccion + "%";
+            ps.setString(1, patron);
+            ps.setString(2, patron);
+            ps.setString(3, patron);
+            ps.setString(4, patron);
+            ResultSet rs = ps.executeQuery();
+            return mapearClientes(rs);
         }
     }
 
-    // ── Helper: mapea ResultSet → List<ClienteDTO> ─────────────────────────
     private List<ClienteDTO> mapearClientes(ResultSet rs) throws SQLException {
         Map<Integer, ClienteDTO> mapaClientes = new LinkedHashMap<>();
 
@@ -255,7 +248,6 @@ public class ClienteDAO implements Operaciones<Integer, ClienteDTO> {
                 c.getDirecciones().add(d);
             }
         }
-
         return new ArrayList<>(mapaClientes.values());
     }
 }
