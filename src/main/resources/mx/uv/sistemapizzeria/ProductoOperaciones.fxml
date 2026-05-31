@@ -41,7 +41,7 @@
          </font>
       </Label>
 
-      <TextField fx:id="txt_codigo" layoutX="30.0" layoutY="107.0" prefHeight="38.0" prefWidth="320.0" promptText="Placeholder" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 13px; -fx-prompt-text-fill: #68727d;" />
+      <TextField fx:id="txt_codigo" layoutX="30.0" layoutY="107.0" prefHeight="38.0" prefWidth="320.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 13px; -fx-prompt-text-fill: #68727d;" />
 
       <Label layoutX="30.0" layoutY="154.0" text="Nombre" textFill="#202932">
          <font>
@@ -49,7 +49,7 @@
          </font>
       </Label>
 
-      <TextField fx:id="txt_nombre" layoutX="30.0" layoutY="176.0" prefHeight="38.0" prefWidth="320.0" promptText="Placeholder" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 13px; -fx-prompt-text-fill: #68727d;" />
+      <TextField fx:id="txt_nombre" layoutX="30.0" layoutY="176.0" prefHeight="38.0" prefWidth="320.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 13px; -fx-prompt-text-fill: #68727d;" />
 
       <Label layoutX="30.0" layoutY="223.0" text="Descripción" textFill="#202932">
          <font>
@@ -57,7 +57,7 @@
          </font>
       </Label>
 
-      <TextField fx:id="txt_descripcion" layoutX="30.0" layoutY="245.0" prefHeight="38.0" prefWidth="320.0" promptText="Placeholder" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 13px; -fx-prompt-text-fill: #68727d;" />
+      <TextField fx:id="txt_descripcion" layoutX="30.0" layoutY="245.0" prefHeight="38.0" prefWidth="320.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 13px; -fx-prompt-text-fill: #68727d;" />
 
       <Label layoutX="30.0" layoutY="292.0" text="Precio" textFill="#202932">
          <font>
@@ -65,7 +65,7 @@
          </font>
       </Label>
 
-      <TextField fx:id="txt_precio" layoutX="30.0" layoutY="314.0" prefHeight="38.0" prefWidth="150.0" promptText="Placeholder" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 13px; -fx-prompt-text-fill: #68727d;" />
+      <TextField fx:id="txt_precio" layoutX="30.0" layoutY="314.0" prefHeight="38.0" prefWidth="150.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 13px; -fx-prompt-text-fill: #68727d;" />
 
       <Label layoutX="200.0" layoutY="292.0" text="Límite" textFill="#202932">
          <font>
@@ -73,9 +73,9 @@
          </font>
       </Label>
 
-      <TextField fx:id="txt_limite" layoutX="200.0" layoutY="314.0" prefHeight="38.0" prefWidth="150.0" promptText="Placeholder" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 13px; -fx-prompt-text-fill: #68727d;" />
+      <TextField fx:id="txt_limite" layoutX="200.0" layoutY="314.0" prefHeight="38.0" prefWidth="150.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 13px; -fx-prompt-text-fill: #68727d;" />
 
-      <VBox layoutX="404.0" layoutY="103.0" prefHeight="65.0" prefWidth="320.0" spacing="8.0">
+      <VBox fx:id="vb_receta" layoutX="404.0" layoutY="103.0" prefHeight="65.0" prefWidth="320.0" spacing="8.0">
          <children>
             <Label text="Requiere receta" textFill="#202932">
                <font>
@@ -123,7 +123,7 @@
          </children>
       </AnchorPane>
 
-      <AnchorPane fx:id="pnl_receta" layoutX="398.0" layoutY="157.0" prefHeight="269.0" prefWidth="340.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
+      <AnchorPane fx:id="pnl_receta" layoutX="398.0" layoutY="157.0" prefHeight="404.0" prefWidth="340.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
          <children>
             <Label layoutX="16.0" layoutY="14.0" text="Agregar productos del inventario" textFill="#202932">
                <font>
@@ -149,7 +149,7 @@
 
             <Button fx:id="btn_agregarInsumo" layoutX="16.0" layoutY="125.0" mnemonicParsing="false" onAction="#clicAgregarInsumo" prefHeight="36.0" prefWidth="294.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Agregar" />
 
-            <TableView fx:id="tbl_insumos" layoutX="16.0" layoutY="178.0" prefHeight="82.0" prefWidth="308.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
+            <TableView fx:id="tbl_insumos" layoutX="16.0" layoutY="178.0" prefHeight="216.0" prefWidth="313.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
                <columns>
                   <TableColumn fx:id="col_insumo" prefWidth="210.0" text="Insumo" />
                   <TableColumn fx:id="col_cantidad" prefWidth="95.0" text="Cantidad" />
@@ -172,7 +172,6 @@
       
             <Button fx:id="btn_subirFoto" mnemonicParsing="false" onAction="#clicSubirFoto" prefHeight="38.0" prefWidth="125.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 13px; -fx-font-weight: bold;" text="Subir Foto" />
       
-            <Button fx:id="btn_borrarFoto" mnemonicParsing="false" onAction="#clicBorrarFoto" prefHeight="25.0" prefWidth="60.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #0a2878; -fx-font-size: 13px;" text="Borrar" />
          </children>
       </VBox>
 

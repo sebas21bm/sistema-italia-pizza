@@ -61,6 +61,7 @@ public class ProductoInventarioOperacionesController implements Initializable {
             txt_operaciones.setText("Editar Producto Inventario");
             txt_codigo.setDisable(true);
             txt_nombre.setDisable(true);
+            txt_existencias.setDisable(true);
         }
     }
 

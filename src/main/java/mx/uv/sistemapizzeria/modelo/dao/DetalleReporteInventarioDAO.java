@@ -64,7 +64,9 @@ public class DetalleReporteInventarioDAO {
                 }
             }
             PreparedStatement sentenciaReporte = conn.prepareStatement("CALL registrar_reporte();");
-            sentenciaReporte.executeUpdate();
+            if (sentenciaReporte.executeUpdate() == 0) {
+                return false;
+            }
 
             return true;
         }

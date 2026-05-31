@@ -1,10 +1,7 @@
 package mx.uv.sistemapizzeria.controladores;
 
+import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -18,9 +15,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import mx.uv.sistemapizzeria.excepciones.ProductoExistente;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoCompuestoPorDAO;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoDAO;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoInventarioDAO;
@@ -32,10 +31,10 @@ import javafx.scene.control.Alert;
 import java.io.File;
 import javafx.stage.FileChooser;
 import javafx.scene.image.Image;
-import javafx.scene.control.ButtonType;
-import java.util.Optional;
+import javafx.scene.layout.VBox;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
-import mx.uv.sistemapizzeria.modelo.dto.ProductoInventarioDTO;
+
+import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 
 /**
  * FXML Controller class
@@ -69,9 +68,9 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private TableView<ProductoCompuestoPorDTO> tbl_insumos;
     @FXML
-    private TableColumn<ProductoCompuestoPorDTO, String> col_insumo;
+    private TableColumn col_insumo;
     @FXML
-    private TableColumn<ProductoCompuestoPorDTO, Double> col_cantidad;
+    private TableColumn col_cantidad;
     @FXML
     private AnchorPane pnl_foto;
     @FXML
@@ -79,88 +78,69 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private Button btn_subirFoto;
     @FXML
-    private Button btn_borrarFoto;
-    @FXML
     private Button btn_cancelar;
     @FXML
     private Button btn_guardar;
     @FXML
     private AnchorPane pnl_sinReceta;
-    
+
     // Variables agregadas por el equipo
     @FXML
     private Label txt_operacion;
     @FXML
     private TextField txt_existencias;
 
-    private ObservableList<ProductoCompuestoPorDTO> listaInsumosReceta = FXCollections.observableArrayList();
-    private File archivoFotoSeleccionado = null;
+    private final ObservableList<ProductoCompuestoPorDTO> listaInsumosReceta = FXCollections.observableArrayList();
     private Boolean registro;
     @FXML
     private DatePicker dp_caducidad;
+    @FXML
+    private VBox vb_receta;
 
+    String rutaFotoActual;
+
+    ProductoInventarioDAO productoInventarioDAO = new ProductoInventarioDAO();
+    ProductoCompuestoPorDAO productoCompuestoPorDAO = new ProductoCompuestoPorDAO();
+    ProductoDAO productoDAO = new ProductoDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.registro = (Boolean) SistemaPizzeria.getMetadatos("registrar-producto");
 
         if(registro){
-            txt_operacion.setText("Registrar Producto Inventario");
+            txt_operacion.setText("Registrar Producto");
         }else{
-            txt_operacion.setText("Editar Producto Inventario");
+            txt_operacion.setText("Editar Producto");
             txt_codigo.setDisable(true);
+            vb_receta.setVisible(false);
         }
-        
-        configurarReceta();
         configurarTablaReceta();
-        cargarInsumosDisponibles();
-    }
-
-    private void configurarReceta(){
-        tg_requiereReceta.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (tg_requiereReceta.getSelectedToggle() != null) {
-                RadioButton conReceta = (RadioButton) tg_requiereReceta.getSelectedToggle();
-                if(conReceta == rb_requiereRecetaSi){
-                    pnl_receta.setVisible(true);
-                    pnl_sinReceta.setVisible(false);
-                }else{
-                    pnl_receta.setVisible(false);
-                    pnl_sinReceta.setVisible(true);
-                }
-            }
-        });
+        cargarProductosInventarioDisponibles();
     }
 
     private void configurarTablaReceta() {
+        col_insumo.setCellValueFactory(new PropertyValueFactory<>("nombreProductoInventario"));
+        col_cantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         tbl_insumos.setItems(listaInsumosReceta);
-
-        col_insumo.setCellValueFactory(cellData -> {
-            ProductoCompuestoPorDTO fila = cellData.getValue();
-            if (fila != null && fila.getInsumo() != null) {
-                return new javafx.beans.property.SimpleStringProperty(fila.getInsumo().getNombre());
-            }
-            return new javafx.beans.property.SimpleStringProperty("");
-        });
-
-        col_cantidad.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("cantidad"));
     }
 
-    private void cargarInsumosDisponibles() {
+    private void cargarProductosInventarioDisponibles() {
         try {
-            ProductoInventarioDAO insumoDAO = new ProductoInventarioDAO();
-            List<ProductoInventarioDTO> insumos = insumoDAO.mostrarTodos();
-            ObservableList<ProductoInventarioDTO> listaObservable = FXCollections.observableArrayList(insumos);
-            cb_insumo.setItems(listaObservable);
-
-        } catch (Exception e) {
-            UtilidadesFX.mostrarAlertaSimple("Error de Conexión", "No se pudieron cargar los insumos desde la base de datos.", Alert.AlertType.ERROR);
-            e.printStackTrace();
+            List<ProductoInventarioDTO> productosInventarioCB = productoInventarioDAO.mostrarTodos();
+            ObservableList<ProductoInventarioDTO> productosInventario = FXCollections.observableArrayList(productosInventarioCB);
+            cb_insumo.setItems(productosInventario);
+        }catch(SQLException e){
+            UtilidadesFX.mostrarAlertaSimple("Error al obtener productos de inventario disponibles",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        }catch(NullPointerException | ClassNotFoundException | IOException n){
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar los datos del inventario",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
         }
     }
 
-    // Método para recibir el producto seleccionado y mostrar sus datos en la ventana de edición
-    public void editarProductoInventario(ProductoVentaDTO producto) {
-        // 1. Llenamos los datos básicos de texto
+    public void mostrarProductoVenta(ProductoVentaDTO producto){
         txt_codigo.setText(producto.getCodigoMenu());
         txt_nombre.setText(producto.getNombre());
 
@@ -170,69 +150,58 @@ public class ProductoOperacionesController implements Initializable {
 
         txt_precio.setText(String.valueOf(producto.getPrecio()));
         txt_limite.setText(String.valueOf(producto.getLimite()));
+        rutaFotoActual = producto.getFoto();
+        img_foto.setImage(cargarImagen(rutaFotoActual));
+        cargarReceta(producto);
+    }
 
-        // 2. Cargamos la fotografía física desde la carpeta local de productos
-        if (producto.getFoto() != null && !producto.getFoto().isEmpty()) {
-            try {
-                String rutaProyecto = System.getProperty("user.dir");
-                java.nio.file.Path rutaLocal = java.nio.file.Paths.get(rutaProyecto, "source", "imagenes", "productos", producto.getFoto());
-
-                if (java.nio.file.Files.exists(rutaLocal)) {
-                    javafx.scene.image.Image img = new javafx.scene.image.Image(rutaLocal.toUri().toString());
-                    img_foto.setImage(img);
-
-                    // Guardamos el archivo por si el usuario guarda sin cambiar la imagen
-                    archivoFotoSeleccionado = rutaLocal.toFile();
-                }
-            } catch (Exception e) {
-                System.err.println("No se pudo cargar la imagen en la edición: " + e.getMessage());
-            }
+    private Image cargarImagen(String rutaFoto) {
+        if (rutaFoto == null || rutaFoto.isBlank()) {
+            return null;
         }
 
-        // 3. Lógica para detectar automáticamente si es "Con Receta" o "Sin Receta"
         try {
-            ProductoCompuestoPorDAO daoReceta = new ProductoCompuestoPorDAO();
-            List<ProductoCompuestoPorDTO> recetaCompleta = daoReceta.obtenerReceta(producto.getCodigoMenu());
+            if (rutaFoto.startsWith("/") || rutaFoto.startsWith("imagenes/")) {
+                String ruta = rutaFoto.startsWith("/") ? rutaFoto : "/" + rutaFoto;
+                return new Image(getClass().getResourceAsStream(ruta));
+            }
 
-            // REGLA: Si la receta tiene más de un ingrediente o su cantidad no es 1.0, es un producto "Con Receta"
+            File archivo = new File(rutaFoto);
+            if (archivo.exists()) {
+                return new Image(archivo.toURI().toString());
+            }
+
+        } catch (NullPointerException e) {
+            return null;
+        }
+
+        return null;
+    }
+
+    private void cargarReceta(ProductoVentaDTO producto){
+        try {
+            List<ProductoCompuestoPorDTO> recetaCompleta = productoCompuestoPorDAO.obtenerReceta(producto.getCodigoMenu());
+
             if (recetaCompleta.size() > 1 || (recetaCompleta.size() == 1 && recetaCompleta.get(0).getCantidad() != 1.0)) {
-
-                rb_requiereRecetaSi.setSelected(true);
                 pnl_receta.setVisible(true);
                 pnl_sinReceta.setVisible(false);
                 listaInsumosReceta.setAll(recetaCompleta);
-
-            } else if (recetaCompleta.size() == 1) {
-
-                // REGLA: Si tiene un solo insumo en cantidad 1.0, es un producto "Sin Receta" (venta libre)
-                rb_requiereRecetaNo.setSelected(true);
+            } else {
                 pnl_receta.setVisible(false);
-                pnl_sinReceta.setVisible(true);
-
-                ProductoCompuestoPorDTO enlaceDirecto = recetaCompleta.get(0);
-
-                ProductoInventarioDAO daoInventario = new ProductoInventarioDAO();
-                ProductoInventarioDTO insumoInventario = daoInventario.buscar(enlaceDirecto.getCodigoInsumo());
-
-                if (insumoInventario != null) {
-                    txt_existencias.setText(String.valueOf(insumoInventario.getExistencias()));
-
-                    if (insumoInventario.getFechaCaducidad() != null) {
-                        dp_caducidad.setValue(insumoInventario.getFechaCaducidad());
-                    }
-                }
+                pnl_sinReceta.setVisible(false);
+                listaInsumosReceta.clear();
             }
-
-            // --- NUEVA REGLA DE SEGURIDAD VISUAL ---
-            // Deshabilitamos ambos botones para evitar que el usuario cambie la naturaleza del producto
-            rb_requiereRecetaSi.setDisable(true);
-            rb_requiereRecetaNo.setDisable(true);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            UtilidadesFX.mostrarAlertaSimple("Error de carga", "No se pudieron recuperar los componentes del producto para su edición.", javafx.scene.control.Alert.AlertType.ERROR);
+        } catch (SQLException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al obtener receta",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        } catch (NullPointerException | ClassNotFoundException | IOException n) {
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar los datos de la receta",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
         }
     }
+
 
     @FXML
     private void clicAgregarInsumo(ActionEvent event) {
@@ -240,32 +209,43 @@ public class ProductoOperacionesController implements Initializable {
         String cantidadTexto = txt_cantidadInsumo.getText().trim();
 
         if (insumoSeleccionado == null) {
-            UtilidadesFX.mostrarAlertaSimple("Dato requerido", "Por favor, seleccione un insumo de la lista.", Alert.AlertType.WARNING);
+            UtilidadesFX.mostrarAlertaSimple("Dato requerido",
+                    "Por favor, seleccione un insumo de la lista.",
+                    Alert.AlertType.WARNING);
             return;
         }
 
         if (cantidadTexto.isEmpty()) {
-            UtilidadesFX.mostrarAlertaSimple("Dato requerido", "Por favor, introduzca la cantidad del insumo.", Alert.AlertType.WARNING);
+            UtilidadesFX.mostrarAlertaSimple("Dato requerido",
+                    "Por favor, introduzca la cantidad del insumo.",
+                    Alert.AlertType.WARNING);
             return;
         }
 
         double cantidad;
+
         try {
             cantidad = Double.parseDouble(cantidadTexto);
+
             if (cantidad <= 0) {
-                UtilidadesFX.mostrarAlertaSimple("Formato inválido", "La cantidad del insumo debe ser estrictamente mayor a cero.", Alert.AlertType.WARNING);
+                UtilidadesFX.mostrarAlertaSimple("Formato inválido",
+                        "La cantidad del insumo debe ser estrictamente mayor a cero.",
+                        Alert.AlertType.WARNING);
                 return;
             }
         } catch (NumberFormatException e) {
-            UtilidadesFX.mostrarAlertaSimple("Formato inválido", "Por favor, ingrese un valor numérico válido para la cantidad.", Alert.AlertType.WARNING);
+            UtilidadesFX.mostrarAlertaSimple("Formato inválido",
+                    "Por favor, ingrese un valor numérico válido para la cantidad.",
+                    Alert.AlertType.WARNING);
             return;
         }
 
         for (ProductoCompuestoPorDTO itemExistente : listaInsumosReceta) {
-            if (itemExistente.getCodigoInsumo() != null && itemExistente.getCodigoInsumo().equals(insumoSeleccionado.getCodigo())) {
+            if (itemExistente.getCodigoInsumo() != null
+                    && itemExistente.getCodigoInsumo().equals(insumoSeleccionado.getCodigo())) {
                 UtilidadesFX.mostrarAlertaSimple(
                         "Insumo repetido",
-                        "Este insumo ya está integrado en la receta actual. Si requiere cambiar su dosificación, elimine el renglón y vuelva a agregarlo.",
+                        "Este insumo ya está integrado en la receta actual, para cambiar la cantidad elimínalo de la receta y vuelve a agregarlo",
                         Alert.AlertType.WARNING
                 );
                 return;
@@ -274,6 +254,8 @@ public class ProductoOperacionesController implements Initializable {
 
         ProductoCompuestoPorDTO ingredienteReceta = new ProductoCompuestoPorDTO();
         ingredienteReceta.setInsumo(insumoSeleccionado);
+        ingredienteReceta.setCodigoInsumo(insumoSeleccionado.getCodigo());
+        ingredienteReceta.setNombreProductoInventario(insumoSeleccionado.getNombre());
         ingredienteReceta.setCantidad(cantidad);
 
         listaInsumosReceta.add(ingredienteReceta);
@@ -282,44 +264,107 @@ public class ProductoOperacionesController implements Initializable {
         txt_cantidadInsumo.clear();
     }
 
+    private ProductoVentaDTO recuperarDatosProducto(){
+        ProductoVentaDTO producto = new ProductoVentaDTO();
+
+        producto.setCodigoMenu(txt_codigo.getText().trim().toUpperCase());
+        producto.setNombre(txt_nombre.getText().trim());
+        producto.setDescripcion(txt_descripcion.getText().trim());
+        producto.setPrecio(Double.parseDouble(txt_precio.getText().trim()));
+        producto.setLimite(Integer.parseInt(txt_limite.getText().trim()));
+        producto.setFoto(rutaFotoActual);
+
+        return producto;
+    }
+
+    private List<ProductoCompuestoPorDTO> recuperarDatosReceta(){
+        return List.copyOf(tbl_insumos.getItems());
+
+    }
+
+
+    public boolean editarProductoConReceta() {
+        try {
+            if (productoDAO.editarConReceta(recuperarDatosProducto(), recuperarDatosReceta())) {
+                UtilidadesFX.mostrarAlertaSimple("Edición exitosa",
+                        "Se ha editado el producto correctamente",
+                        Alert.AlertType.INFORMATION);
+                return true;
+            }
+            UtilidadesFX.mostrarAlertaSimple("Falló la edición",
+                    "La edición del producto no pudo realizarse, intente de nuevo",
+                    Alert.AlertType.WARNING);
+        } catch (SQLException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al editar",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        } catch (NullPointerException | ClassNotFoundException | IOException n) {
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar los datos de la edición",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
+        }
+        return false;
+    }
+
+    public boolean editarProductoSinReceta() {
+        try {
+            if (productoDAO.editarSinReceta(recuperarDatosProducto())) {
+                UtilidadesFX.mostrarAlertaSimple("Edición exitosa",
+                        "Se ha editado el producto correctamente",
+                        Alert.AlertType.INFORMATION);
+                return true;
+            }
+
+            UtilidadesFX.mostrarAlertaSimple("Falló la edición",
+                    "La edición del producto no pudo realizarse, intente de nuevo",
+                    Alert.AlertType.WARNING);
+        } catch (SQLException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al editar",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        } catch (NullPointerException | ClassNotFoundException | IOException n) {
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar los datos de la edición",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
+        }
+        return false;
+    }
+
     @FXML
     private void clicCancelar(ActionEvent event) {
-        Stage escenario = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        escenario.close();
+        ((Stage)txt_cantidadInsumo.getScene().getWindow()).close();
     }
 
     @FXML
     private void clicGuardar(ActionEvent event) {
-        // 1. Validar que toda la interfaz esté correctamente llenada
-        if (!datosSonValidos()) return;
+        if (!datosSonValidos()) {
+            return;
+        }
 
-        try {
-            // 2. Extraer los datos básicos de la pantalla
-            String codigo = txt_codigo.getText().trim().toUpperCase();
-            String nombre = txt_nombre.getText().trim();
-            String descripcion = txt_descripcion.getText().trim();
-            double precio = Double.parseDouble(txt_precio.getText().trim());
-            int limite = Integer.parseInt(txt_limite.getText().trim());
+        boolean guardado = false;
 
-            // 3. Procesar y copiar la fotografía
-            String nombreFoto = procesarFotografia(codigo);
-
-            // 4. Delegar la construcción de objetos y la conexión a la BD
-            if (rb_requiereRecetaSi.isSelected()) {
-                guardarConReceta(codigo, nombre, descripcion, precio, limite, nombreFoto);
-            } else {
-                guardarSinReceta(codigo, nombre, descripcion, precio, limite, nombreFoto);
+        if (registro) {
+            try {
+                if (rb_requiereRecetaSi.isSelected()) {
+                    guardado = guardarConReceta();
+                } else {
+                    guardado = guardarSinReceta();
+                }
+            } catch (ProductoExistente e) {
+                UtilidadesFX.mostrarAlertaSimple("Código repetido",
+                        e.getMessage(),
+                        Alert.AlertType.WARNING);
             }
+        } else {
+            if (pnl_receta.isVisible()) {
+                guardado = editarProductoConReceta();
+            } else {
+                guardado = editarProductoSinReceta();
+            }
+        }
 
-            UtilidadesFX.mostrarAlertaSimple("Éxito", "Operación procesada correctamente.", Alert.AlertType.INFORMATION);
-            clicCancelar(event);
-
-        } catch (java.sql.SQLException ex) {
-            ex.printStackTrace();
-            UtilidadesFX.mostrarAlertaSimple("Operación rechazada", ex.getMessage(), Alert.AlertType.WARNING);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            UtilidadesFX.mostrarAlertaSimple("Error Inesperado", "Ha ocurrido un fallo en el sistema al guardar.", Alert.AlertType.ERROR);
+        if (guardado) {
+            ((Stage) txt_existencias.getScene().getWindow()).close();
         }
     }
 
@@ -370,88 +415,76 @@ public class ProductoOperacionesController implements Initializable {
         return true;
     }
 
-    private String procesarFotografia(String codigo) throws Exception {
-        String nombreFoto = "";
-        if (archivoFotoSeleccionado != null) {
-            nombreFoto = archivoFotoSeleccionado.getName();
-            String rutaProyecto = System.getProperty("user.dir");
 
-            java.nio.file.Path destinoVenta = java.nio.file.Paths.get(rutaProyecto, "source", "imagenes", "productos", nombreFoto);
-            java.nio.file.Files.createDirectories(destinoVenta.getParent());
-            java.nio.file.Files.copy(archivoFotoSeleccionado.toPath(), destinoVenta, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
-            if (rb_requiereRecetaNo.isSelected()) {
-                java.nio.file.Path destinoInv = java.nio.file.Paths.get(rutaProyecto, "source", "imagenes", "productosInventario", nombreFoto);
-                java.nio.file.Files.createDirectories(destinoInv.getParent());
-                java.nio.file.Files.copy(archivoFotoSeleccionado.toPath(), destinoInv, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+    private boolean guardarConReceta() throws ProductoExistente {
+        ProductoVentaDTO producto = recuperarDatosProducto();
+
+        try {
+            if (productoDAO.buscar(producto.getCodigoMenu()) != null) {
+                throw new ProductoExistente("Ya existe un producto con este código.");
             }
-        } else if (!registro) {
-            // Recupera la foto anterior si estamos editando y no se subió una nueva
-            ProductoVentaDTO prodActual = new ProductoDAO().buscar(codigo);
-            if (prodActual != null) nombreFoto = prodActual.getFoto();
+
+            if (productoDAO.registrarConReceta(producto, recuperarDatosReceta())) {
+                UtilidadesFX.mostrarAlertaSimple("Registro exitoso",
+                        "Se ha registrado el producto correctamente",
+                        Alert.AlertType.INFORMATION);
+                return true;
+            }
+
+            UtilidadesFX.mostrarAlertaSimple("Falló registro",
+                    "El producto no pudo registrarse, intente de nuevo.",
+                    Alert.AlertType.WARNING);
+        } catch (SQLException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al registrar producto",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        } catch (NullPointerException | ClassNotFoundException | IOException n) {
+            UtilidadesFX.mostrarAlertaSimple("Error para el registro de producto",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
         }
-        return nombreFoto;
+
+        return false;
     }
 
-    private void guardarConReceta(String codigo, String nombre, String descripcion, double precio, int limite, String nombreFoto) throws Exception {
-        ProductoVentaDTO producto = new ProductoVentaDTO();
-        producto.setCodigoMenu(codigo);
-        producto.setNombre(nombre);
-        producto.setDescripcion(descripcion);
-        producto.setPrecio(precio);
-        producto.setLimite(limite);
-        producto.setEstatus(1);
-        producto.setFoto(nombreFoto);
-
-        ProductoDAO dao = new ProductoDAO();
-        if (registro) {
-            if (dao.buscar(codigo) != null) throw new Exception("Ya existe un producto con este código.");
-            dao.registrarConReceta(producto, listaInsumosReceta);
-        } else {
-            dao.editarProductoCompleto(producto, listaInsumosReceta);
-        }
-    }
-
-    private void guardarSinReceta(String codigo, String nombre, String descripcion, double precio, int limite, String nombreFoto) throws Exception {
-        ProductoVentaDTO producto = new ProductoVentaDTO();
-        producto.setCodigoMenu(codigo);
-        producto.setNombre(nombre);
-        producto.setDescripcion(descripcion);
-        producto.setPrecio(precio);
-        producto.setLimite(limite);
-        producto.setEstatus(1);
-        producto.setFoto(nombreFoto);
+    private boolean guardarSinReceta() throws ProductoExistente {
+        ProductoVentaDTO producto = recuperarDatosProducto();
 
         int existencias = Integer.parseInt(txt_existencias.getText().trim());
-        java.time.LocalDate caducidad = dp_caducidad.getValue();
-        ProductoDAO dao = new ProductoDAO();
+        LocalDate caducidad = dp_caducidad.getValue();
 
-        if (registro) {
-            if (dao.buscar(codigo) != null) throw new Exception("Ya existe un producto con este código.");
-            dao.registrarSinReceta(producto, existencias, caducidad);
-        } else {
-            String codigoInventario = "I" + codigo.substring(1);
+        try {
+            if (productoDAO.buscar(producto.getCodigoMenu()) != null) {
+                throw new ProductoExistente("Ya existe un producto con este código.");
+            }
 
-            ProductoInventarioDAO daoInv = new ProductoInventarioDAO();
-            ProductoInventarioDTO insumo = daoInv.buscar(codigoInventario);
-            if (insumo == null) insumo = new ProductoInventarioDTO();
-            insumo.setCodigo(codigoInventario);
-            insumo.setNombre(nombre);
-            insumo.setExistencias(existencias);
-            insumo.setFechaCaducidad(caducidad);
-            insumo.setFoto(nombreFoto);
-            daoInv.editar(insumo);
+            if (productoDAO.registrarSinReceta(producto, existencias, caducidad)) {
+                UtilidadesFX.mostrarAlertaSimple("Registro exitoso",
+                        "Se ha registrado el producto correctamente",
+                        Alert.AlertType.INFORMATION);
+                return true;
+            }
 
-            ProductoCompuestoPorDTO ingUnico = new ProductoCompuestoPorDTO();
-            ingUnico.setCodigoInsumo(codigoInventario);
-            ingUnico.setCantidad(1.0);
-
-            dao.editarProductoCompleto(producto, java.util.Arrays.asList(ingUnico));
+            UtilidadesFX.mostrarAlertaSimple("Falló registro",
+                    "El producto no pudo registrarse, intente de nuevo.",
+                    Alert.AlertType.WARNING);
+        } catch (SQLException e) {
+            UtilidadesFX.mostrarAlertaSimple("Error al registrar producto",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        } catch (NullPointerException | ClassNotFoundException | IOException n) {
+            UtilidadesFX.mostrarAlertaSimple("Error para el registro de producto",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
         }
+        return false;
     }
 
     @FXML
     private void clicRequiereRecetaSi(ActionEvent event) {
+        pnl_receta.setVisible(true);
+        pnl_sinReceta.setVisible(false);
         txt_existencias.clear();
         dp_caducidad.setValue(null);
     }
@@ -464,29 +497,28 @@ public class ProductoOperacionesController implements Initializable {
         if (txt_cantidadInsumo != null) {
             txt_cantidadInsumo.clear();
         }
+
+        pnl_receta.setVisible(false);
+        pnl_sinReceta.setVisible(true);
     }
 
     @FXML
     private void clicSubirFoto(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Seleccionar Foto del Producto");
+        fileChooser.setTitle("Seleccionar imagen del producto");
 
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg")
         );
 
-        File archivoSeleccionado = fileChooser.showOpenDialog(null);
+        Stage stage = (Stage) img_foto.getScene().getWindow();
+        File archivoSeleccionado = fileChooser.showOpenDialog(stage);
 
-        if (archivoSeleccionado != null) {
-            archivoFotoSeleccionado = archivoSeleccionado;
-            Image imagen = new Image(archivoSeleccionado.toURI().toString());
-            img_foto.setImage(imagen);
+        if (archivoSeleccionado == null) {
+            return;
         }
-    }
 
-    @FXML
-    private void clicBorrarFoto(ActionEvent event) {
-        archivoFotoSeleccionado = null; // Limpiar la memoria del archivo
-        img_foto.setImage(null);       // Quitar la foto de la pantalla
+        rutaFotoActual = archivoSeleccionado.getAbsolutePath();
+        img_foto.setImage(new Image(archivoSeleccionado.toURI().toString()));
     }
 }

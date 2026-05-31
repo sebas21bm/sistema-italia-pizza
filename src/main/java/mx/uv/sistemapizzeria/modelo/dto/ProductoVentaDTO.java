@@ -1,12 +1,5 @@
 package mx.uv.sistemapizzeria.modelo.dto;
 
-/**
- * DTO que mapea la tabla: producto_venta
- * Campos BD: codigo_menu, nombre, estatus, precio, limite, descripcion, foto
- *
- * Representa los productos del menú (pizzas, bebidas, etc.) que se venden
- * en pedidos. Si requiere receta, estará compuesto por ProductoInsumoDTO.
- */
 public class ProductoVentaDTO {
 
     private String codigoMenu;
