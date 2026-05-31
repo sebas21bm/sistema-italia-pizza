@@ -35,7 +35,7 @@ import mx.uv.sistemapizzeria.modelo.dto.ClienteDTO;
 import mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO;
 import mx.uv.sistemapizzeria.modelo.dto.PedidoDTO;
 import mx.uv.sistemapizzeria.utilidades.ExportadorCSV;
-import mx.uv.sistemapizzeria.utilidades.ExportadorPDF;
+import mx.uv.sistemapizzeria.utilidades.ExportadorPDFGeneral;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 
 import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
@@ -437,8 +437,7 @@ public class PedidosGestionController implements Initializable {
                 }
             }
 
-            // TODO checar si se puede refactorizar para usar el mismo que Yara
-            ExportadorPDF.exportar(pedidosCompletos, archivo.getAbsolutePath());
+            ExportadorPDFGeneral.generarReportePedidos(archivo.getAbsolutePath(), pedidosCompletos);
             UtilidadesFX.mostrarAlertaSimple("Exportación exitosa",
                     "Reporte guardado en:\n" + archivo.getAbsolutePath(),
                     Alert.AlertType.INFORMATION);
