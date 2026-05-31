@@ -4,6 +4,7 @@ public class ProductoCompuestoPorDTO {
 
     private String codigoInsumo;
     private String codigoMenu;
+    private String nombreProductoInventario;
     private double cantidad;
 
     private ProductoInventarioDTO insumo;
@@ -35,6 +36,14 @@ public class ProductoCompuestoPorDTO {
         this.cantidad = cantidad;
     }
 
+    public String getNombreProductoInventario() {
+        return nombreProductoInventario;
+    }
+
+    public void setNombreProductoInventario(String nombreProductoInventario) {
+        this.nombreProductoInventario = nombreProductoInventario;
+    }
+    
     public ProductoInventarioDTO getInsumo() {
         return insumo;
     }

@@ -3,6 +3,8 @@ package mx.uv.sistemapizzeria.controladores;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -215,8 +217,8 @@ public class ProductosGestionController implements Initializable {
                 ProductoVentaDTO producto = productoDAO.buscar(campoBuscar);
                 productosVenta.add(producto);
             } else {
-                //List<ProductoInventarioDTO> productosBD = productoDAO.buscarPorNombre(campoBuscar);
-                //productosVenta.addAll(productosBD);
+                List<ProductoVentaDTO> productosBD = productoDAO.buscarPorNombre(campoBuscar);
+                productosVenta.addAll(productosBD);
             }
             tbl_productos.setItems(productosVenta);
         }catch(SQLException e){
@@ -254,14 +256,12 @@ public class ProductosGestionController implements Initializable {
         }
 
         try {
-
-
-            if (productoDAO.eliminarProductoVenta(productoSeleccionado.getCodigoMenu())){
+            if (productoDAO.eliminar(productoSeleccionado.getCodigoMenu())){
                 UtilidadesFX.mostrarAlertaSimple("Eliminación exitosa",
                         "Se ha eliminado el producto correctamente",
                         Alert.AlertType.INFORMATION);
             } else {
-                UtilidadesFX.mostrarAlertaSimple("Falló la edición",
+                UtilidadesFX.mostrarAlertaSimple("Falló la eliminación",
                         "La eliminación del producto no pudo realizarse," +
                                 "intente de nuevo",
                         Alert.AlertType.WARNING);
@@ -316,7 +316,7 @@ public class ProductosGestionController implements Initializable {
             FXMLLoader loader = UtilidadesFX.cargarFXML("ProductoOperaciones");
             Parent vista = loader.load();
             ProductoOperacionesController controller = loader.getController();
-            controller.editarProductoInventario(producto);
+            controller.mostrarProductoVenta(producto);
             Scene escena = new Scene(vista);
 
             Stage stage = new Stage();
