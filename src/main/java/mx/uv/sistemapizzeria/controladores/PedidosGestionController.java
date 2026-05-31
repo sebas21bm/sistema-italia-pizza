@@ -70,7 +70,6 @@ public class PedidosGestionController implements Initializable {
     @FXML
     private ComboBox<String> cb_estatus;
 
-    // TODO checar que onda con esto
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private final PedidosDAO pedidosDAO = new PedidosDAO();

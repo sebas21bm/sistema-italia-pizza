@@ -46,7 +46,6 @@ public class InicioSesionController implements Initializable {
         try {
             EmpleadoDTO empleadoLogin = Autenticador.iniciarSesion(usuario, contrasenia);
 
-            // 1. Guardar sesión en AMBOS lugares antes de cargar la escena
             Sesion.empleadoSesion = empleadoLogin;
             SistemaPizzeria.setMetadatos("empleado", empleadoLogin);
 
@@ -54,7 +53,6 @@ public class InicioSesionController implements Initializable {
                     "Bienvenido al sistema: " + empleadoLogin.getNombreCompleto(),
                     Alert.AlertType.INFORMATION);
 
-            // 2. Cargar escena después de tener la sesión lista
             String rutaMenu = CargadorEscenas.cargarEscenaSegunRol(empleadoLogin.getTipoEmpleado());
             cargarEscena(rutaMenu);
 

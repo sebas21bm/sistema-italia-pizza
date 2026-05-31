@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
+public class PedidosDAO {
 
     private static final String COLS_VISTA =
             "nombre, paterno, materno, telefono, " +
@@ -24,8 +24,6 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
                     "  costo       DOUBLE     NOT NULL" +
                     ")";
 
-    // TODO no lo implementa
-    @Override
     public PedidoDTO buscar(Integer idPedido)
             throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         PedidoDTO pedido = null;
@@ -51,7 +49,6 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         return pedido;
     }
 
-    @Override
     public boolean editar(PedidoDTO pedido)
             throws NullPointerException, IOException, SQLException, ClassNotFoundException {
 
@@ -82,24 +79,6 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         }
     }
 
-    // TODO no lo implementa
-    @Override
-    public boolean eliminar(Integer idPedido)
-            throws NullPointerException, IOException, SQLException, ClassNotFoundException {
-        try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
-            if (conn == null) {
-                throw new SQLException(Constantes.MSJ_SIN_CONEXION);
-            }
-
-            String consulta = "UPDATE pedido SET estatus = ?";
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "UPDATE pedido SET estatus = 'Cancelado' WHERE id_pedido = ?")) {
-                ps.setInt(1, idPedido);
-                return ps.executeUpdate() > 0;
-            }
-        }
-    }
-
     public boolean cambiarEstatus(Integer idPedido, String nuevoEstatus)
             throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {
@@ -115,7 +94,6 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         }
     }
 
-    @Override
     public List<PedidoDTO> mostrarTodos()
             throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         List<PedidoDTO> pedidos = new ArrayList<>();
@@ -136,7 +114,6 @@ public class PedidosDAO implements Operaciones<Integer, PedidoDTO> {
         return pedidos;
     }
 
-    @Override
     public boolean registrar(PedidoDTO pedido)
             throws NullPointerException, IOException, SQLException, ClassNotFoundException {
         try (Connection conn = ConnectionFactory.crearParaRol(Sesion.empleadoSesion.getTipoEmpleado())) {

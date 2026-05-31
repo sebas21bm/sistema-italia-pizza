@@ -31,9 +31,6 @@ public class UsuarioTipoController implements Initializable {
     @FXML
     private Label lb_titulo;
 
-    /**
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
     }
