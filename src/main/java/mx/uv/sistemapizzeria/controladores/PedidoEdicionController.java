@@ -370,6 +370,10 @@ public class PedidoEdicionController implements Initializable {
 
         rutaFoto = rutaFoto.trim().replace("\\", "/");
 
+        if (!rutaFoto.contains("/")) {
+            rutaFoto = "/imagenes/" + rutaFoto;
+        }
+
         try {
             if (rutaFoto.startsWith("/imagenes/") || rutaFoto.startsWith("imagenes/")) {
                 String rutaRecurso = rutaFoto.startsWith("/") ? rutaFoto : "/" + rutaFoto;
