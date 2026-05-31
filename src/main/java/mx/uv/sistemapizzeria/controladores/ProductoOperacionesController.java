@@ -12,14 +12,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import mx.uv.sistemapizzeria.excepciones.ProductoExistente;
+import mx.uv.sistemapizzeria.excepciones.ProductoExistenteException;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoCompuestoPorDAO;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoDAO;
 import mx.uv.sistemapizzeria.modelo.dao.ProductoInventarioDAO;
@@ -355,7 +354,7 @@ public class ProductoOperacionesController implements Initializable {
                 } else {
                     guardado = guardarSinReceta();
                 }
-            } catch (ProductoExistente e) {
+            } catch (ProductoExistenteException e) {
                 UtilidadesFX.mostrarAlertaSimple("Código repetido",
                         e.getMessage(),
                         Alert.AlertType.WARNING);
@@ -432,12 +431,12 @@ public class ProductoOperacionesController implements Initializable {
 
 
 
-    private boolean guardarConReceta() throws ProductoExistente {
+    private boolean guardarConReceta() throws ProductoExistenteException {
         ProductoVentaDTO producto = recuperarDatosProducto();
 
         try {
             if (productoDAO.buscar(producto.getCodigoMenu()) != null) {
-                throw new ProductoExistente("Ya existe un producto con este código.");
+                throw new ProductoExistenteException("Ya existe un producto con este código.");
             }
 
             if (productoDAO.registrarConReceta(producto, recuperarDatosReceta())) {
@@ -463,7 +462,7 @@ public class ProductoOperacionesController implements Initializable {
         return false;
     }
 
-    private boolean guardarSinReceta() throws ProductoExistente {
+    private boolean guardarSinReceta() throws ProductoExistenteException {
         ProductoVentaDTO producto = recuperarDatosProducto();
 
         int existencias = Integer.parseInt(txt_existencias.getText().trim());
@@ -471,7 +470,7 @@ public class ProductoOperacionesController implements Initializable {
 
         try {
             if (productoDAO.buscar(producto.getCodigoMenu()) != null) {
-                throw new ProductoExistente("Ya existe un producto con este código.");
+                throw new ProductoExistenteException("Ya existe un producto con este código.");
             }
 
             if (productoDAO.registrarSinReceta(producto, existencias, caducidad)) {
