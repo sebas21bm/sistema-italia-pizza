@@ -19,7 +19,7 @@ public class Autenticador {
         return AutenticacionDAO.autenticarUsuario(usuario, passwordHashed);
     }
 
-    private static byte[] hashearContrasenia(String contrasenia) throws NoSuchAlgorithmException {
+    public static byte[] hashearContrasenia(String contrasenia) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         return md.digest(contrasenia.getBytes(StandardCharsets.UTF_8));
     }

@@ -14,12 +14,16 @@ import mx.uv.sistemapizzeria.modelo.dto.TipoEmpleado;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 import mx.uv.sistemapizzeria.utilidades.Validador;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 
 public class UsuarioEmpleadoOperacionesController implements Initializable {
 
@@ -150,68 +154,22 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
 
     @FXML
     private void clicGuardar(ActionEvent event) {
-        // Construir DTO con los datos del formulario
-        EmpleadoDTO empleado = (!registro && empleadoEdicion != null) ? empleadoEdicion : new EmpleadoDTO();
-
-        empleado.setNombre(txt_nombres.getText().trim());
-        empleado.setPaterno(txt_apellidoPaterno.getText().trim());
-        empleado.setMaterno(txt_apellidoMaterno.getText().trim());
-        empleado.setTelefono(txt_telefono.getText().trim());
-        empleado.setEmail(txt_correoElectronico.getText().trim());
-        empleado.setTipoEmpleado(cmb_tipoEmpleado.getValue());
-        empleado.setEstatus(true);
-
-        // Dirección
-        DireccionDTO dir = (!registro && empleadoEdicion != null && empleadoEdicion.getDireccion() != null)
-                ? empleadoEdicion.getDireccion() : new DireccionDTO();
-        dir.setCalle(txt_calle.getText().trim());
-        dir.setNumero(txt_numero.getText().trim());
-        dir.setCodigoPostal(txt_codigoPostal.getText().trim());
-        dir.setCiudad(txt_ciudad.getText().trim());
-        empleado.setDireccion(dir);
-
-        // Contraseña (solo en registro o si se escribió algo en edición)
-        String pass = psw_contrasena.isVisible()
-                ? psw_contrasena.getText()
-                : txt_contrasenaVisible.getText();
         if (registro) {
-            // Registro: la contraseña es obligatoria
-            if (pass == null || pass.isBlank()) {
+            if (psw_contrasena.getText().isEmpty() || txt_contrasenaVisible.getText().isEmpty()) {
                 UtilidadesFX.mostrarAlertaSimple("Campo requerido",
                         "La contraseña es obligatoria para registrar un empleado.",
                         Alert.AlertType.WARNING);
                 return;
             }
-            empleado.setContrasenia(hashearContrasenia(pass));
-
-            String noEmpleado = txt_noEmpleado.getText().trim().toUpperCase();
-            if (noEmpleado.isEmpty()) {
+            if (txt_noEmpleado.getText().trim().isEmpty()) {
                 UtilidadesFX.mostrarAlertaSimple("Campo requerido",
                         "El número de empleado (ej. E0006) es obligatorio.",
                         Alert.AlertType.WARNING);
                 return;
             }
-            empleado.setNoEmpleado(noEmpleado);
-
-            String usuario = (empleado.getNombre().charAt(0) + empleado.getPaterno())
-                    .replaceAll("\\s+", "");
-            empleado.setUsuario(usuario);
-        } else {
-            if (empleadoEdicion != null && empleadoEdicion.getUsuario() != null) {
-                empleado.setUsuario(empleadoEdicion.getUsuario());
-            }
         }
 
-        // Validar
-        List<String> errores = Validador.validarEmpleado(empleado);
-        errores.addAll(Validador.validarDireccion(dir));
-
-        if (!errores.isEmpty()) {
-            UtilidadesFX.mostrarAlertaSimple("Datos inválidos",
-                    Validador.formatearErrores(errores),
-                    Alert.AlertType.WARNING);
-            return;
-        }
+        EmpleadoDTO empleado = crearEmpleadoRegistrar();
 
         String accionConfirmacion = registro ? "registrar" : "actualizar";
         boolean confirmar = UtilidadesFX.mostrarAlertaConfirmacion(
@@ -239,31 +197,69 @@ public class UsuarioEmpleadoOperacionesController implements Initializable {
                         Alert.AlertType.INFORMATION);
                 cerrarVentana();
             }
-        }  catch (Exception e) {
-            // Este horita lo modificamos, queda pendiente por el push
-        e.printStackTrace();
-
-        String mensajeOriginal = e.getMessage();
-
-        UtilidadesFX.mostrarAlertaSimple("MySQL",
-                "MySQL rechazó la edición con este mensaje exacto:\n\n" + mensajeOriginal,
-                Alert.AlertType.ERROR);
+        }catch(SQLException e){
+            UtilidadesFX.mostrarAlertaSimple("Error al guardar",
+                    e.getMessage(),
+                    Alert.AlertType.ERROR);
+        }catch(NullPointerException | ClassNotFoundException | IOException n){
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar los datos del registro",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
+        }
     }
+
+    private EmpleadoDTO crearEmpleadoRegistrar() {
+        EmpleadoDTO empleado = (!registro && empleadoEdicion != null) ? empleadoEdicion : new EmpleadoDTO();
+
+        empleado.setNombre(txt_nombres.getText().trim());
+        empleado.setPaterno(txt_apellidoPaterno.getText().trim());
+        empleado.setMaterno(txt_apellidoMaterno.getText().trim());
+        empleado.setTelefono(txt_telefono.getText().trim());
+        empleado.setEmail(txt_correoElectronico.getText().trim());
+        empleado.setTipoEmpleado(cmb_tipoEmpleado.getValue());
+        empleado.setEstatus(true);
+
+        DireccionDTO dir = (!registro && empleadoEdicion != null && empleadoEdicion.getDireccion() != null)
+                ? empleadoEdicion.getDireccion() : new DireccionDTO();
+        dir.setCalle(txt_calle.getText().trim());
+        dir.setNumero(txt_numero.getText().trim());
+        dir.setCodigoPostal(txt_codigoPostal.getText().trim());
+        dir.setCiudad(txt_ciudad.getText().trim());
+        empleado.setDireccion(dir);
+
+        if (registro) {
+            String pass = psw_contrasena.isVisible()
+                    ? psw_contrasena.getText()
+                    : txt_contrasenaVisible.getText();
+            empleado.setContrasenia(hashearContrasenia(pass));
+            String noEmpleado = txt_noEmpleado.getText().trim().toUpperCase();
+            empleado.setNoEmpleado(noEmpleado);
+
+            String usuario = (empleado.getNombre().charAt(0) + empleado.getPaterno())
+                    .replaceAll("\\s+", "");
+            empleado.setUsuario(usuario);
+        } else {
+            if (empleadoEdicion != null && empleadoEdicion.getUsuario() != null) {
+                empleado.setUsuario(empleadoEdicion.getUsuario());
+            }
+        }
+
+        List<String> errores = Validador.validarEmpleado(empleado);
+        errores.addAll(Validador.validarDireccion(dir));
+
+        if (!errores.isEmpty()) {
+            UtilidadesFX.mostrarAlertaSimple("Datos inválidos",
+                    Validador.formatearErrores(errores),
+                    Alert.AlertType.WARNING);
+            return null;
+        }
+
+        return empleado;
     }
 
     @FXML
     private void clicCancelar(ActionEvent event) {
         cerrarVentana();
-    }
-
-    @FXML
-    private void clicCerrar(ActionEvent event) {
-        cerrarVentana();
-    }
-
-    @FXML
-    private void clicMostrarContrasena(ActionEvent event) {
-        // El CheckBox chkBtn_mostrar ya tiene su listener en initialize()
     }
 
     private void cerrarVentana() {

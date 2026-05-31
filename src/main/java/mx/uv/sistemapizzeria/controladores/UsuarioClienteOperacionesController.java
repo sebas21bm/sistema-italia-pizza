@@ -1,12 +1,14 @@
 package mx.uv.sistemapizzeria.controladores;
 
+import com.mysql.cj.xdevapi.Client;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import mx.uv.sistemapizzeria.SistemaPizzeria;
 import mx.uv.sistemapizzeria.modelo.dao.ClienteDAO;
@@ -15,10 +17,14 @@ import mx.uv.sistemapizzeria.modelo.dto.DireccionDTO;
 import mx.uv.sistemapizzeria.utilidades.UtilidadesFX;
 import mx.uv.sistemapizzeria.utilidades.Validador;
 
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static mx.uv.sistemapizzeria.utilidades.Constantes.MSJ_ERROR_CARGA_DATOS;
 
 public class UsuarioClienteOperacionesController implements Initializable {
 
@@ -56,20 +62,30 @@ public class UsuarioClienteOperacionesController implements Initializable {
     private Boolean registro;
     private ClienteDTO clienteEdicion = null;
 
+    @FXML
+    private TableView<DireccionDTO> tbl_direcciones;
+    @FXML
+    private TableColumn<DireccionDTO, String> col_direccion;
+
+    private ObservableList<DireccionDTO> direcciones;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        /*
-        this.registro = Boolean.TRUE.equals(SistemaPizzeria.getMetadatos("registrar-cliente"));
-
-         */
-        this.registro = (Boolean) SistemaPizzeria.getMetadatos("registrar-producto-inventario");
+        this.registro = (Boolean) SistemaPizzeria.getMetadatos("registrar-cliente");
 
         if (registro){
             lb_formulario.setText("Registrar cliente");
         } else {
             lb_formulario.setText("Editar cliente");
-
         }
+
+        configurarTablaDirecciones();
+    }
+
+    private void configurarTablaDirecciones() {
+        col_direccion.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().toString())
+        );
     }
 
     public void mostrarCliente(ClienteDTO cliente) {
@@ -132,53 +148,17 @@ public class UsuarioClienteOperacionesController implements Initializable {
 
     @FXML
     private void clicGuardar(ActionEvent event) {
-        String calle = txt_calle1.getText().trim();
-        String numero = txt_numero1.getText().trim();
-        String cp = txt_codigoPostal1.getText().trim();
-        String ciudad = txt_ciudad1.getText().trim();
 
-        if (!calle.isEmpty() || !numero.isEmpty() || !cp.isEmpty() || !ciudad.isEmpty()) {
-            DireccionDTO dirPendiente = new DireccionDTO(0, calle, numero, cp, ciudad);
-            List<String> errDir = Validador.validarDireccion(dirPendiente);
-            if (!errDir.isEmpty()) {
-                UtilidadesFX.mostrarAlertaSimple("Dirección inválida",
-                        "Completa o corrige la dirección antes de guardar:\n" +
-                                Validador.formatearErrores(errDir),
-                        Alert.AlertType.WARNING);
-                return;
-            }
-            if (!registro && !direccionesAcumuladas.isEmpty()) {
-                DireccionDTO primera = direccionesAcumuladas.get(0);
-                primera.setCalle(calle);
-                primera.setNumero(numero);
-                primera.setCodigoPostal(cp);
-                primera.setCiudad(ciudad);
-            } else {
-                direccionesAcumuladas.add(dirPendiente);
-            }
-        }
+        ClienteDTO cliente = crearClienteRegistrar();
 
-        if (direccionesAcumuladas.isEmpty()) {
-            UtilidadesFX.mostrarAlertaSimple("Dirección requerida",
-                    "Debes agregar al menos una dirección.",
-                    Alert.AlertType.WARNING);
-            return;
-        }
+        String accionConfirmacion = registro ? "registrar" : "actualizar";
+        boolean confirmar = UtilidadesFX.mostrarAlertaConfirmacion(
+                "Confirmar acción",
+                "¿Estás seguro de " + accionConfirmacion + " a este cliente?",
+                "Revisa que todos los datos capturados sean correctos."
+        );
 
-        ClienteDTO cliente = (!registro && clienteEdicion != null) ? clienteEdicion : new ClienteDTO();
-        cliente.setNombre(txt_nombres1.getText().trim());
-        cliente.setPaterno(txt_apellidoPaterno1.getText().trim());
-        cliente.setMaterno(txt_apellidoMaterno1.getText().trim());
-        cliente.setTelefono(txt_telefono1.getText().trim());
-        cliente.setEmail(txt_correoElectronico1.getText().trim());
-        cliente.setEstatus(true);
-        cliente.setDirecciones(direccionesAcumuladas);
-
-        List<String> errores = Validador.validarCliente(cliente);
-        if (!errores.isEmpty()) {
-            UtilidadesFX.mostrarAlertaSimple("Datos inválidos",
-                    Validador.formatearErrores(errores),
-                    Alert.AlertType.WARNING);
+        if (!confirmar) {
             return;
         }
 
@@ -197,11 +177,69 @@ public class UsuarioClienteOperacionesController implements Initializable {
                         Alert.AlertType.INFORMATION);
                 cerrarVentana();
             }
-        } catch (Exception e) {
+        } catch(SQLException e){
             UtilidadesFX.mostrarAlertaSimple("Error al guardar",
                     e.getMessage(),
                     Alert.AlertType.ERROR);
+        }catch(NullPointerException | ClassNotFoundException | IOException n){
+            UtilidadesFX.mostrarAlertaSimple("Error al cargar los datos del registro",
+                    MSJ_ERROR_CARGA_DATOS,
+                    Alert.AlertType.ERROR);
         }
+    }
+
+    private ClienteDTO crearClienteRegistrar() {
+        String calle = txt_calle1.getText().trim();
+        String numero = txt_numero1.getText().trim();
+        String cp = txt_codigoPostal1.getText().trim();
+        String ciudad = txt_ciudad1.getText().trim();
+
+        if (!calle.isEmpty() || !numero.isEmpty() || !cp.isEmpty() || !ciudad.isEmpty()) {
+            DireccionDTO dirPendiente = new DireccionDTO(0, calle, numero, cp, ciudad);
+            List<String> errDir = Validador.validarDireccion(dirPendiente);
+            if (!errDir.isEmpty()) {
+                UtilidadesFX.mostrarAlertaSimple("Dirección inválida",
+                        "Completa o corrige la dirección antes de guardar:\n" +
+                                Validador.formatearErrores(errDir),
+                        Alert.AlertType.WARNING);
+                return null;
+            }
+            if (!registro && !direccionesAcumuladas.isEmpty()) {
+                DireccionDTO primera = direccionesAcumuladas.get(0);
+                primera.setCalle(calle);
+                primera.setNumero(numero);
+                primera.setCodigoPostal(cp);
+                primera.setCiudad(ciudad);
+            } else {
+                direccionesAcumuladas.add(dirPendiente);
+            }
+        }
+
+        if (direccionesAcumuladas.isEmpty()) {
+            UtilidadesFX.mostrarAlertaSimple("Dirección requerida",
+                    "Debes agregar al menos una dirección.",
+                    Alert.AlertType.WARNING);
+            return null;
+        }
+
+        ClienteDTO cliente = (!registro && clienteEdicion != null) ? clienteEdicion : new ClienteDTO();
+        cliente.setNombre(txt_nombres1.getText().trim());
+        cliente.setPaterno(txt_apellidoPaterno1.getText().trim());
+        cliente.setMaterno(txt_apellidoMaterno1.getText().trim());
+        cliente.setTelefono(txt_telefono1.getText().trim());
+        cliente.setEmail(txt_correoElectronico1.getText().trim());
+        cliente.setEstatus(true);
+        cliente.setDirecciones(direccionesAcumuladas);
+
+        List<String> errores = Validador.validarCliente(cliente);
+        if (!errores.isEmpty()) {
+            UtilidadesFX.mostrarAlertaSimple("Datos inválidos",
+                    Validador.formatearErrores(errores),
+                    Alert.AlertType.WARNING);
+            return null;
+        }
+
+        return cliente;
     }
 
     @FXML
@@ -216,9 +254,12 @@ public class UsuarioClienteOperacionesController implements Initializable {
 
     // TODO añadir tabla para que muestre el acumulado
     private void actualizarLabelDirecciones() {
+        direcciones = FXCollections.observableArrayList();
         int total = direccionesAcumuladas.size();
         btn_agregarDireccion1.setText(total == 0
                 ? "+   Agregar Dirección"
                 : "+   Agregar Dirección (" + total + ")");
+        direcciones.addAll(direccionesAcumuladas);
+        tbl_direcciones.setItems(direcciones);
     }
 }

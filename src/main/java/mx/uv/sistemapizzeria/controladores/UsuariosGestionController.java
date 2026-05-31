@@ -67,6 +67,7 @@ public class UsuariosGestionController implements Initializable {
         configurarSeleccionTipo();
         configurarSeleccionFiltro();
         cargarTodosEmpleados();
+        filtroTipo = "Empleado";
     }
 
     private void configurarColumnas() {
