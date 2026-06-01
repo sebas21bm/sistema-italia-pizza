@@ -134,20 +134,16 @@
                     prefHeight="36.0" prefWidth="294.0"
                     text="Agregar" styleClass="producto-form-btn-agregar" />
 
-<<<<<<< Updated upstream
             <TableView fx:id="tbl_insumos" layoutX="16.0" layoutY="178.0"
                        prefHeight="216.0" prefWidth="313.0"
                        styleClass="producto-form-tabla">
-=======
-            <TableView fx:id="tbl_insumos" layoutX="16.0" layoutY="178.0" prefHeight="176.0" prefWidth="313.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
->>>>>>> Stashed changes
                <columns>
                   <TableColumn fx:id="col_insumo" prefWidth="210.0" text="Insumo" />
                   <TableColumn fx:id="col_cantidad" prefWidth="95.0" text="Cantidad" />
                </columns>
             </TableView>
 
-            <Button fx:id="btn_eliminarInsumo" layoutX="16.0" layoutY="362.0" mnemonicParsing="false" onAction="#clicEliminarInsumo" prefHeight="36.0" prefWidth="313.0" style="-fx-background-color: #e03c31; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Eliminar seleccionado" />
+            <Button layoutX="16.0" layoutY="362.0" mnemonicParsing="false" onAction="#clicEliminarInsumo" prefHeight="36.0" prefWidth="313.0" style="-fx-background-color: #e03c31; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Eliminar seleccionado" />
          </children>
       </AnchorPane>
 

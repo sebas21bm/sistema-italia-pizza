@@ -59,24 +59,20 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private AnchorPane pnl_receta;
     @FXML
-<<<<<<< Updated upstream
-=======
-    private Button btn_agregarInsumo;
-    @FXML
-    private Button btn_eliminarInsumo;
-    @FXML
->>>>>>> Stashed changes
     private TableView<ProductoCompuestoPorDTO> tbl_insumos;
     @FXML
     private TableColumn col_insumo;
     @FXML
     private TableColumn col_cantidad;
     @FXML
-    private ImageView img_foto;
-    @FXML
     private AnchorPane pnl_sinReceta;
     @FXML
     private Label txt_operacion;
+
+    @FXML
+    private ImageView img_foto;
+    @FXML
+    private ToggleGroup tg_requiereReceta;
     @FXML
     private TextField txt_existencias;
     @FXML
