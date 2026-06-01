@@ -59,6 +59,13 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private AnchorPane pnl_receta;
     @FXML
+<<<<<<< Updated upstream
+=======
+    private Button btn_agregarInsumo;
+    @FXML
+    private Button btn_eliminarInsumo;
+    @FXML
+>>>>>>> Stashed changes
     private TableView<ProductoCompuestoPorDTO> tbl_insumos;
     @FXML
     private TableColumn col_insumo;
@@ -477,6 +484,24 @@ public class ProductoOperacionesController implements Initializable {
                     Alert.AlertType.ERROR);
         }
         return false;
+    }
+
+    @FXML
+    private void clicEliminarInsumo(ActionEvent event) {
+        ProductoCompuestoPorDTO insumoSeleccionado = tbl_insumos.getSelectionModel().getSelectedItem();
+        if (insumoSeleccionado == null) {
+            UtilidadesFX.mostrarAlertaSimple("Selección requerida",
+                    "Por favor, seleccione un insumo de la tabla para eliminarlo.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+        boolean confirmado = UtilidadesFX.mostrarAlertaConfirmacion(
+                "Confirmar eliminación",
+                "¿Deseas eliminar el insumo \"" + insumoSeleccionado.getNombreProductoInventario() + "\" de la receta?",
+                "Esta acción quitará el insumo de la lista.");
+        if (confirmado) {
+            listaInsumosReceta.remove(insumoSeleccionado);
+        }
     }
 
     @FXML
