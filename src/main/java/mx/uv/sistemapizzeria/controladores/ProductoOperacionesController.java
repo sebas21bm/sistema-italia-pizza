@@ -271,7 +271,7 @@ public class ProductoOperacionesController implements Initializable {
     }
 
 
-    public boolean editarProductoConReceta() {
+    private boolean editarProductoConReceta() {
 
         try {
             if (productoDAO.editarConReceta(recuperarDatosProducto(), recuperarDatosReceta())) {
@@ -297,7 +297,7 @@ public class ProductoOperacionesController implements Initializable {
         return false;
     }
 
-    public boolean editarProductoSinReceta() {
+    private boolean editarProductoSinReceta() {
         try {
             if (productoDAO.editarSinReceta(recuperarDatosProducto())) {
                 UtilidadesFX.mostrarAlertaSimple("Edición exitosa",
