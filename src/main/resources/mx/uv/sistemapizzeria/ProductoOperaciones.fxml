@@ -60,7 +60,7 @@
                <children>
                   <RadioButton fx:id="rb_requiereRecetaSi" mnemonicParsing="false" onAction="#clicRequiereRecetaSi" selected="true" styleClass="producto-form-radio" text="Sí">
                      <toggleGroup>
-                        <ToggleGroup />
+                        <ToggleGroup fx:id="tg_requiereReceta"/>
                      </toggleGroup>
                   </RadioButton>
 

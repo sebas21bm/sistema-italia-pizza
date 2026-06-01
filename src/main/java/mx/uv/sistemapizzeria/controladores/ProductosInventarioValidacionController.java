@@ -249,6 +249,16 @@ public class ProductosInventarioValidacionController implements Initializable {
 
     @FXML
     private void clicCalcularDiferencia(ActionEvent event) {
+
+        boolean confirmado = UtilidadesFX.mostrarAlertaConfirmacion(
+                "Confirmar termino de conteo",
+                "Proceder a calcular la diferencia",
+                "Una vez confirmes, no podrás editar el conteo fisico");
+
+        if (!confirmado) {
+            return;
+        }
+
         for (DetalleReporteDTO detalle : tbl_validacionProductosInventario.getItems()) {
             Double conteoFisico = detalle.getConteoFisico();
             Double existencias = Double.valueOf(detalle.getExistencias());
