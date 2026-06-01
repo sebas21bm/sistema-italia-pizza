@@ -1,33 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #f3f5fa;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidosGestionController">
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" styleClass="pedidos-gestion-root"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="mx.uv.sistemapizzeria.controladores.PedidosGestionController">
+
+   <stylesheets>
+      <URL value="@../../../css/estilos.css" />
+   </stylesheets>
+
    <children>
-      <AnchorPane fx:id="pnl_contenido" layoutX="180.0" prefHeight="650.0" prefWidth="820.0" style="-fx-background-color: #f3f5fa;">
+      <AnchorPane fx:id="pnl_contenido" layoutX="180.0" prefHeight="650.0" prefWidth="820.0" styleClass="pedidos-gestion-contenido">
          <children>
-            <Label layoutX="20.0" layoutY="18.0" text="Gestión de Pedidos" textFill="#202932">
-               <font>
-                  <Font name="System Bold" size="28.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" prefHeight="42.0" prefWidth="760.0" spacing="10.0" style="-fx-background-color: white;">
+            <Label layoutX="20.0" layoutY="18.0" text="Gestión de Pedidos" styleClass="gestion-titulo" />
+
+            <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" prefHeight="42.0" prefWidth="760.0"
+                  spacing="10.0" styleClass="gestion-barra-busqueda">
                <padding>
                   <Insets left="14.0" right="8.0" />
                </padding>
                <children>
-                  <TextField fx:id="txt_buscar" prefHeight="40.0" prefWidth="230.0" promptText="Buscar por cliente" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-size: 12px; -fx-prompt-text-fill: #69727c;" />
-                  <Button mnemonicParsing="false" onAction="#clicBuscar" prefHeight="33.0" prefWidth="116.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Buscar" />
-                  <ComboBox fx:id="cb_estatusFiltro" prefHeight="31.0" prefWidth="139.0" promptText="Estatus" />
-                  <DatePicker fx:id="dp_fechaInicio" prefHeight="31.0" prefWidth="106.0" promptText="Fecha inicio" />
-                  <DatePicker fx:id="dp_fechaFinal" prefHeight="31.0" prefWidth="108.0" promptText="Fecha fin" />
+                  <TextField fx:id="txt_buscar" prefHeight="40.0" prefWidth="230.0"
+                             promptText="Buscar por cliente" styleClass="gestion-campo-busqueda" />
+
+                  <Button mnemonicParsing="false" onAction="#clicBuscar" prefHeight="33.0" prefWidth="116.0"
+                          text="Buscar" styleClass="gestion-btn-primario" />
+
+                  <ComboBox fx:id="cb_estatusFiltro" prefHeight="31.0" prefWidth="139.0"
+                            promptText="Estatus" styleClass="gestion-combo" />
+
+                  <DatePicker fx:id="dp_fechaInicio" prefHeight="31.0" prefWidth="106.0"
+                              promptText="Fecha inicio" styleClass="gestion-date-picker" />
+
+                  <DatePicker fx:id="dp_fechaFinal" prefHeight="31.0" prefWidth="108.0"
+                              promptText="Fecha fin" styleClass="gestion-date-picker" />
                </children>
             </HBox>
-            <TableView fx:id="tbl_pedidos" fixedCellSize="38.0" layoutX="20.0" layoutY="130.0" prefHeight="405.0" prefWidth="760.0" style="-fx-background-color: white; -fx-border-color: #d5dae2; -fx-border-width: 1; -fx-table-cell-border-color: #d5dae2; -fx-selection-bar: #eef1f6; -fx-selection-bar-non-focused: #eef1f6;">
+
+            <TableView fx:id="tbl_pedidos" fixedCellSize="38.0" layoutX="20.0" layoutY="130.0"
+                       prefHeight="405.0" prefWidth="760.0" styleClass="gestion-tabla">
                <columns>
                   <TableColumn fx:id="col_folio" prefWidth="64.0" text="Folio" />
                   <TableColumn fx:id="col_cliente" prefWidth="199.0" text="Cliente" />
@@ -36,153 +65,137 @@
                   <TableColumn fx:id="col_estatus" prefWidth="140.0" text="Estatus" />
                </columns>
             </TableView>
-                  <Button layoutX="20.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicNuevoPedido" prefHeight="45.0" prefWidth="155.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="+ Nuevo pedido" />
-                  <Button layoutX="190.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEditar" prefHeight="45.0" prefWidth="105.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Editar" />
-            <Button layoutX="540.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicExportarPDF" prefHeight="45.0" prefWidth="115.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Exportar PDF" />
-            <Button layoutX="665.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicExportarCSV" prefHeight="45.0" prefWidth="115.0" style="-fx-background-color: transparent; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-background-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="Exportar CSV" />
-            <ComboBox fx:id="cb_estatus" layoutX="320.0" layoutY="565.0" onAction="#clicCambiarEstatus" prefHeight="45.0" prefWidth="193.0" promptText="Cambiar estatus" />
+
+            <Button layoutX="20.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicNuevoPedido"
+                    prefHeight="45.0" prefWidth="155.0" text="+ Nuevo pedido" styleClass="gestion-btn-primario-grande" />
+
+            <Button layoutX="190.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicEditar"
+                    prefHeight="45.0" prefWidth="105.0" text="Editar" styleClass="gestion-btn-secundario" />
+
+            <ComboBox fx:id="cb_estatus" layoutX="320.0" layoutY="565.0" onAction="#clicCambiarEstatus"
+                      prefHeight="45.0" prefWidth="193.0" promptText="Cambiar estatus" styleClass="gestion-combo-accion" />
+
+            <Button layoutX="540.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicExportarPDF"
+                    prefHeight="45.0" prefWidth="115.0" text="Exportar PDF" styleClass="gestion-btn-secundario" />
+
+            <Button layoutX="665.0" layoutY="565.0" mnemonicParsing="false" onAction="#clicExportarCSV"
+                    prefHeight="45.0" prefWidth="115.0" text="Exportar CSV" styleClass="gestion-btn-secundario" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="pnl_menuCajero" layoutY="1.0" prefHeight="650.0" prefWidth="180.0" style="-fx-background-color: white;">
+
+      <AnchorPane fx:id="pnl_menuCajero" layoutY="1.0" prefHeight="650.0" prefWidth="180.0" styleClass="menu-lateral">
          <children>
             <ImageView fitHeight="50.0" fitWidth="60.0" layoutX="10.0" layoutY="8.0" preserveRatio="true">
                <image>
                   <Image url="@../../../imagenes/logo%20mini.png" />
                </image>
             </ImageView>
-            <Label layoutX="62.0" layoutY="19.0" text="Italia Pizza" textFill="#69727c">
-               <font>
-                  <Font name="System Bold" size="17.0" />
-               </font>
-            </Label>
-            <Label layoutX="111.0" layoutY="39.0" text="Restaurante" textFill="#69727c">
-               <font>
-                  <Font size="8.0" />
-               </font>
-            </Label>
-            <Accordion layoutX="10.0" layoutY="70.0" prefWidth="160.0" style="-fx-background-color: #f1f3f8; -fx-border-color: transparent;">
+
+            <Label layoutX="62.0" layoutY="19.0" text="Italia Pizza" styleClass="menu-logo-titulo" />
+            <Label layoutX="111.0" layoutY="39.0" text="Restaurante" styleClass="menu-logo-subtitulo" />
+
+            <Accordion layoutX="10.0" layoutY="70.0" prefWidth="160.0" styleClass="menu-acordeon">
                <panes>
-                  <TitledPane animated="false" expanded="true" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Pedidos">
+                  <TitledPane animated="false" expanded="true" text="Pedidos" styleClass="menu-seccion">
                      <content>
-                        <VBox prefWidth="158.0" spacing="8.0" style="-fx-background-color: #f1f3f8;">
-                           <children>
-                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicPedidos" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Pedidos">
-                                 <font>
-                                    <Font size="12.0" />
-                                 </font>
-                              </Button>
-                           </children>
+                        <VBox prefWidth="158.0" spacing="8.0" styleClass="menu-seccion-contenido">
                            <padding>
                               <Insets bottom="8.0" left="12.0" right="8.0" top="8.0" />
                            </padding>
+                           <children>
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicPedidos"
+                                      prefWidth="135.0" text="Pedidos" styleClass="menu-opcion" />
+                           </children>
                         </VBox>
                      </content>
                   </TitledPane>
                </panes>
             </Accordion>
-            <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="575.0" mnemonicParsing="false" onAction="#clicCerrarSesion" prefHeight="22.0" prefWidth="130.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #301f1f;" text="Cerrar sesión">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Button>
-            <Separator layoutX="10.0" layoutY="604.0" prefHeight="1.0" prefWidth="160.0" />
-            <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="615.0" mnemonicParsing="false" onAction="#clicAyudaAcercaDe" prefHeight="22.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Ayuda / Acerca de">
-               <font>
-                  <Font size="12.0" />
-               </font>
-            </Button>
+
+            <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="575.0" mnemonicParsing="false"
+                    onAction="#clicCerrarSesion" prefHeight="22.0" prefWidth="130.0"
+                    text="Cerrar sesión" styleClass="menu-cerrar-sesion" />
+
+            <Separator layoutX="10.0" layoutY="604.0" prefHeight="1.0" prefWidth="160.0" styleClass="menu-separador" />
+
+            <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="615.0" mnemonicParsing="false"
+                    onAction="#clicAyudaAcercaDe" prefHeight="22.0" prefWidth="140.0"
+                    text="Ayuda / Acerca de" styleClass="menu-ayuda" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="pnl_menuAdmin" prefHeight="650.0" prefWidth="180.0" style="-fx-background-color: white;">
+
+      <AnchorPane fx:id="pnl_menuAdmin" prefHeight="650.0" prefWidth="180.0" styleClass="menu-lateral">
          <children>
             <ImageView fitHeight="50.0" fitWidth="60.0" layoutX="10.0" layoutY="8.0" preserveRatio="true">
                <image>
                   <Image url="@../../../imagenes/logo%20mini.png" />
                </image>
             </ImageView>
-            <Label layoutX="62.0" layoutY="19.0" text="Italia Pizza" textFill="#69727c">
-               <font>
-                  <Font name="System Bold" size="17.0" />
-               </font>
-            </Label>
-            <Label layoutX="111.0" layoutY="39.0" text="Restaurante" textFill="#69727c">
-               <font>
-                  <Font size="8.0" />
-               </font>
-            </Label>
-            <Accordion layoutX="10.0" layoutY="70.0" prefWidth="160.0" style="-fx-background-color: #f1f3f8; -fx-border-color: transparent;">
+
+            <Label layoutX="62.0" layoutY="19.0" text="Italia Pizza" styleClass="menu-logo-titulo" />
+            <Label layoutX="111.0" layoutY="39.0" text="Restaurante" styleClass="menu-logo-subtitulo" />
+
+            <Accordion layoutX="10.0" layoutY="70.0" prefWidth="160.0" styleClass="menu-acordeon">
                <panes>
-                  <TitledPane animated="false" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Administración">
+                  <TitledPane animated="false" text="Administración" styleClass="menu-seccion">
                      <content>
-                        <VBox prefWidth="158.0" spacing="8.0" style="-fx-background-color: #f1f3f8;">
+                        <VBox prefWidth="158.0" spacing="8.0" styleClass="menu-seccion-contenido">
                            <padding>
                               <Insets bottom="8.0" left="12.0" right="8.0" top="8.0" />
                            </padding>
                            <children>
-                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicUsuarios" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Usuarios">
-                                 <font>
-                                    <Font size="12.0" />
-                                 </font>
-                              </Button>
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicUsuarios"
+                                      prefWidth="135.0" text="Usuarios" styleClass="menu-opcion" />
                            </children>
                         </VBox>
                      </content>
                   </TitledPane>
-                  <TitledPane animated="false" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Inventarios">
+
+                  <TitledPane animated="false" text="Inventarios" styleClass="menu-seccion">
                      <content>
-                        <VBox prefWidth="158.0" spacing="10.0" style="-fx-background-color: #f1f3f8;">
+                        <VBox prefWidth="158.0" spacing="10.0" styleClass="menu-seccion-contenido">
                            <padding>
                               <Insets bottom="10.0" left="12.0" right="8.0" top="8.0" />
                            </padding>
                            <children>
-                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicProductos" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Productos">
-                                 <font>
-                                    <Font size="12.0" />
-                                 </font>
-                              </Button>
-                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicProductosInventario" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Productos de Inventario">
-                                 <font>
-                                    <Font size="12.0" />
-                                 </font>
-                              </Button>
-                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicValidacionInventarios" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Validación inventario">
-                                 <font>
-                                    <Font size="12.0" />
-                                 </font>
-                              </Button>
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicProductos"
+                                      prefWidth="135.0" text="Productos" styleClass="menu-opcion" />
+
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicProductosInventario"
+                                      prefWidth="135.0" text="Productos de Inventario" styleClass="menu-opcion" />
+
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicValidacionInventarios"
+                                      prefWidth="135.0" text="Validación inventario" styleClass="menu-opcion" />
                            </children>
                         </VBox>
                      </content>
                   </TitledPane>
-                  <TitledPane animated="false" expanded="true" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #202932;" text="Pedidos">
+
+                  <TitledPane animated="false" expanded="true" text="Pedidos" styleClass="menu-seccion">
                      <content>
-                        <VBox prefWidth="158.0" spacing="8.0" style="-fx-background-color: #f1f3f8;">
+                        <VBox prefWidth="158.0" spacing="8.0" styleClass="menu-seccion-contenido">
                            <padding>
                               <Insets bottom="8.0" left="12.0" right="8.0" top="8.0" />
                            </padding>
                            <children>
-                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicPedidos" prefWidth="135.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #1265f5; -fx-font-weight: bold;" text="Pedidos">
-                                 <font>
-                                    <Font name="System Bold" size="12.0" />
-                                 </font>
-                              </Button>
+                              <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#clicPedidos"
+                                      prefWidth="135.0" text="Pedidos" styleClass="menu-opcion-activa" />
                            </children>
                         </VBox>
                      </content>
                   </TitledPane>
                </panes>
             </Accordion>
-            <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="575.0" mnemonicParsing="false" onAction="#clicCerrarSesion" prefHeight="22.0" prefWidth="130.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #301f1f;" text="Cerrar sesión">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Button>
-            <AnchorPane layoutX="10.0" layoutY="604.0" prefHeight="1.0" prefWidth="160.0" style="-fx-background-color: #e1e5eb;" />
-            <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="615.0" mnemonicParsing="false" onAction="#clicAyudaAcercaDe" prefHeight="22.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #202932;" text="Ayuda / Acerca de">
-               <font>
-                  <Font size="12.0" />
-               </font>
-            </Button>
+
+            <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="575.0" mnemonicParsing="false"
+                    onAction="#clicCerrarSesion" prefHeight="22.0" prefWidth="130.0"
+                    text="Cerrar sesión" styleClass="menu-cerrar-sesion" />
+
+            <AnchorPane layoutX="10.0" layoutY="604.0" prefHeight="1.0" prefWidth="160.0" styleClass="menu-separador-pane" />
+
+            <Button alignment="CENTER_LEFT" layoutX="18.0" layoutY="615.0" mnemonicParsing="false"
+                    onAction="#clicAyudaAcercaDe" prefHeight="22.0" prefWidth="140.0"
+                    text="Ayuda / Acerca de" styleClass="menu-ayuda" />
          </children>
       </AnchorPane>
    </children>

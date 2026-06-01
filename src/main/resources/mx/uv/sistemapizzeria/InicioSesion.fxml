@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="600.0" prefWidth="850.0" style="-fx-background-color: #f4f6f8;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.InicioSesionController">
+<AnchorPane prefHeight="600.0" prefWidth="850.0" styleClass="login-root"
+            xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="mx.uv.sistemapizzeria.controladores.InicioSesionController">
+
+    <stylesheets>
+        <URL value="@../../../css/estilos.css" />
+    </stylesheets>
+
     <children>
-        <VBox alignment="CENTER" layoutX="393.0" layoutY="6.0" prefHeight="604.0" prefWidth="449.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e0e0e0; -fx-border-radius: 10;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="393.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="6.0">
-            <effect>
-                <DropShadow color="#00000020" offsetX="0.0" offsetY="5.0" radius="15.0" />
-            </effect>
+        <VBox alignment="CENTER" layoutX="393.0" layoutY="6.0" prefHeight="604.0" prefWidth="449.0"
+              spacing="20.0" styleClass="login-card"
+              AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="393.0"
+              AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="6.0">
             <padding>
                 <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
             </padding>
             <children>
                 <VBox alignment="CENTER" spacing="5.0">
                     <children>
-                        <Label text="ITALIA PIZZA" textFill="#333333">
-                            <font>
-                                <Font name="System Bold" size="28.0" />
-                            </font>
-                        </Label>
-                        <Label text="Sistema de pedidos e inventario" textFill="#666666">
-                            <font>
-                                <Font size="16.0" />
-                            </font>
-                        </Label>
+                        <Label text="ITALIA PIZZA" styleClass="login-marca-titulo" />
+                        <Label text="Sistema de pedidos e inventario" styleClass="login-marca-subtitulo" />
                     </children>
                 </VBox>
 
@@ -41,11 +45,7 @@
 
                 <VBox alignment="CENTER" spacing="5.0">
                     <children>
-                        <Label alignment="CENTER" contentDisplay="CENTER" text="Iniciar Sesión" textFill="#495057">
-                            <font>
-                                <Font name="System Bold" size="18.0" />
-                            </font>
-                        </Label>
+                        <Label alignment="CENTER" contentDisplay="CENTER" text="Iniciar Sesión" styleClass="login-titulo" />
                     </children>
                 </VBox>
 
@@ -53,35 +53,21 @@
                     <children>
                         <VBox spacing="5.0">
                             <children>
-                                <Label text="Usuario:" textFill="#495057">
-                                    <font>
-                                        <Font name="System Bold" size="14.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="txt_usuario" prefHeight="40.0" promptText="Ingrese su usuario" style="-fx-background-radius: 5; -fx-border-color: #dee2e6; -fx-border-radius: 5;" />
+                                <Label text="Usuario:" styleClass="login-label" />
+                                <TextField fx:id="txt_usuario" prefHeight="40.0" promptText="Ingrese su usuario" styleClass="login-campo" />
                             </children>
                         </VBox>
+
                         <VBox spacing="5.0">
                             <children>
-                                <Label text="Contraseña:" textFill="#495057">
-                                    <font>
-                                        <Font name="System Bold" size="14.0" />
-                                    </font>
-                                </Label>
-                                <PasswordField fx:id="txt_contrasenia" prefHeight="40.0" promptText="Ingrese su contraseña" style="-fx-background-radius: 5; -fx-border-color: #dee2e6; -fx-border-radius: 5;" />
-                                <Label fx:id="lb_datosCompletosError" textFill="#8c8c8c" wrapText="true">
-                                    <font>
-                                        <Font size="11.0" />
-                                    </font>
-                                </Label>
+                                <Label text="Contraseña:" styleClass="login-label" />
+                                <PasswordField fx:id="txt_contrasenia" prefHeight="40.0" promptText="Ingrese su contraseña" styleClass="login-campo" />
+                                <Label fx:id="lb_datosCompletosError" wrapText="true" styleClass="login-error" />
                             </children>
                         </VBox>
-      
-                      <Button mnemonicParsing="false" onAction="#clicIniciarSesion" prefHeight="45.0" prefWidth="1000.0" style="-fx-background-color: #FF383C; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-font-size: 16px;" text="Iniciar Sesión">
-                          <effect>
-                              <DropShadow color="#00000033" offsetY="3.0" />
-                          </effect>
-                      </Button>
+
+                        <Button mnemonicParsing="false" onAction="#clicIniciarSesion" prefHeight="45.0"
+                                prefWidth="1000.0" text="Iniciar Sesión" styleClass="login-boton" />
                     </children>
                     <VBox.margin>
                         <Insets bottom="10.0" top="10.0" />
@@ -89,14 +75,15 @@
                 </VBox>
             </children>
         </VBox>
-      <VBox alignment="CENTER" layoutX="-9.0" prefHeight="620.0" prefWidth="394.0" style="-fx-background-color: #FF383C;">
-         <children>
-            <ImageView fitHeight="314.0" fitWidth="296.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../imagenes/logo%20pizza%20pae.png" />
-               </image>
-            </ImageView>
-         </children>
-      </VBox>
+
+        <VBox alignment="CENTER" layoutX="-9.0" prefHeight="620.0" prefWidth="394.0" styleClass="login-panel-logo">
+            <children>
+                <ImageView fitHeight="314.0" fitWidth="296.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../../imagenes/logo%20pizza%20pae.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </VBox>
     </children>
 </AnchorPane>

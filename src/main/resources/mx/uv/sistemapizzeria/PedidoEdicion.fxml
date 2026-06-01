@@ -1,40 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="620.0" prefWidth="860.0" style="-fx-background-color: #f7f8fc;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoEdicionController">
+<AnchorPane prefHeight="620.0" prefWidth="860.0" styleClass="pedido-edicion-root"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="mx.uv.sistemapizzeria.controladores.PedidoEdicionController">
+
+   <stylesheets>
+      <URL value="@../../../css/estilos.css" />
+   </stylesheets>
 
    <children>
 
-      <HBox alignment="CENTER_LEFT" layoutX="0.0" layoutY="0.0" prefHeight="60.0" prefWidth="860.0" spacing="10.0" style="-fx-background-color: white;                  -fx-border-color: #e2e6ed;                  -fx-border-width: 0 0 1 0;                  -fx-padding: 0 24 0 24;">
+      <HBox alignment="CENTER_LEFT" layoutX="0.0" layoutY="0.0" prefHeight="60.0" prefWidth="860.0"
+            spacing="10.0" styleClass="pedido-edicion-header">
          <children>
             <VBox spacing="1.0">
                <children>
-                  <Label text="Formulario" textFill="#8892a0">
-                     <font><Font size="11.0" /></font>
-                  </Label>
-                  <Label fx:id="lbl_titulo" text="Editar pedido #—" textFill="#1a2535">
-                     <font><Font name="System Bold" size="20.0" /></font>
-                  </Label>
+                  <Label text="Formulario" styleClass="pedido-edicion-caption" />
+                  <Label fx:id="lbl_titulo" text="Editar pedido #—" styleClass="pedido-edicion-titulo" />
                </children>
             </VBox>
+
             <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="btn_cancelar" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="34.0" prefWidth="90.0" style="-fx-background-color: white;                        -fx-border-color: #1265f5; -fx-border-width: 2;                        -fx-border-radius: 6; -fx-background-radius: 6;                        -fx-text-fill: #1265f5;                        -fx-font-size: 12px; -fx-font-weight: bold;" text="Cancelar" />
-            <Button  mnemonicParsing="false" onAction="#clicGuardar" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: #1265f5;                        -fx-border-radius: 6; -fx-background-radius: 6;                        -fx-text-fill: white;                        -fx-font-size: 12px; -fx-font-weight: bold;" text="Guardar cambios" />
+
+            <Button fx:id="btn_cancelar" mnemonicParsing="false" onAction="#clicCancelar"
+                    prefHeight="34.0" prefWidth="90.0" text="Cancelar"
+                    styleClass="pedido-edicion-btn-cancelar" />
+
+            <Button mnemonicParsing="false" onAction="#clicGuardar"
+                    prefHeight="34.0" prefWidth="110.0" text="Guardar cambios"
+                    styleClass="pedido-edicion-btn-guardar" />
          </children>
       </HBox>
 
       <VBox layoutX="16.0" layoutY="72.0" prefHeight="536.0" prefWidth="828.0" spacing="12.0">
          <children>
 
-            <VBox spacing="6.0" style="-fx-background-color: white;                      -fx-border-color: #e2e6ed; -fx-border-width: 1;                      -fx-border-radius: 8; -fx-background-radius: 8;                      -fx-padding: 12 16 12 16;">
+            <VBox spacing="6.0" styleClass="pedido-edicion-card-cliente">
                <children>
-                  <Label text="Cliente del pedido" textFill="#1a2535">
-                     <font><Font name="System Bold" size="12.0" /></font>
-                  </Label>
-                  <TableView fx:id="tbl_cliente" fixedCellSize="32.0" prefHeight="285.0" prefWidth="794.0" style="-fx-background-color: white;                               -fx-border-color: #e2e6ed; -fx-border-width: 1;                               -fx-table-cell-border-color: #e2e6ed;                               -fx-selection-bar: #f0f4ff;                               -fx-selection-bar-non-focused: #f0f4ff;">
+                  <Label text="Cliente del pedido" styleClass="pedido-edicion-seccion-titulo" />
+
+                  <TableView fx:id="tbl_cliente" fixedCellSize="32.0" prefHeight="285.0" prefWidth="794.0"
+                             styleClass="pedido-edicion-tabla">
                      <columns>
                         <TableColumn fx:id="col_nombre" prefWidth="170.0" text="Nombre" />
                         <TableColumn fx:id="col_numeroTelefono" prefWidth="110.0" text="Teléfono" />
@@ -47,34 +67,35 @@
                </children>
             </VBox>
 
-            <VBox spacing="8.0" style="-fx-background-color: white;                      -fx-border-color: #e2e6ed; -fx-border-width: 1;                      -fx-border-radius: 8; -fx-background-radius: 8;                      -fx-padding: 12 16 12 16;" VBox.vgrow="ALWAYS">
+            <VBox spacing="8.0" VBox.vgrow="ALWAYS" styleClass="pedido-edicion-card-productos">
                <children>
 
-                  <Label text="Productos del pedido" textFill="#1a2535">
-                     <font><Font name="System Bold" size="12.0" /></font>
-                  </Label>
+                  <Label text="Productos del pedido" styleClass="pedido-edicion-seccion-titulo" />
 
                   <HBox alignment="CENTER_LEFT" spacing="8.0">
                      <children>
-                        <TextField fx:id="txt_busquedaProducto" prefHeight="34.0" promptText="Buscar producto por nombre…" style="-fx-background-color: #f3f4f9;                                   -fx-border-color: #d9dde5; -fx-border-width: 1;                                   -fx-border-radius: 6; -fx-background-radius: 6;                                   -fx-font-size: 12px; -fx-padding: 0 10 0 10;" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="btn_buscarProducto" mnemonicParsing="false" onAction="#clicBuscarProducto" prefHeight="34.0" prefWidth="34.0" style="-fx-background-color: #1265f5;                                -fx-background-radius: 6;                                -fx-padding: 0;" textFill="WHITE" />
+                        <TextField fx:id="txt_busquedaProducto" prefHeight="34.0"
+                                   promptText="Buscar producto por nombre…"
+                                   HBox.hgrow="ALWAYS"
+                                   styleClass="pedido-edicion-campo" />
+
+                        <Button fx:id="btn_buscarProducto" mnemonicParsing="false"
+                                onAction="#clicBuscarProducto" prefHeight="34.0" prefWidth="34.0"
+                                styleClass="pedido-edicion-btn-buscar" />
                      </children>
                   </HBox>
 
-                  <ScrollPane  fitToWidth="true" style="-fx-background-color: transparent;                                -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
+                  <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="pedido-edicion-scroll">
                      <content>
-                        <FlowPane fx:id="flow_productos" hgap="12.0" prefWrapLength="796.0" style="-fx-background-color: transparent;                                  -fx-padding: 4 0 4 0;" vgap="12.0" />
+                        <FlowPane fx:id="flow_productos" hgap="12.0" prefWrapLength="796.0"
+                                  vgap="12.0" styleClass="pedido-edicion-flow" />
                      </content>
                   </ScrollPane>
 
-                  <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-border-color: #e2e6ed; -fx-border-width: 1 0 0 0;                          -fx-padding: 8 0 0 0;">
+                  <HBox alignment="CENTER_RIGHT" spacing="8.0" styleClass="pedido-edicion-total-barra">
                      <children>
-                        <Label text="Total estimado:" textFill="#6f7882">
-                           <font><Font size="13.0" /></font>
-                        </Label>
-                        <Label fx:id="lbl_total" text="0.00" textFill="#1265f5">
-                           <font><Font name="System Bold" size="18.0" /></font>
-                        </Label>
+                        <Label text="Total estimado:" styleClass="pedido-edicion-total-label" />
+                        <Label fx:id="lbl_total" text="0.00" styleClass="pedido-edicion-total-valor" />
                      </children>
                   </HBox>
 

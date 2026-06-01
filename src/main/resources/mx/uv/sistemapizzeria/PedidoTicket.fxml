@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
+<VBox prefWidth="443.0" styleClass="pedido-ticket-root"
+      xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="mx.uv.sistemapizzeria.controladores.PedidoTicketController">
 
-<VBox prefWidth="443.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.PedidoTicketController">
-    <padding><Insets bottom="24" left="28" right="28" top="24" /></padding>
+    <stylesheets>
+        <URL value="@../../../css/estilos.css" />
+    </stylesheets>
+
+    <padding>
+        <Insets bottom="24" left="28" right="28" top="24" />
+    </padding>
+
     <children>
 
-        <Label alignment="CENTER" maxWidth="Infinity" text="Ticket de Pedido" textFill="#202932">
-            <font>
-                <Font name="System Bold" size="26.0" />
-            </font>
+        <Label alignment="CENTER" maxWidth="Infinity" text="Ticket de Pedido" styleClass="pedido-ticket-titulo">
             <VBox.margin>
                 <Insets bottom="6" />
             </VBox.margin>
@@ -25,30 +38,14 @@
                 <Insets bottom="16" />
             </VBox.margin>
             <children>
-                <Label text="Pedido #" textFill="#5a6070">
-                    <font>
-                        <Font size="13.0" />
-                    </font>
-                </Label>
-                <Label fx:id="lbl_numeroPedido" text="—" textFill="#202932">
-                    <font>
-                        <Font name="System Bold" size="13.0" />
-                    </font>
-                </Label>
-                <Label text=" · " textFill="#9aa0ac">
-                    <font>
-                        <Font size="13.0" />
-                    </font>
-                </Label>
-                <Label fx:id="lbl_estadoPedido" text="—" textFill="#1265f5">
-                    <font>
-                        <Font name="System Bold" size="13.0" />
-                    </font>
-                </Label>
+                <Label text="Pedido #" styleClass="pedido-ticket-texto-secundario" />
+                <Label fx:id="lbl_numeroPedido" text="—" styleClass="pedido-ticket-numero" />
+                <Label text=" · " styleClass="pedido-ticket-separador-texto" />
+                <Label fx:id="lbl_estadoPedido" text="—" styleClass="pedido-ticket-estado" />
             </children>
         </HBox>
 
-        <VBox style="-fx-background-color: #f8f9fc; -fx-border-color: #e2e6ed; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;">
+        <VBox styleClass="pedido-ticket-info-card">
             <VBox.margin>
                 <Insets bottom="16" />
             </VBox.margin>
@@ -64,60 +61,21 @@
                     </columnConstraints>
                     <children>
 
-                        <Label text="Fecha y hora:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <font>
-                                <Font name="System Bold" size="11.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="lbl_fechaHora" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <font>
-                                <Font size="11.0" />
-                            </font>
-                        </Label>
+                        <Label text="Fecha y hora:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="pedido-ticket-etiqueta" />
+                        <Label fx:id="lbl_fechaHora" text="" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="pedido-ticket-valor" />
 
-                        <Label text="Atiende:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                            <font>
-                                <Font name="System Bold" size="11.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="lbl_empleado" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                            <font>
-                                <Font size="11.0" />
-                            </font>
-                        </Label>
+                        <Label text="Atiende:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="pedido-ticket-etiqueta" />
+                        <Label fx:id="lbl_empleado" text="" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="pedido-ticket-valor" />
 
-                        <Label text="Cliente:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                            <font>
-                                <Font name="System Bold" size="11.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="lbl_cliente" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                            <font>
-                                <Font size="11.0" />
-                            </font>
-                        </Label>
+                        <Label text="Cliente:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="pedido-ticket-etiqueta" />
+                        <Label fx:id="lbl_cliente" text="" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="pedido-ticket-valor" />
 
-                        <Label text="Dirección:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="3">
-                            <font>
-                                <Font name="System Bold" size="11.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="lbl_direccion" text="" textFill="#3a4250" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                            <font>
-                                <Font size="11.0" />
-                            </font>
-                        </Label>
+                        <Label text="Dirección:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="pedido-ticket-etiqueta" />
+                        <Label fx:id="lbl_direccion" text="" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="pedido-ticket-valor" />
 
-                        <Label text="Teléfono:" textFill="#202932" GridPane.columnIndex="0" GridPane.rowIndex="4">
-                            <font>
-                                <Font name="System Bold" size="11.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="lbl_telefono" text="" textFill="#3a4250" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                            <font>
-                                <Font size="11.0" />
-                            </font>
-                        </Label>
+                        <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="pedido-ticket-etiqueta" />
+                        <Label fx:id="lbl_telefono" text="" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="pedido-ticket-valor" />
+
                     </children>
                     <rowConstraints>
                         <RowConstraints />
@@ -127,19 +85,17 @@
                         <RowConstraints />
                     </rowConstraints>
                 </GridPane>
+
             </children>
         </VBox>
 
-        <Label text="Productos" textFill="#202932">
-            <font>
-                <Font name="System Bold" size="12.0" />
-            </font>
+        <Label text="Productos" styleClass="pedido-ticket-subtitulo">
             <VBox.margin>
                 <Insets bottom="6" />
             </VBox.margin>
         </Label>
 
-        <TableView fx:id="tbl_productosTicket" maxWidth="Infinity" prefHeight="180.0" style="-fx-border-color: #d5dae2; -fx-border-width: 1;">
+        <TableView fx:id="tbl_productosTicket" maxWidth="Infinity" prefHeight="180.0" styleClass="pedido-ticket-tabla">
             <VBox.margin>
                 <Insets bottom="16" />
             </VBox.margin>
@@ -155,27 +111,20 @@
                 <Insets bottom="20" />
             </VBox.margin>
             <children>
-                <VBox alignment="CENTER_RIGHT" style="-fx-background-color: #f3f4f9; -fx-border-color: #e2e6ed; -fx-border-width: 1; -fx-border-radius: 4; -fx-background-radius: 4;">
+                <VBox alignment="CENTER_RIGHT" styleClass="pedido-ticket-total-card">
                     <padding>
                         <Insets bottom="8" left="16" right="16" top="8" />
                     </padding>
                     <children>
-                        <Label text="Total a pagar" textFill="#5a6070">
-                            <font>
-                                <Font size="11.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="lbl_totalPagar" alignment="CENTER_RIGHT" text="0.00" textFill="#202932">
-                            <font>
-                                <Font name="System Bold" size="17.0" />
-                            </font>
-                        </Label>
+                        <Label text="Total a pagar" styleClass="pedido-ticket-total-label" />
+                        <Label fx:id="lbl_totalPagar" alignment="CENTER_RIGHT" text="0.00" styleClass="pedido-ticket-total-valor" />
                     </children>
                 </VBox>
             </children>
         </HBox>
 
-        <Button maxWidth="Infinity" onAction="#clicAceptar" prefHeight="40.0" style="-fx-background-color: #1265f5; -fx-background-radius: 6; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;" text="Aceptar" />
+        <Button maxWidth="Infinity" onAction="#clicAceptar" prefHeight="40.0" text="Aceptar" styleClass="pedido-ticket-btn-aceptar" />
+
     </children>
 
 </VBox>

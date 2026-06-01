@@ -1,63 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="610.0" prefWidth="539.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.ProductoInventarioOperacionesController">
+<AnchorPane prefHeight="610.0" prefWidth="539.0" styleClass="producto-inventario-form-root"
+            xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="mx.uv.sistemapizzeria.controladores.ProductoInventarioOperacionesController">
+
+   <stylesheets>
+      <URL value="@../../../css/estilos.css" />
+   </stylesheets>
+
    <children>
 
-      <Label layoutX="14.0" layoutY="14.0" text="Formulario" textFill="#6f7882">
-         <font>
-            <Font size="13.0" />
-         </font>
-      </Label>
+      <Label layoutX="14.0" layoutY="14.0" text="Formulario" styleClass="producto-inventario-form-caption" />
 
-      <Label fx:id="txt_operaciones" layoutX="17.0" layoutY="35.0" text="Operación Producto Inventario" textFill="#202932">
-         <font>
-            <Font name="System Bold" size="26.0" />
-         </font>
-      </Label>
+      <Label fx:id="txt_operaciones" layoutX="17.0" layoutY="35.0"
+             text="Operación Producto Inventario" styleClass="producto-inventario-form-titulo" />
 
-      <Label layoutX="14.0" layoutY="86.0" text="Código" textFill="#202932">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
+      <Label layoutX="14.0" layoutY="86.0" text="Código" styleClass="producto-inventario-form-label" />
 
-      <TextField fx:id="txt_codigo" layoutX="14.0" layoutY="111.0" prefHeight="42.0" prefWidth="487.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 14px;" />
+      <TextField fx:id="txt_codigo" layoutX="14.0" layoutY="111.0"
+                 prefHeight="42.0" prefWidth="487.0"
+                 styleClass="producto-inventario-form-campo" />
 
-      <Label layoutX="14.0" layoutY="171.0" text="Nombre" textFill="#202932">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
+      <Label layoutX="14.0" layoutY="171.0" text="Nombre" styleClass="producto-inventario-form-label" />
 
-      <TextField fx:id="txt_nombre" layoutX="14.0" layoutY="196.0" prefHeight="42.0" prefWidth="487.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 14px;" />
+      <TextField fx:id="txt_nombre" layoutX="14.0" layoutY="196.0"
+                 prefHeight="42.0" prefWidth="487.0"
+                 styleClass="producto-inventario-form-campo" />
 
-      <Label layoutX="14.0" layoutY="256.0" text="Existencias" textFill="#202932">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
+      <Label layoutX="14.0" layoutY="256.0" text="Existencias" styleClass="producto-inventario-form-label" />
 
-      <TextField fx:id="txt_existencias" layoutX="14.0" layoutY="281.0" prefHeight="42.0" prefWidth="487.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 14px;" />
+      <TextField fx:id="txt_existencias" layoutX="14.0" layoutY="281.0"
+                 prefHeight="42.0" prefWidth="487.0"
+                 styleClass="producto-inventario-form-campo" />
 
-      <Label layoutX="14.0" layoutY="341.0" text="Fecha de caducidad" textFill="#202932">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
+      <Label layoutX="14.0" layoutY="341.0" text="Fecha de caducidad" styleClass="producto-inventario-form-label" />
 
-      <Button layoutX="254.0" layoutY="457.0" mnemonicParsing="false" onAction="#clicSubirFoto" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 13px; -fx-font-weight: bold;" text="Subir Foto" />
+      <DatePicker fx:id="dp_fechaCaducidad" layoutX="14.0" layoutY="367.0"
+                  prefHeight="40.0" prefWidth="487.0"
+                  styleClass="producto-inventario-form-date" />
 
-      <Button layoutX="202.0" layoutY="548.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="42.0" prefWidth="140.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 15px; -fx-font-weight: bold;" text="Cancelar" />
+      <ImageView fx:id="img_foto" fitHeight="120.0" fitWidth="140.0"
+                 layoutX="67.0" layoutY="415.0"
+                 pickOnBounds="true" preserveRatio="true" />
 
-      <Button layoutX="361.0" layoutY="548.0" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="42.0" prefWidth="140.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;" text="Guardar" />
-      <DatePicker fx:id="dp_fechaCaducidad" layoutX="14.0" layoutY="367.0" prefHeight="40.0" prefWidth="487.0" />
-      <ImageView fx:id="img_foto" fitHeight="120.0" fitWidth="140.0" layoutX="67.0" layoutY="415.0" pickOnBounds="true" preserveRatio="true" />
+      <Button layoutX="254.0" layoutY="457.0" mnemonicParsing="false"
+              onAction="#clicSubirFoto" prefHeight="40.0" prefWidth="130.0"
+              text="Subir Foto" styleClass="producto-inventario-form-btn-secundario" />
+
+      <Button layoutX="202.0" layoutY="548.0" mnemonicParsing="false"
+              onAction="#clicCancelar" prefHeight="42.0" prefWidth="140.0"
+              text="Cancelar" styleClass="producto-inventario-form-btn-secundario-grande" />
+
+      <Button layoutX="361.0" layoutY="548.0" mnemonicParsing="false"
+              onAction="#clicGuardar" prefHeight="42.0" prefWidth="140.0"
+              text="Guardar" styleClass="producto-inventario-form-btn-primario" />
 
    </children>
 </AnchorPane>

@@ -1,102 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="559.0" prefWidth="469.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.UsuarioClienteOperacionesController">
+<AnchorPane prefHeight="559.0" prefWidth="469.0" styleClass="usuario-cliente-form-root"
+            xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="mx.uv.sistemapizzeria.controladores.UsuarioClienteOperacionesController">
+
+   <stylesheets>
+      <URL value="@../../../css/estilos.css" />
+   </stylesheets>
+
    <children>
-      <ScrollPane layoutX="-3.0" layoutY="-2.0" prefHeight="660.0" prefWidth="470.0">
+      <ScrollPane layoutX="-3.0" layoutY="-2.0" prefHeight="660.0" prefWidth="470.0"
+                  styleClass="usuario-cliente-form-scroll">
          <content>
 
-                  <AnchorPane layoutX="-4.0" prefHeight="1085.0" prefWidth="463.0" style="-fx-background-color: white; -fx-border-color: #d9dde5; -fx-border-width: 1;">
-                     <children>
-                        <Label fx:id="lb_formulario" layoutX="28.0" layoutY="33.0" text="Formulario" textFill="#6f7882">
-                           <font>
-                              <Font name="System Bold" size="16.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="28.0" layoutY="58.0" text="Cliente" textFill="#202932">
-                           <font>
-                              <Font name="System Bold" size="32.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="28.0" layoutY="124.0" text="Nombre(s)" textFill="#202932">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="txt_nombres1" layoutX="28.0" layoutY="149.0" prefHeight="48.0" prefWidth="397.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 16px; -fx-prompt-text-fill: #68727d;" />
-                        <Label layoutX="28.0" layoutY="203.0" text="Apellido paterno" textFill="#202932">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="227.0" layoutY="203.0" text="Apellido materno" textFill="#202932">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="txt_apellidoPaterno1" layoutX="28.0" layoutY="226.0" prefHeight="48.0" prefWidth="189.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 16px; -fx-prompt-text-fill: #68727d;" />
-                        <TextField fx:id="txt_apellidoMaterno1" layoutX="227.0" layoutY="226.0" prefHeight="48.0" prefWidth="198.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 16px; -fx-prompt-text-fill: #68727d;" />
-                        <Separator layoutX="28.0" layoutY="294.0" prefHeight="3.0" prefWidth="397.0" />
-                        <Label layoutX="28.0" layoutY="312.0" text="Teléfono" textFill="#202932">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="txt_telefono1" layoutX="28.0" layoutY="336.0" prefHeight="48.0" prefWidth="397.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 16px; -fx-prompt-text-fill: #68727d;" />
-                        <Label layoutX="28.0" layoutY="398.0" text="Correo electrónico" textFill="#202932">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="txt_correoElectronico1" layoutX="28.0" layoutY="422.0" prefHeight="48.0" prefWidth="397.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 16px; -fx-prompt-text-fill: #68727d;" />
-                        <Separator layoutX="28.0" layoutY="480.0" prefHeight="3.0" prefWidth="397.0" />
-                        <Label layoutX="28.0" layoutY="498.0" text="Calle" textFill="#202932">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="txt_calle1" layoutX="28.0" layoutY="522.0" prefHeight="48.0" prefWidth="397.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 16px; -fx-prompt-text-fill: #68727d;" />
-                        <Label layoutX="28.0" layoutY="589.0" text="Código postal" textFill="#202932">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="282.0" layoutY="589.0" text="Número" textFill="#202932">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="txt_codigoPostal1" layoutX="28.0" layoutY="613.0" prefHeight="48.0" prefWidth="244.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 16px; -fx-prompt-text-fill: #68727d;" />
-                        <TextField fx:id="txt_numero1" layoutX="282.0" layoutY="613.0" prefHeight="48.0" prefWidth="143.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 16px; -fx-prompt-text-fill: #68727d;" />
-                        <Label layoutX="28.0" layoutY="682.0" text="Ciudad" textFill="#202932">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="txt_ciudad1" layoutX="28.0" layoutY="704.0" prefHeight="48.0" prefWidth="397.0" style="-fx-background-color: #f3f4f9; -fx-background-radius: 0; -fx-border-color: #cfd5dd; -fx-border-width: 0 0 1 0; -fx-font-size: 16px; -fx-prompt-text-fill: #68727d;" />
-                        <Button fx:id="btn_agregarDireccion1" layoutX="236.0" layoutY="763.0" mnemonicParsing="false" onAction="#clicAgregarDireccion" prefHeight="40.0" prefWidth="189.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 14px; -fx-font-weight: bold;" text="+   Agregar Dirección" />
-                        <Label layoutX="28.0" layoutY="821.0" text="Direccion" textFill="#202932">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Button fx:id="btn_cancelar1" layoutX="31.0" layoutY="1007.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="47.0" prefWidth="189.0" style="-fx-background-color: white; -fx-background-radius: 0; -fx-border-color: #1265ff; -fx-border-width: 2; -fx-border-radius: 0; -fx-text-fill: #1265ff; -fx-font-size: 16px; -fx-font-weight: bold;" text="Cancelar" />
-                        <Button fx:id="btn_guardar1" layoutX="236.0" layoutY="1007.0" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="47.0" prefWidth="189.0" style="-fx-background-color: #1265f5; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;" text="Guardar" />
-                  <ScrollPane layoutX="27.0" layoutY="847.0" prefHeight="130.0" prefWidth="398.0">
+            <AnchorPane layoutX="-4.0" prefHeight="1085.0" prefWidth="463.0"
+                        styleClass="usuario-cliente-form-contenido">
+               <children>
+
+                  <Label fx:id="lb_formulario" layoutX="28.0" layoutY="33.0"
+                         text="Formulario" styleClass="usuario-cliente-form-caption" />
+
+                  <Label layoutX="28.0" layoutY="58.0"
+                         text="Cliente" styleClass="usuario-cliente-form-titulo" />
+
+                  <Label layoutX="28.0" layoutY="124.0"
+                         text="Nombre(s)" styleClass="usuario-cliente-form-label" />
+
+                  <TextField fx:id="txt_nombres1" layoutX="28.0" layoutY="149.0"
+                             prefHeight="48.0" prefWidth="397.0"
+                             styleClass="usuario-cliente-form-campo" />
+
+                  <Label layoutX="28.0" layoutY="203.0"
+                         text="Apellido paterno" styleClass="usuario-cliente-form-label" />
+
+                  <Label layoutX="227.0" layoutY="203.0"
+                         text="Apellido materno" styleClass="usuario-cliente-form-label" />
+
+                  <TextField fx:id="txt_apellidoPaterno1" layoutX="28.0" layoutY="226.0"
+                             prefHeight="48.0" prefWidth="189.0"
+                             styleClass="usuario-cliente-form-campo" />
+
+                  <TextField fx:id="txt_apellidoMaterno1" layoutX="227.0" layoutY="226.0"
+                             prefHeight="48.0" prefWidth="198.0"
+                             styleClass="usuario-cliente-form-campo" />
+
+                  <Separator layoutX="28.0" layoutY="294.0" prefHeight="3.0" prefWidth="397.0"
+                             styleClass="usuario-cliente-form-separador" />
+
+                  <Label layoutX="28.0" layoutY="312.0"
+                         text="Teléfono" styleClass="usuario-cliente-form-label" />
+
+                  <TextField fx:id="txt_telefono1" layoutX="28.0" layoutY="336.0"
+                             prefHeight="48.0" prefWidth="397.0"
+                             styleClass="usuario-cliente-form-campo" />
+
+                  <Label layoutX="28.0" layoutY="398.0"
+                         text="Correo electrónico" styleClass="usuario-cliente-form-label" />
+
+                  <TextField fx:id="txt_correoElectronico1" layoutX="28.0" layoutY="422.0"
+                             prefHeight="48.0" prefWidth="397.0"
+                             styleClass="usuario-cliente-form-campo" />
+
+                  <Separator layoutX="28.0" layoutY="480.0" prefHeight="3.0" prefWidth="397.0"
+                             styleClass="usuario-cliente-form-separador" />
+
+                  <Label layoutX="28.0" layoutY="498.0"
+                         text="Calle" styleClass="usuario-cliente-form-label" />
+
+                  <TextField fx:id="txt_calle1" layoutX="28.0" layoutY="522.0"
+                             prefHeight="48.0" prefWidth="397.0"
+                             styleClass="usuario-cliente-form-campo" />
+
+                  <Label layoutX="28.0" layoutY="589.0"
+                         text="Código postal" styleClass="usuario-cliente-form-label" />
+
+                  <Label layoutX="282.0" layoutY="589.0"
+                         text="Número" styleClass="usuario-cliente-form-label" />
+
+                  <TextField fx:id="txt_codigoPostal1" layoutX="28.0" layoutY="613.0"
+                             prefHeight="48.0" prefWidth="244.0"
+                             styleClass="usuario-cliente-form-campo" />
+
+                  <TextField fx:id="txt_numero1" layoutX="282.0" layoutY="613.0"
+                             prefHeight="48.0" prefWidth="143.0"
+                             styleClass="usuario-cliente-form-campo" />
+
+                  <Label layoutX="28.0" layoutY="682.0"
+                         text="Ciudad" styleClass="usuario-cliente-form-label" />
+
+                  <TextField fx:id="txt_ciudad1" layoutX="28.0" layoutY="704.0"
+                             prefHeight="48.0" prefWidth="397.0"
+                             styleClass="usuario-cliente-form-campo" />
+
+                  <Button fx:id="btn_agregarDireccion1" layoutX="236.0" layoutY="763.0"
+                          mnemonicParsing="false" onAction="#clicAgregarDireccion"
+                          prefHeight="40.0" prefWidth="189.0"
+                          text="+   Agregar Dirección"
+                          styleClass="usuario-cliente-form-btn-secundario" />
+
+                  <Label layoutX="28.0" layoutY="821.0"
+                         text="Direccion" styleClass="usuario-cliente-form-label" />
+
+                  <ScrollPane layoutX="27.0" layoutY="847.0" prefHeight="130.0" prefWidth="398.0"
+                              styleClass="usuario-cliente-form-scroll-tabla">
                      <content>
-                        <TableView fx:id="tbl_direcciones" prefHeight="201.0" prefWidth="379.0">
-                          <columns>
-                            <TableColumn fx:id="col_direccion" prefWidth="378.0" text="Direcciones" />
-                          </columns>
+                        <TableView fx:id="tbl_direcciones" prefHeight="201.0" prefWidth="379.0"
+                                   styleClass="usuario-cliente-form-tabla">
+                           <columns>
+                              <TableColumn fx:id="col_direccion" prefWidth="378.0" text="Direcciones" />
+                           </columns>
                         </TableView>
                      </content>
                   </ScrollPane>
-                     </children>
-                  </AnchorPane>
+
+                  <Button fx:id="btn_cancelar1" layoutX="31.0" layoutY="1007.0"
+                          mnemonicParsing="false" onAction="#clicCancelar"
+                          prefHeight="47.0" prefWidth="189.0"
+                          text="Cancelar"
+                          styleClass="usuario-cliente-form-btn-secundario-grande" />
+
+                  <Button fx:id="btn_guardar1" layoutX="236.0" layoutY="1007.0"
+                          mnemonicParsing="false" onAction="#clicGuardar"
+                          prefHeight="47.0" prefWidth="189.0"
+                          text="Guardar"
+                          styleClass="usuario-cliente-form-btn-primario-grande" />
+
+               </children>
+            </AnchorPane>
 
          </content>
       </ScrollPane>
