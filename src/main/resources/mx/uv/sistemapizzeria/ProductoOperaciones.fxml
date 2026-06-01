@@ -72,11 +72,11 @@
                                onAction="#clicRequiereRecetaSi" selected="true"
                                text="Sí" styleClass="producto-form-radio">
                      <toggleGroup>
-                        <ToggleGroup fx:id="tg_requiereReceta" />
+                        <ToggleGroup />
                      </toggleGroup>
                   </RadioButton>
 
-                  <RadioButton fx:id="rb_requiereRecetaNo" mnemonicParsing="false"
+                  <RadioButton mnemonicParsing="false"
                                onAction="#clicRequiereRecetaNo"
                                text="No" toggleGroup="$tg_requiereReceta"
                                styleClass="producto-form-radio" />
@@ -129,7 +129,7 @@
                        prefHeight="36.0" prefWidth="90.0"
                        promptText="0" styleClass="producto-form-campo-pequeno" />
 
-            <Button fx:id="btn_agregarInsumo" layoutX="16.0" layoutY="125.0"
+            <Button layoutX="16.0" layoutY="125.0"
                     mnemonicParsing="false" onAction="#clicAgregarInsumo"
                     prefHeight="36.0" prefWidth="294.0"
                     text="Agregar" styleClass="producto-form-btn-agregar" />
@@ -149,26 +149,26 @@
             prefHeight="200.0" prefWidth="100.0" spacing="15.0">
          <children>
 
-            <AnchorPane fx:id="pnl_foto" prefHeight="174.0" prefWidth="178.0"
+            <AnchorPane prefHeight="174.0" prefWidth="178.0"
                         styleClass="producto-form-panel-foto">
                <children>
                   <ImageView fx:id="img_foto" fitHeight="110.0" fitWidth="125.0" preserveRatio="true" />
                </children>
             </AnchorPane>
 
-            <Button fx:id="btn_subirFoto" mnemonicParsing="false" onAction="#clicSubirFoto"
+            <Button mnemonicParsing="false" onAction="#clicSubirFoto"
                     prefHeight="38.0" prefWidth="125.0"
                     text="Subir Foto" styleClass="producto-form-btn-secundario-pequeno" />
 
          </children>
       </VBox>
 
-      <Button fx:id="btn_cancelar" layoutX="411.0" layoutY="575.0"
+      <Button layoutX="411.0" layoutY="575.0"
               mnemonicParsing="false" onAction="#clicCancelar"
               prefHeight="42.0" prefWidth="115.0"
               text="Cancelar" styleClass="producto-form-btn-secundario" />
 
-      <Button fx:id="btn_guardar" layoutX="568.0" layoutY="575.0"
+      <Button layoutX="568.0" layoutY="575.0"
               mnemonicParsing="false" onAction="#clicGuardar"
               prefHeight="42.0" prefWidth="115.0"
               text="Guardar" styleClass="producto-form-btn-primario" />

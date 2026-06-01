@@ -57,13 +57,7 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private RadioButton rb_requiereRecetaSi;
     @FXML
-    private ToggleGroup tg_requiereReceta;
-    @FXML
-    private RadioButton rb_requiereRecetaNo;
-    @FXML
     private AnchorPane pnl_receta;
-    @FXML
-    private Button btn_agregarInsumo;
     @FXML
     private TableView<ProductoCompuestoPorDTO> tbl_insumos;
     @FXML
@@ -71,32 +65,22 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private TableColumn col_cantidad;
     @FXML
-    private AnchorPane pnl_foto;
-    @FXML
     private ImageView img_foto;
     @FXML
-    private Button btn_subirFoto;
-    @FXML
-    private Button btn_cancelar;
-    @FXML
-    private Button btn_guardar;
-    @FXML
     private AnchorPane pnl_sinReceta;
-
-    // Variables agregadas por el equipo
     @FXML
     private Label txt_operacion;
     @FXML
     private TextField txt_existencias;
-
-    private final ObservableList<ProductoCompuestoPorDTO> listaInsumosReceta = FXCollections.observableArrayList();
-    private Boolean registro;
     @FXML
     private DatePicker dp_caducidad;
     @FXML
     private VBox vb_receta;
 
-    String rutaFotoActual;
+    private final ObservableList<ProductoCompuestoPorDTO> listaInsumosReceta = FXCollections.observableArrayList();
+    private Boolean registro;
+
+    private String rutaFotoActual;
 
     private ProductoInventarioDAO productoInventarioDAO = new ProductoInventarioDAO();
     private ProductoCompuestoPorDAO productoCompuestoPorDAO = new ProductoCompuestoPorDAO();
