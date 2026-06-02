@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -15,10 +20,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="650.0" prefWidth="760.0" styleClass="producto-form-root"
-            xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="mx.uv.sistemapizzeria.controladores.ProductoOperacionesController">
+<AnchorPane prefHeight="650.0" prefWidth="760.0" styleClass="producto-form-root" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uv.sistemapizzeria.controladores.ProductoOperacionesController">
 
    <stylesheets>
       <URL value="@../../../css/estilos.css" />
@@ -26,152 +28,104 @@
 
    <children>
 
-      <Label layoutX="18.0" layoutY="14.0" text="Formulario" styleClass="producto-form-caption" />
+      <Label layoutX="18.0" layoutY="14.0" styleClass="producto-form-caption" text="Formulario" />
 
-      <Label fx:id="txt_operacion" layoutX="18.0" layoutY="34.0"
-             text="Registrar Producto" styleClass="producto-form-titulo" />
+      <Label fx:id="txt_operacion" layoutX="18.0" layoutY="34.0" styleClass="producto-form-titulo" text="Registrar Producto" />
 
-      <Label layoutX="30.0" layoutY="85.0" text="Código" styleClass="producto-form-label" />
+      <Label layoutX="30.0" layoutY="85.0" styleClass="producto-form-label" text="Código" />
 
-      <TextField fx:id="txt_codigo" layoutX="30.0" layoutY="107.0"
-                 prefHeight="38.0" prefWidth="320.0"
-                 styleClass="producto-form-campo" />
+      <TextField fx:id="txt_codigo" layoutX="30.0" layoutY="107.0" prefHeight="38.0" prefWidth="320.0" styleClass="producto-form-campo" />
 
-      <Label layoutX="30.0" layoutY="154.0" text="Nombre" styleClass="producto-form-label" />
+      <Label layoutX="30.0" layoutY="154.0" styleClass="producto-form-label" text="Nombre" />
 
-      <TextField fx:id="txt_nombre" layoutX="30.0" layoutY="176.0"
-                 prefHeight="38.0" prefWidth="320.0"
-                 styleClass="producto-form-campo" />
+      <TextField fx:id="txt_nombre" layoutX="30.0" layoutY="176.0" prefHeight="38.0" prefWidth="320.0" styleClass="producto-form-campo" />
 
-      <Label layoutX="30.0" layoutY="223.0" text="Descripción" styleClass="producto-form-label" />
+      <Label layoutX="30.0" layoutY="223.0" styleClass="producto-form-label" text="Descripción" />
 
-      <TextField fx:id="txt_descripcion" layoutX="30.0" layoutY="245.0"
-                 prefHeight="38.0" prefWidth="320.0"
-                 styleClass="producto-form-campo" />
+      <TextField fx:id="txt_descripcion" layoutX="30.0" layoutY="245.0" prefHeight="38.0" prefWidth="320.0" styleClass="producto-form-campo" />
 
-      <Label layoutX="30.0" layoutY="292.0" text="Precio" styleClass="producto-form-label" />
+      <Label layoutX="30.0" layoutY="292.0" styleClass="producto-form-label" text="Precio" />
 
-      <TextField fx:id="txt_precio" layoutX="30.0" layoutY="314.0"
-                 prefHeight="38.0" prefWidth="150.0"
-                 styleClass="producto-form-campo" />
+      <TextField fx:id="txt_precio" layoutX="30.0" layoutY="314.0" prefHeight="38.0" prefWidth="150.0" styleClass="producto-form-campo" />
 
-      <Label layoutX="200.0" layoutY="292.0" text="Límite" styleClass="producto-form-label" />
+      <Label layoutX="200.0" layoutY="292.0" styleClass="producto-form-label" text="Límite" />
 
-      <TextField fx:id="txt_limite" layoutX="200.0" layoutY="314.0"
-                 prefHeight="38.0" prefWidth="150.0"
-                 styleClass="producto-form-campo" />
+      <TextField fx:id="txt_limite" layoutX="200.0" layoutY="314.0" prefHeight="38.0" prefWidth="150.0" styleClass="producto-form-campo" />
 
-      <VBox fx:id="vb_receta" layoutX="404.0" layoutY="103.0"
-            prefHeight="65.0" prefWidth="320.0" spacing="8.0">
+      <VBox fx:id="vb_receta" layoutX="404.0" layoutY="103.0" prefHeight="65.0" prefWidth="320.0" spacing="8.0">
          <children>
-            <Label text="Requiere receta" styleClass="producto-form-label" />
+            <Label styleClass="producto-form-label" text="Requiere receta" />
 
             <HBox prefHeight="32.0" prefWidth="320.0" spacing="40.0">
                <children>
-                  <RadioButton fx:id="rb_requiereRecetaSi" mnemonicParsing="false"
-                               onAction="#clicRequiereRecetaSi" selected="true"
-                               text="Sí" styleClass="producto-form-radio">
+                  <RadioButton fx:id="rb_requiereRecetaSi" mnemonicParsing="false" onAction="#clicRequiereRecetaSi" selected="true" styleClass="producto-form-radio" text="Sí">
                      <toggleGroup>
-                        <ToggleGroup fx:id="tg_requiereReceta" />
+                        <ToggleGroup fx:id="tg_requiereReceta"/>
                      </toggleGroup>
                   </RadioButton>
 
-                  <RadioButton fx:id="rb_requiereRecetaNo" mnemonicParsing="false"
-                               onAction="#clicRequiereRecetaNo"
-                               text="No" toggleGroup="$tg_requiereReceta"
-                               styleClass="producto-form-radio" />
+                  <RadioButton mnemonicParsing="false" onAction="#clicRequiereRecetaNo" styleClass="producto-form-radio" text="No" toggleGroup="$tg_requiereReceta" />
                </children>
             </HBox>
          </children>
       </VBox>
 
-      <AnchorPane fx:id="pnl_sinReceta" layoutX="404.0" layoutY="186.0"
-                  prefHeight="115.0" prefWidth="320.0"
-                  styleClass="producto-form-panel">
+      <AnchorPane fx:id="pnl_sinReceta" layoutX="404.0" layoutY="186.0" prefHeight="115.0" prefWidth="320.0" styleClass="producto-form-panel">
          <children>
-            <Label layoutX="14.0" layoutY="10.0" text="Agregar otros datos"
-                   styleClass="producto-form-panel-titulo" />
+            <Label layoutX="14.0" layoutY="10.0" styleClass="producto-form-panel-titulo" text="Agregar otros datos" />
 
-            <Label layoutX="14.0" layoutY="42.0" text="Existencias"
-                   styleClass="producto-form-label-pequeno" />
+            <Label layoutX="14.0" layoutY="42.0" styleClass="producto-form-label-pequeno" text="Existencias" />
 
-            <TextField fx:id="txt_existencias" layoutX="14.0" layoutY="63.0"
-                       prefHeight="34.0" prefWidth="125.0" promptText="0"
-                       styleClass="producto-form-campo-pequeno" />
+            <TextField fx:id="txt_existencias" layoutX="14.0" layoutY="63.0" prefHeight="34.0" prefWidth="125.0" promptText="0" styleClass="producto-form-campo-pequeno" />
 
-            <Label layoutX="160.0" layoutY="42.0" text="Caducidad"
-                   styleClass="producto-form-label-pequeno" />
+            <Label layoutX="160.0" layoutY="42.0" styleClass="producto-form-label-pequeno" text="Caducidad" />
 
-            <DatePicker fx:id="dp_caducidad" layoutX="160.0" layoutY="63.0"
-                        prefHeight="34.0" prefWidth="140.0"
-                        styleClass="producto-form-date" />
+            <DatePicker fx:id="dp_caducidad" layoutX="160.0" layoutY="63.0" prefHeight="34.0" prefWidth="140.0" styleClass="producto-form-date" />
          </children>
       </AnchorPane>
 
-      <AnchorPane fx:id="pnl_receta" layoutX="398.0" layoutY="157.0"
-                  prefHeight="404.0" prefWidth="340.0"
-                  styleClass="producto-form-panel">
+      <AnchorPane fx:id="pnl_receta" layoutX="398.0" layoutY="157.0" prefHeight="404.0" prefWidth="340.0" styleClass="producto-form-panel">
          <children>
-            <Label layoutX="16.0" layoutY="14.0" text="Agregar productos del inventario"
-                   styleClass="producto-form-panel-titulo-grande" />
+            <Label layoutX="16.0" layoutY="14.0" styleClass="producto-form-panel-titulo-grande" text="Agregar productos del inventario" />
 
-            <Label layoutX="16.0" layoutY="52.0" text="Producto del Inventario"
-                   styleClass="producto-form-label" />
+            <Label layoutX="16.0" layoutY="52.0" styleClass="producto-form-label" text="Producto del Inventario" />
 
-            <ComboBox fx:id="cb_insumo" layoutX="16.0" layoutY="74.0"
-                      prefHeight="36.0" prefWidth="190.0"
-                      promptText="Seleccionar" styleClass="producto-form-combo" />
+            <ComboBox fx:id="cb_insumo" layoutX="16.0" layoutY="74.0" prefHeight="36.0" prefWidth="190.0" promptText="Seleccionar" styleClass="producto-form-combo" />
 
-            <Label layoutX="220.0" layoutY="52.0" text="Cantidad"
-                   styleClass="producto-form-label" />
+            <Label layoutX="220.0" layoutY="52.0" styleClass="producto-form-label" text="Cantidad" />
 
-            <TextField fx:id="txt_cantidadInsumo" layoutX="220.0" layoutY="74.0"
-                       prefHeight="36.0" prefWidth="90.0"
-                       promptText="0" styleClass="producto-form-campo-pequeno" />
+            <TextField fx:id="txt_cantidadInsumo" layoutX="220.0" layoutY="74.0" prefHeight="36.0" prefWidth="90.0" promptText="0" styleClass="producto-form-campo-pequeno" />
 
-            <Button fx:id="btn_agregarInsumo" layoutX="16.0" layoutY="125.0"
-                    mnemonicParsing="false" onAction="#clicAgregarInsumo"
-                    prefHeight="36.0" prefWidth="294.0"
-                    text="Agregar" styleClass="producto-form-btn-agregar" />
+            <Button layoutX="16.0" layoutY="125.0" mnemonicParsing="false" onAction="#clicAgregarInsumo" prefHeight="36.0" prefWidth="294.0" styleClass="producto-form-btn-agregar" text="Agregar" />
 
-            <TableView fx:id="tbl_insumos" layoutX="16.0" layoutY="178.0"
-                       prefHeight="216.0" prefWidth="313.0"
-                       styleClass="producto-form-tabla">
+            <TableView fx:id="tbl_insumos" layoutX="16.0" layoutY="178.0" prefHeight="216.0" prefWidth="313.0" styleClass="producto-form-tabla">
                <columns>
                   <TableColumn fx:id="col_insumo" prefWidth="210.0" text="Insumo" />
                   <TableColumn fx:id="col_cantidad" prefWidth="95.0" text="Cantidad" />
                </columns>
             </TableView>
+
+            <Button layoutX="16.0" layoutY="362.0" mnemonicParsing="false" onAction="#clicEliminarInsumo" prefHeight="36.0" prefWidth="313.0" style="-fx-background-color: #e03c31; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Eliminar ingrediente" />
          </children>
       </AnchorPane>
 
-      <VBox alignment="CENTER" layoutX="128.0" layoutY="396.0"
-            prefHeight="200.0" prefWidth="100.0" spacing="15.0">
+      <VBox alignment="CENTER" layoutX="128.0" layoutY="396.0" prefHeight="200.0" prefWidth="100.0" spacing="15.0">
          <children>
 
-            <AnchorPane fx:id="pnl_foto" prefHeight="174.0" prefWidth="178.0"
-                        styleClass="producto-form-panel-foto">
+            <AnchorPane prefHeight="174.0" prefWidth="178.0" styleClass="producto-form-panel-foto">
                <children>
                   <ImageView fx:id="img_foto" fitHeight="110.0" fitWidth="125.0" preserveRatio="true" />
                </children>
             </AnchorPane>
 
-            <Button fx:id="btn_subirFoto" mnemonicParsing="false" onAction="#clicSubirFoto"
-                    prefHeight="38.0" prefWidth="125.0"
-                    text="Subir Foto" styleClass="producto-form-btn-secundario-pequeno" />
+            <Button mnemonicParsing="false" onAction="#clicSubirFoto" prefHeight="38.0" prefWidth="125.0" styleClass="producto-form-btn-secundario-pequeno" text="Subir Foto" />
 
          </children>
       </VBox>
 
-      <Button fx:id="btn_cancelar" layoutX="411.0" layoutY="575.0"
-              mnemonicParsing="false" onAction="#clicCancelar"
-              prefHeight="42.0" prefWidth="115.0"
-              text="Cancelar" styleClass="producto-form-btn-secundario" />
+      <Button layoutX="411.0" layoutY="575.0" mnemonicParsing="false" onAction="#clicCancelar" prefHeight="42.0" prefWidth="115.0" styleClass="producto-form-btn-secundario" text="Cancelar" />
 
-      <Button fx:id="btn_guardar" layoutX="568.0" layoutY="575.0"
-              mnemonicParsing="false" onAction="#clicGuardar"
-              prefHeight="42.0" prefWidth="115.0"
-              text="Guardar" styleClass="producto-form-btn-primario" />
+      <Button layoutX="568.0" layoutY="575.0" mnemonicParsing="false" onAction="#clicGuardar" prefHeight="42.0" prefWidth="115.0" styleClass="producto-form-btn-primario" text="Guardar" />
 
    </children>
 </AnchorPane>

@@ -57,13 +57,7 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private RadioButton rb_requiereRecetaSi;
     @FXML
-    private ToggleGroup tg_requiereReceta;
-    @FXML
-    private RadioButton rb_requiereRecetaNo;
-    @FXML
     private AnchorPane pnl_receta;
-    @FXML
-    private Button btn_agregarInsumo;
     @FXML
     private TableView<ProductoCompuestoPorDTO> tbl_insumos;
     @FXML
@@ -71,32 +65,25 @@ public class ProductoOperacionesController implements Initializable {
     @FXML
     private TableColumn col_cantidad;
     @FXML
-    private AnchorPane pnl_foto;
+    private AnchorPane pnl_sinReceta;
+    @FXML
+    private Label txt_operacion;
+
     @FXML
     private ImageView img_foto;
     @FXML
-    private Button btn_subirFoto;
-    @FXML
-    private Button btn_cancelar;
-    @FXML
-    private Button btn_guardar;
-    @FXML
-    private AnchorPane pnl_sinReceta;
-
-    // Variables agregadas por el equipo
-    @FXML
-    private Label txt_operacion;
+    private ToggleGroup tg_requiereReceta;
     @FXML
     private TextField txt_existencias;
-
-    private final ObservableList<ProductoCompuestoPorDTO> listaInsumosReceta = FXCollections.observableArrayList();
-    private Boolean registro;
     @FXML
     private DatePicker dp_caducidad;
     @FXML
     private VBox vb_receta;
 
-    String rutaFotoActual;
+    private final ObservableList<ProductoCompuestoPorDTO> listaInsumosReceta = FXCollections.observableArrayList();
+    private Boolean registro;
+
+    private String rutaFotoActual;
 
     private ProductoInventarioDAO productoInventarioDAO = new ProductoInventarioDAO();
     private ProductoCompuestoPorDAO productoCompuestoPorDAO = new ProductoCompuestoPorDAO();
@@ -284,7 +271,7 @@ public class ProductoOperacionesController implements Initializable {
     }
 
 
-    public boolean editarProductoConReceta() {
+    private boolean editarProductoConReceta() {
 
         try {
             if (productoDAO.editarConReceta(recuperarDatosProducto(), recuperarDatosReceta())) {
@@ -310,7 +297,7 @@ public class ProductoOperacionesController implements Initializable {
         return false;
     }
 
-    public boolean editarProductoSinReceta() {
+    private boolean editarProductoSinReceta() {
         try {
             if (productoDAO.editarSinReceta(recuperarDatosProducto())) {
                 UtilidadesFX.mostrarAlertaSimple("Edición exitosa",
@@ -493,6 +480,24 @@ public class ProductoOperacionesController implements Initializable {
                     Alert.AlertType.ERROR);
         }
         return false;
+    }
+
+    @FXML
+    private void clicEliminarInsumo(ActionEvent event) {
+        ProductoCompuestoPorDTO insumoSeleccionado = tbl_insumos.getSelectionModel().getSelectedItem();
+        if (insumoSeleccionado == null) {
+            UtilidadesFX.mostrarAlertaSimple("Selección requerida",
+                    "Por favor, seleccione un insumo de la tabla para eliminarlo.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+        boolean confirmado = UtilidadesFX.mostrarAlertaConfirmacion(
+                "Confirmar eliminación",
+                "¿Deseas eliminar el insumo \"" + insumoSeleccionado.getNombreProductoInventario() + "\" de la receta?",
+                "Esta acción quitará el insumo de la lista.");
+        if (confirmado) {
+            listaInsumosReceta.remove(insumoSeleccionado);
+        }
     }
 
     @FXML
