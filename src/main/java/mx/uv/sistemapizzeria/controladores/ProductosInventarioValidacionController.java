@@ -182,7 +182,8 @@ public class ProductosInventarioValidacionController implements Initializable {
                 boolean requiereJustificacion = requiereJustificacion(detalle);
 
                 if (!requiereJustificacion) {
-                    detalle.setJustificacion("");
+                    detalle.setJustificacion("Sin diferencia");
+                    txt_justificacion.setText(detalle.getJustificacion());
                 }
 
                 colocarTexto(requiereJustificacion && detalle.getJustificacion() != null
@@ -243,6 +244,10 @@ public class ProductosInventarioValidacionController implements Initializable {
     }
 
     private List<DetalleReporteDTO> recuperarDatos() {
+        for(DetalleReporteDTO detalle : tbl_validacionProductosInventario.getItems()){
+            System.out.println(detalle.getCodigo());
+            System.out.println(detalle.getJustificacion());
+        }
         return List.copyOf(tbl_validacionProductosInventario.getItems());
     }
 
@@ -270,7 +275,7 @@ public class ProductosInventarioValidacionController implements Initializable {
             detalle.setDiferencia(diferencia);
 
             if (Double.compare(diferencia, 0.0) == 0) {
-                detalle.setJustificacion("");
+                detalle.setJustificacion("Sin diferencia");
             }
         }
 
