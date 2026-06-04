@@ -410,8 +410,8 @@ public class PedidosGestionController implements Initializable {
 
     @FXML
     private void clicExportarPDF(ActionEvent event) {
-        List<PedidoDTO> pedidos = new ArrayList<>(this.pedidos);
-        if (pedidos.isEmpty()) {
+        List<PedidoDTO> itemsTabla = new ArrayList<>(tbl_pedidos.getItems());
+        if (itemsTabla.isEmpty()) {
             UtilidadesFX.mostrarAlertaSimple("Sin datos",
                     "No hay pedidos para exportar.", Alert.AlertType.WARNING);
             return;
@@ -427,17 +427,13 @@ public class PedidosGestionController implements Initializable {
         if (archivo == null) return;
 
         try {
-            List<PedidoDTO> pedidosCompletos = new ArrayList<>();
-            for (PedidoDTO p : pedidos) {
-                try {
-                    PedidoDTO completo = pedidosDAO.buscar(p.getIdPedido());
-                    pedidosCompletos.add(completo != null ? completo : p);
-                } catch (Exception ignored) {
-                    pedidosCompletos.add(p);
-                }
+            List<PedidoDTO> pedidosConDetalles = new ArrayList<>();
+            for (PedidoDTO p : itemsTabla) {
+                PedidoDTO completo = pedidosDAO.buscar(p.getIdPedido());
+                pedidosConDetalles.add(completo != null ? completo : p);
             }
 
-            ExportadorPDFGeneral.generarReportePedidos(archivo.getAbsolutePath(), pedidosCompletos);
+            ExportadorPDFGeneral.generarReportePedidos(archivo.getAbsolutePath(), pedidosConDetalles);
             UtilidadesFX.mostrarAlertaSimple("Exportación exitosa",
                     "Reporte guardado en:\n" + archivo.getAbsolutePath(),
                     Alert.AlertType.INFORMATION);
