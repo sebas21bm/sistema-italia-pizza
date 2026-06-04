@@ -375,14 +375,12 @@ public class PedidoCreacionController implements Initializable {
             ctrl.setPedido(pedido, stageCreacion);
 
             Stage stageConf = new Stage();
-            stageConf.initOwner(stageCreacion);
-            stageConf.initModality(Modality.WINDOW_MODAL);
+            stageConf.initModality(Modality.APPLICATION_MODAL);
             stageConf.setTitle("Confirmar pedido");
             stageConf.setResizable(false);
             stageConf.setScene(new Scene(vista));
             stageConf.centerOnScreen();
 
-            stageCreacion.hide();
             stageConf.showAndWait();
 
         } catch (Exception e) {

@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -89,9 +88,6 @@ public class PedidoConfirmacionController implements Initializable {
     @FXML
     private void clicAtras(ActionEvent event) {
         cerrarEstaVentana();
-        if (stageCreacion != null) {
-            stageCreacion.show();
-        }
     }
 
     @FXML
@@ -100,10 +96,10 @@ public class PedidoConfirmacionController implements Initializable {
         try {
             pedidosDAO.registrar(pedido);
             cerrarEstaVentana();
-            Platform.runLater(() -> {
-                abrirTicket(pedido);
-            });
-
+            abrirTicket(pedido);
+            if (stageCreacion != null) {
+                stageCreacion.close();
+            }
         } catch(SQLException | IOException | ClassNotFoundException | NullPointerException e ){
             UtilidadesFX.mostrarAlertaSimple("Error al registrar",
                     e.getMessage(),
