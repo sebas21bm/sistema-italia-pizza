@@ -91,7 +91,19 @@ public class PedidosDAO {
             PreparedStatement ps = conn.prepareStatement(consulta);
             ps.setString(1, nuevoEstatus);
             ps.setInt(2, idPedido);
-            return ps.executeUpdate() > 0;
+
+            boolean actualizado = ps.executeUpdate() > 0;
+
+            if (actualizado && "Cancelado".equals(nuevoEstatus)) {
+
+                CallableStatement cs =
+                        conn.prepareCall("{CALL regresar_existencias(?)}");
+
+                cs.setInt(1, idPedido);
+                cs.execute();
+            }
+
+            return actualizado;
         }
     }
 
