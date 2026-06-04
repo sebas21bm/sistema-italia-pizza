@@ -52,14 +52,12 @@ public class DetalleReporteInventarioDAO {
             sentenciaLimpiarTabla.executeUpdate();
 
             for(DetalleReporteDTO detalle : detallesReporte){
-                if(detalle.getDiferencia() != 0) {
                     String consultaDetalle = "CALL registrar_detalle_reporte( ?, ?, ?);";
                     PreparedStatement sentencia = conn.prepareStatement(consultaDetalle);
                     sentencia.setString(1, detalle.getCodigo());
                     sentencia.setDouble(2, detalle.getDiferencia());
                     sentencia.setString(3, detalle.getJustificacion());
                     sentencia.execute();
-                }
             }
             PreparedStatement sentenciaReporte = conn.prepareStatement("CALL registrar_reporte();");
             sentenciaReporte.execute();

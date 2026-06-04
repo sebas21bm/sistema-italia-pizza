@@ -105,7 +105,7 @@
                </columns>
             </TableView>
 
-            <Button layoutX="16.0" layoutY="362.0" mnemonicParsing="false" onAction="#clicEliminarInsumo" prefHeight="36.0" prefWidth="313.0" style="-fx-background-color: #e03c31; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Eliminar ingrediente" />
+            <Button fx:id="btn_eliminarInsumo" layoutX="16.0" layoutY="362.0" mnemonicParsing="false" onAction="#clicEliminarInsumo" prefHeight="36.0" prefWidth="313.0" style="-fx-background-color: #e03c31; -fx-background-radius: 0; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;" text="Eliminar ingrediente" />
          </children>
       </AnchorPane>
 

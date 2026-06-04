@@ -38,7 +38,6 @@ public class SistemaPizzeria extends Application {
         }
         metadatos.put(nombre, valor);
 
-        // Sincronizar con Sesion.empleadoSesion cuando se guarda/limpia el empleado
         if ("empleado".equals(nombre)) {
             Sesion.empleadoSesion = (valor instanceof mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO)
                     ? (mx.uv.sistemapizzeria.modelo.dto.EmpleadoDTO) valor

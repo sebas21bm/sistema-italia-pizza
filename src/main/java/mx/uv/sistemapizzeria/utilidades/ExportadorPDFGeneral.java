@@ -152,11 +152,14 @@ public class ExportadorPDFGeneral {
         for (DetalleReporteDTO detalle : reporteInventario) {
             String codigo = detalle.getCodigo();
             String productoInventario = detalle.getDescripcionProductoInventario();
-            String existecias = String.format("%.2f", detalle.getExistencias());
+            String existencias = String.format("%.2f", detalle.getExistencias());
+            String conteoFisico = detalle.getConteoFisico() != null
+                    ? String.format("%.2f", detalle.getConteoFisico())
+                    : "";
             detallesReporte.addCell(crearCeldaTablaIText(codigo));
             detallesReporte.addCell(crearCeldaTablaIText(productoInventario));
-            detallesReporte.addCell(crearCeldaTablaIText(existecias));
-            detallesReporte.addCell(crearCeldaTablaIText(""));
+            detallesReporte.addCell(crearCeldaTablaIText(existencias));
+            detallesReporte.addCell(crearCeldaTablaIText(conteoFisico));
         }
         documento.add(detallesReporte);
         documento.close();
